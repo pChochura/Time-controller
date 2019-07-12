@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Time Controller</string>
+    <plurals name="times">
+        <item quantity="one">time</item>
+        <item quantity="other">times</item>
+    </plurals>
 </resources>

@@ -6,6 +6,28 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/josefin_sans</item>
+    </style>
+
+    <style name="ButtonText">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Label" parent="AppTheme">
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/colorText1</item>
+    </style>
+
+    <style name="Title" parent="AppTheme">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorText1</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Subtitle" parent="AppTheme">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorText2</item>
     </style>
 
 </resources>
