@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
 import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
+import com.pointlessapss.timecontroler.fragments.AddTaskFragment
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.ItemType
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 			override fun click(pos: Int, adder: Boolean) {
 				if (adder) {
-
+					onTaskAddClick()
 					return
 				}
 
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 	private fun onTaskClick(item: Item) {
 
+	}
+
+	private fun onTaskAddClick() {
+		AddTaskFragment().show(supportFragmentManager, "addTaskFragment")
 	}
 
 	override fun onDayClick(dateClicked: Date?) {

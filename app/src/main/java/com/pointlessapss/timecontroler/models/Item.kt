@@ -6,7 +6,8 @@ import java.util.*
 
 data class Item(val title: String, var type: ItemType = ItemType.TimeBased) {
 
-	lateinit var startDate: Calendar
+	var startDate: Calendar? = null
+
 	val id = UUID.randomUUID().hashCode()
 
 	@ColorInt

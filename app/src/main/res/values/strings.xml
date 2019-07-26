@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Time Controller</string>
     <string name="tasks_today">Today\'s tasks</string>
+    <string name="text_task_name">Task name</string>
+    <string name="time_based">Time Based</string>
+    <string name="count_based">Count based</string>
     <plurals name="times">
         <item quantity="one">time</item>
         <item quantity="other">times</item>

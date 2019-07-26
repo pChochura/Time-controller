@@ -2,6 +2,7 @@ package com.pointlessapss.timecontroler.adapters
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.NonNull
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.widget.TextViewCompat
@@ -35,6 +37,7 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 		val iconImage: AppCompatImageView = itemView.findViewById(R.id.iconImage)
 		val iconText: AppCompatTextView = itemView.findViewById(R.id.iconText)
 		val buttonConfigure: AppCompatImageView = itemView.findViewById(R.id.buttonConfigure)
+		val card: CardView = itemView.findViewById(R.id.card)
 
 		init {
 			itemView.findViewById<View>(R.id.card).setOnClickListener {
@@ -58,11 +61,13 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		if (pos < items.size) {
+			holder.card.cardElevation = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics)
 			holder.buttonConfigure.visibility = View.VISIBLE
 
 			setColor(holder, items[pos].color)
 			holder.iconText.text = items[pos].title.toUpperCase()
 		} else {
+			holder.card.cardElevation = 0f
 			holder.buttonConfigure.visibility = View.GONE
 
 			setColor(holder, ContextCompat.getColor(context, R.color.colorTaskDefault))

@@ -1,117 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardUseCompatPadding="true"
-        app:cardElevation="2dp"
-        app:cardCornerRadius="5dp">
+        android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/textTaskName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@android:color/transparent"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:hint="@string/text_task_name"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="G2A"
-                android:textSize="35sp"
-                android:textColor="@color/colorText1"/>
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPagerType"
+            android:layout_width="match_parent"
+            android:layout_height="450dp">
 
-        <androidx.cardview.widget.CardView
-                android:id="@+id/startHourContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                app:cardCornerRadius="1dp"
-                app:cardElevation="1dp"
-                app:cardUseCompatPadding="true"
-                app:cardBackgroundColor="@color/colorPrimary">
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayoutType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorText3"
-                    android:text="9:00"/>
+    </androidx.viewpager.widget.ViewPager>
 
-        </androidx.cardview.widget.CardView>
+    <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:textAppearance="@style/ButtonText"
+            android:backgroundTint="@color/colorPrimaryDark"
+            app:cornerRadius="0dp"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
+            android:textColor="@color/colorText3"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:text="Save"/>
 
-        <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toRightOf="@id/startHourContainer"
-                app:layout_constraintRight_toLeftOf="@id/endHourContainer"
-                app:layout_constraintTop_toTopOf="@id/startHourContainer"
-                app:layout_constraintBottom_toBottomOf="@id/endHourContainer"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    app:layout_constraintLeft_toRightOf="@id/startHourContainer"
-                    app:layout_constraintRight_toLeftOf="@id/endHourContainer"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorText2"
-                    android:text="8h 30 mins"/>
-
-            <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
-
-        </LinearLayout>
-
-        <androidx.cardview.widget.CardView
-                android:id="@+id/endHourContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                app:cardCornerRadius="1dp"
-                app:cardElevation="1dp"
-                app:cardUseCompatPadding="true"
-                app:cardBackgroundColor="@color/colorPrimary">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorText3"
-                    android:text="17:30"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_done"
-                android:layout_margin="20dp"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:fabCustomSize="75dp"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.cardview.widget.CardView>
+</LinearLayout>

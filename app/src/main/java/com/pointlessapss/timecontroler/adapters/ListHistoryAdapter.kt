@@ -41,7 +41,7 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		holder.title.text = items[pos].title
-		holder.subtitle.text = Utils.dateFormat.format(items[pos].startDate.time)
+		holder.subtitle.text = Utils.dateFormat.format(items[pos].startDate!!.time)
 		if (items[pos].type == ItemType.TimeBased) {
 			holder.footnote.text = items[pos].defaultTimeAmount
 			holder.progress.setmValueText(items[pos].getTimeAmount())
