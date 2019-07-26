@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:layout_marginRight="10dp">
 
     <androidx.cardview.widget.CardView
+            android:id="@+id/card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
             app:cardBackgroundColor="#ffffff"
             app:cardCornerRadius="2dp"
             app:cardElevation="1dp"
@@ -19,14 +23,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+                android:layout_height="match_parent">
 
             <FrameLayout
-                    android:id="@+id/iconContainer"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="10dp"
@@ -36,57 +35,40 @@
                     app:layout_constraintDimensionRatio="1:1">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iconImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="10dp"
                         android:src="@drawable/circle"
-                        android:tint="@color/colorAccent"
+                        android:tint="@color/colorPrimary"
                         android:alpha="0.5"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/iconText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="10dp"
                         android:layout_gravity="center"
                         android:maxLines="1"
                         android:gravity="center"
                         android:textStyle="bold"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorPrimary"
                         android:text="G2A"
                         android:padding="15dp"
                         android:fontFamily="@font/lato"/>
 
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/buttonConfigure"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_more"
+                        android:tint="@color/colorText2"
+                        android:layout_gravity="right|top"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
             </FrameLayout>
-
-            <com.app.progresviews.ProgressLine
-                    android:id="@+id/progress"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iconContainer"
-                    app:definition="h"
-                    app:value="2:30"
-                    app:lineBarWidth="5dp"
-                    app:valuePercentage="45"
-                    app:valueDefTextSize="20sp"
-                    app:lineProgressColor="@color/colorAccent"
-                    app:underLineSize="2dp"
-                    app:lineDefTextSize="12sp"
-                    app:underLineColor="@android:color/darker_gray"/>
-
-            <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/ButtonText"
-                    android:text="Start"
-                    android:textColor="@color/colorAccent"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/colorAccent"
-                    app:rippleColor="@color/colorRipple"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/progress"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

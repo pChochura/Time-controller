@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorText1</item>
+        <item name="android:textColorSecondary">@color/colorText3</item>
         <item name="android:fontFamily">@font/josefin_sans</item>
     </style>
 

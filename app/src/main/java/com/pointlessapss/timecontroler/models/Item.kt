@@ -4,9 +4,8 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import java.util.*
 
-data class Item(val title: String) {
+data class Item(val title: String, var type: ItemType = ItemType.TimeBased) {
 
-	lateinit var type: ItemType
 	lateinit var startDate: Calendar
 	val id = UUID.randomUUID().hashCode()
 
