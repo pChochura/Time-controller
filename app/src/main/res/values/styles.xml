@@ -9,10 +9,11 @@
         <item name="android:textColorPrimary">@color/colorText1</item>
         <item name="android:textColorSecondary">@color/colorText3</item>
         <item name="android:fontFamily">@font/josefin_sans</item>
+        <item name="android:timePickerDialogTheme">@style/TimePicker</item>
     </style>
 
     <style name="ButtonText">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Label" parent="AppTheme">
@@ -41,6 +42,10 @@
         <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="TimePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">#ffffff</item>
     </style>
 
 </resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CalendarView">
+        <attr name="cv_color_text_labels" format="color"/>
+        <attr name="cv_color_text_current_month" format="color"/>
+        <attr name="cv_color_text_other_month" format="color"/>
+        <attr name="cv_color_text_selected_day" format="color"/>
+        <attr name="cv_color_text_today" format="color"/>
+        <attr name="cv_color_selected_day" format="color"/>
+        <attr name="cv_color_today" format="color"/>
+        <attr name="cv_color_bg" format="color"/>
+        <attr name="cv_font_size_labels" format="dimension"/>
+        <attr name="cv_font_size_days" format="dimension"/>
+        <attr name="cv_font_typeface" format="reference"/>
+    </declare-styleable>
+</resources>

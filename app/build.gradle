@@ -35,5 +35,8 @@ dependencies {
     implementation 'com.zekapp.library:progreswheelview:1.1.5'
     implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
     implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'com.wdullaer:materialdatetimepicker:4.1.0'
+    implementation 'net.grandcentrix.tray:tray:0.12.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
 }
