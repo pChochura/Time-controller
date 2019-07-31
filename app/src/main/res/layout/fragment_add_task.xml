@@ -18,7 +18,9 @@
             android:background="@android:color/transparent"
             android:textSize="20sp"
             android:gravity="center"
+            android:textColorHint="@color/colorText2"
             android:textColor="@color/colorText1"
+            android:textStyle="bold"
             android:hint="@string/text_task_name"/>
 
     <include layout="@layout/fragment_options" />

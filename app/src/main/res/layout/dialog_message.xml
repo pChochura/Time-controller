@@ -22,16 +22,19 @@
             android:background="@android:color/transparent"
             android:textSize="20sp"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="@string/message"/>
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textContent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Title cannot be blank"
-            android:textSize="35sp"
+            android:text="@string/message_empty_title"
+            android:textSize="20sp"
             android:textColor="@color/colorText1"
             android:layout_margin="20dp"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textTitle"

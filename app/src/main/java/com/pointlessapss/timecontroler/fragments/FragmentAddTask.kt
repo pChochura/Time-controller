@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
+import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 
 class FragmentAddTask : BottomSheetDialogFragment() {
@@ -40,7 +41,7 @@ class FragmentAddTask : BottomSheetDialogFragment() {
 			item.title = textTaskName?.text.toString()
 
 			if (item.title.isBlank()) {
-				showError(resources.getString(R.string.blank_title))
+				showError(resources.getString(R.string.message_empty_title))
 				return@setOnClickListener
 			}
 
@@ -53,7 +54,7 @@ class FragmentAddTask : BottomSheetDialogFragment() {
 	}
 
 	private fun showError(content: String) {
-		Utils.makeDialog(activity!!, R.layout.dialog_message, { dialog ->
+		DialogUtil.create(activity!!, R.layout.dialog_message, { dialog ->
 
 			dialog.findViewById<AppCompatTextView>(R.id.textContent).text = content
 

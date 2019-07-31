@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
 import android.widget.FrameLayout
 import android.widget.TimePicker
 import androidx.appcompat.widget.AppCompatImageView
@@ -17,6 +18,7 @@ import com.google.android.material.button.MaterialButton
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ColorsAdapter
 import com.pointlessapss.timecontroler.models.Item
+import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,7 +37,7 @@ class FragmentOptions private constructor(
 			activity: Activity,
 			rootView: ViewGroup,
 			item: Item,
-			optionsToDisable: Array<Int> = arrayOf()
+			optionsToDisable: Array<Int> = arrayOf(R.id.optionDate)
 		) {
 			val fragment = FragmentOptions(activity, rootView, item)
 
@@ -45,6 +47,7 @@ class FragmentOptions private constructor(
 			fragment.refreshOptionStartTime()
 			fragment.refreshOptionColor()
 			fragment.refreshOptionDuration()
+			fragment.refreshOptionDate()
 
 			rootView.findViewById<View>(R.id.optionWeekdays).setOnClickListener {
 				fragment.showSelectWeekdaysDialog {
@@ -66,6 +69,11 @@ class FragmentOptions private constructor(
 					fragment.refreshOptionDuration()
 				}
 			}
+			rootView.findViewById<View>(R.id.optionDate).setOnClickListener {
+				fragment.showSelectDateDialog {
+					fragment.refreshOptionDate()
+				}
+			}
 		}
 	}
 
@@ -77,7 +85,7 @@ class FragmentOptions private constructor(
 
 	private fun refreshOptionWeekdays() {
 		val layout = rootView.findViewById<FrameLayout>(R.id.optionWeekdays)
-		(layout[1] as AppCompatTextView).text = Utils.joinWeekdaysToString(item.defaultWeekdays) ?: return
+		(layout[1] as AppCompatTextView).text = Utils.joinWeekdaysToString(activity, item.defaultWeekdays)
 	}
 
 	private fun refreshOptionStartTime() {
@@ -92,7 +100,7 @@ class FragmentOptions private constructor(
 	private fun refreshOptionColor() {
 		val layout = rootView.findViewById<FrameLayout>(R.id.optionColor)
 		if (item.color == 0) {
-			return
+			item.color = ContextCompat.getColor(activity, R.color.colorTaskDefault)
 		}
 		(layout[0] as AppCompatImageView).setColorFilter(item.color)
 	}
@@ -105,8 +113,22 @@ class FragmentOptions private constructor(
 		(layout[1] as AppCompatTextView).text = item.getTimeAmount()
 	}
 
+	private fun refreshOptionDate() {
+		val layout = rootView.findViewById<FrameLayout>(R.id.optionDate)
+		val today = Calendar.getInstance()
+		if (item.startDate == null ||
+			(item.startDate?.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+					item.startDate?.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
+		) {
+			(layout[1] as AppCompatTextView).text = activity.resources.getString(R.string.today)
+			return
+		}
+		(layout[1] as AppCompatTextView).text =
+			SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(item.startDate!!.time)
+	}
+
 	private fun showSelectWeekdaysDialog(callbackOk: () -> Unit) {
-		Utils.makeDialog(activity, R.layout.dialog_weekday_picker, { dialog ->
+		DialogUtil.create(activity, R.layout.dialog_weekday_picker, { dialog ->
 			val day = Calendar.getInstance()
 			day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
 
@@ -138,7 +160,7 @@ class FragmentOptions private constructor(
 		val hour = day.get(Calendar.HOUR_OF_DAY)
 		val minute = day.get(Calendar.MINUTE)
 
-		Utils.makeDialog(activity, R.layout.dialog_time_picker, { dialog ->
+		DialogUtil.create(activity, R.layout.dialog_time_picker, { dialog ->
 			val picker = dialog.findViewById<TimePicker>(R.id.timePicker)
 			picker.apply {
 				setIs24HourView(true)
@@ -169,7 +191,7 @@ class FragmentOptions private constructor(
 	}
 
 	private fun showSelectDurationDialog(callbackOk: () -> Unit) {
-		Utils.makeDialog(activity, R.layout.dialog_time_picker, { dialog ->
+		DialogUtil.create(activity, R.layout.dialog_time_picker, { dialog ->
 			val picker = dialog.findViewById<TimePicker>(R.id.timePicker)
 			picker.apply {
 				setIs24HourView(true)
@@ -199,8 +221,32 @@ class FragmentOptions private constructor(
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 
+	private fun showSelectDateDialog(callbackOk: () -> Unit) {
+		DialogUtil.create(activity, R.layout.dialog_date_picker, { dialog ->
+			val picker = dialog.findViewById<DatePicker>(R.id.datePicker)
+
+			if (item.startDate == null) {
+				item.startDate = Calendar.getInstance()
+			}
+			val year = item.startDate!!.get(Calendar.YEAR)
+			val month = item.startDate!!.get(Calendar.MONTH)
+			val day = item.startDate!!.get(Calendar.DAY_OF_MONTH)
+			picker.init(year, month, day) { _, y, m, d ->
+				item.startDate?.set(Calendar.YEAR, y)
+				item.startDate?.set(Calendar.MONTH, m)
+				item.startDate?.set(Calendar.DAY_OF_MONTH, d)
+			}
+
+			dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
+				dialog.dismiss()
+				callbackOk.invoke()
+			}
+
+		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
+	}
+
 	private fun showSelectColorDialog(callbackOk: () -> Unit) {
-		Utils.makeDialog(activity, R.layout.dialog_color_picker, { dialog ->
+		DialogUtil.create(activity, R.layout.dialog_color_picker, { dialog ->
 			val colors = Utils.getColors(activity)
 
 			val list = dialog.findViewById<RecyclerView>(R.id.numberPicker)
