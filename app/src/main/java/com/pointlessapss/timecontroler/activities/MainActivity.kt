@@ -120,33 +120,36 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 		DialogUtil.create(dialogItemInfo, this,
 			R.layout.dialog_item_info, { statefulDialog ->
-			val dialog = statefulDialog.dialog
-			val rootView = dialog.window!!.decorView.rootView as ViewGroup
+				val dialog = statefulDialog.dialog
+				val rootView = dialog.window!!.decorView.rootView as ViewGroup
 
-			FragmentOptions.handleOptions(this, rootView, item, arrayOf(
-				R.id.optionWeekdays,
-				R.id.optionColor
-			))
+				FragmentOptions.handleOptions(
+					this, rootView, item, arrayOf(
+						R.id.optionWeekdays,
+						R.id.optionColor
+					)
+				)
 
-			val textTitle = dialog.findViewById<AppCompatEditText>(R.id.textTitle)
-			textTitle.setText(item.title)
-			dialog.findViewById<AppCompatTextView>(R.id.textContent).text = Utils.createItemDescription(this, item)
+				val textTitle = dialog.findViewById<AppCompatEditText>(R.id.textTitle)
+				textTitle.setText(item.title)
+				dialog.findViewById<AppCompatTextView>(R.id.textContent).text = Utils.createItemDescription(this, item)
 
-			dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
-				dialog.dismiss()
-				callbackOk.invoke()
-			}
+				dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
+					dialog.dismiss()
+					callbackOk.invoke()
+				}
 
-			dialog.findViewById<View>(R.id.buttonEdit).setOnClickListener {
-				statefulDialog.toggle()
-			}
+				dialog.findViewById<View>(R.id.buttonEdit).setOnClickListener {
+					statefulDialog.toggle()
+				}
 
-			if (toEdit) {
-				statefulDialog.showToggled = true
-			} else {
-				Utils.toggleEditText(textTitle)
-			}
-		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
+				if (toEdit) {
+					statefulDialog.showToggled = true
+				} else {
+					Utils.toggleEditText(textTitle)
+				}
+			}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT
+		)
 	}
 
 	private fun onTaskEditClick(item: Item) {

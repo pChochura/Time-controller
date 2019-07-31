@@ -24,7 +24,13 @@ class DialogUtil private constructor(
 			}
 		}
 
-		fun create(statefulDialog: StatefulDialog, activity: Activity, id: Int, callback: (StatefulDialog) -> Unit, vararg windowSize: Int) {
+		fun create(
+			statefulDialog: StatefulDialog,
+			activity: Activity,
+			id: Int,
+			callback: (StatefulDialog) -> Unit,
+			vararg windowSize: Int
+		) {
 			val dialog = DialogUtil(activity, id, windowSize)
 			dialog.makeDialog {
 				callback.invoke(statefulDialog.apply { this.dialog = it })
