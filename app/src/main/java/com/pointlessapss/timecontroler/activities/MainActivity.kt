@@ -3,6 +3,7 @@ package com.pointlessapss.timecontroler.activities
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +12,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
-import com.github.sundeepk.compactcalendarview.domain.Event
 import com.google.gson.Gson
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
@@ -91,8 +91,12 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 	}
 
 	private fun setCalendar() {
-		calendar.setListener(this)
-		onMonthScroll(Calendar.getInstance().time)
+		calendar.setOnMonthChangeListener {
+			val text = SimpleDateFormat("MMMM", Locale.getDefault()).format(it.time)
+			Log.d("LOG!", "changed to: $text")
+			supportActionBar?.title = text
+		}
+//		onMonthScroll(Calendar.getInstance().time)
 	}
 
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit, toEdit: Boolean = false) {
@@ -158,7 +162,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
 
-			calendar.addEvent(Event(setItem.color, setItem.startDate!!.timeInMillis), true)
+//			calendar.addEvent(Event(setItem.color, setItem.startDate!!.timeInMillis), true)
 		}, true)
 	}
 
@@ -168,7 +172,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
 
-			calendar.addEvent(Event(setItem.color, setItem.startDate!!.timeInMillis), true)
+//			calendar.addEvent(Event(setItem.color, setItem.startDate!!.timeInMillis), true)
 		})
 	}
 

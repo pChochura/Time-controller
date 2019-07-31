@@ -18,18 +18,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <com.github.sundeepk.compactcalendarview.CompactCalendarView
-                    android:id="@+id/calendar"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    app:compactCalendarTargetHeight="300dp"
-                    app:compactCalendarTextSize="15sp"
-                    app:compactCalendarDisplayOtherMonthDays="true"
-                    app:compactCalendarTextColor="@color/colorText1"
-                    app:compactCalendarOtherMonthDaysTextColor="@color/colorText2"
-                    app:compactCalendarCurrentDayBackgroundColor="@color/colorAccent"
-                    app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorAccentLight"
-                    app:compactCalendarBackgroundColor="@color/colorBackground"/>
+                <com.pointlessapss.timecontroler.views.CalendarView
+                        android:id="@+id/calendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:nestedScrollingEnabled="true"
+                        app:cv_font_size_days="15sp"
+                        app:cv_color_text_current_month="@color/colorText1"
+                        app:cv_color_text_other_month="@color/colorText2"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Label"
