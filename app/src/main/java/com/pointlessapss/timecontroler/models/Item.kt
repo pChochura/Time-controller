@@ -13,10 +13,7 @@ data class Item(var title: String = "") {
 	val defaultWeekdays = BooleanArray(7)
 
 	@ColorInt
-	var color: Int = Random().nextInt()
-
-	@FloatRange(from = 0.0)
-	var defaultAmount = 0.0f
+	var color = 0
 
 	@FloatRange(from = 0.0)
 	var amount = 0.0f
@@ -29,6 +26,8 @@ data class Item(var title: String = "") {
 		startDate = item.startDate
 		startDate?.set(Calendar.DAY_OF_YEAR, date.get(Calendar.DAY_OF_YEAR))
 		startDate?.set(Calendar.YEAR, date.get(Calendar.YEAR))
-		amount = item.defaultAmount
+		amount = item.amount
+		color = item.color
+		item.defaultWeekdays.copyInto(defaultWeekdays)
 	}
 }

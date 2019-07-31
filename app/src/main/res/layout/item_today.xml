@@ -38,8 +38,7 @@
                         android:id="@+id/iconImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/circle"
+                        android:src="@drawable/ic_circle"
                         android:tint="@color/colorPrimary"
                         android:alpha="0.5"/>
 
@@ -47,7 +46,7 @@
                         android:id="@+id/iconText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="10dp"
+                        android:layout_margin="20dp"
                         android:layout_gravity="center"
                         android:maxLines="1"
                         android:gravity="center"

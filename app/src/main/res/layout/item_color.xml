@@ -4,7 +4,7 @@
         android:id="@+id/image"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/circle"
+        android:src="@drawable/ic_circle"
         android:tint="@color/colorTaskDefault"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:clickable="true"

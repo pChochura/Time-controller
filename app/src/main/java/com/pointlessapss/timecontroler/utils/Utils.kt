@@ -7,11 +7,13 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
+import android.text.method.KeyListener
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.EditText
 import androidx.annotation.FloatRange
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
@@ -66,10 +68,18 @@ object Utils {
 		return Point(displayMetrics.widthPixels, displayMetrics.heightPixels)
 	}
 
-	fun joinWeekdaysToString(weekdays: BooleanArray): String {
+	fun toggleEditText(editText: EditText, enabled: Boolean = false) {
+		if (enabled) {
+			editText.keyListener = (editText.tag ?: return) as KeyListener
+		} else {
+			editText.tag = editText.keyListener
+			editText.keyListener = null
+		}
+	}
+
+	fun joinWeekdaysToString(weekdays: BooleanArray): String? {
 		if (!weekdays.contains(true)) {
-//			TODO return adequate text
-			return ""
+			return null
 		}
 
 		val day = Calendar.getInstance()

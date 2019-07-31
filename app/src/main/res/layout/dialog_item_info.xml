@@ -6,7 +6,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_background">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/textTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -24,18 +24,40 @@
             android:gravity="center"
             android:text="Title"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textContent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/containerInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="9:00 - 17:00"
-            android:textSize="35sp"
-            android:textColor="@color/colorText1"
             android:layout_margin="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textTitle"
-            app:layout_constraintBottom_toTopOf="@id/buttonOk"/>
+            app:layout_constraintBottom_toTopOf="@id/buttonOk">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="9:00 - 17:00"
+                android:textSize="35sp"
+                android:textColor="@color/colorText1"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/containerEdit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textTitle"
+            app:layout_constraintBottom_toTopOf="@id/buttonOk">
+
+        <include layout="@layout/fragment_options"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonEdit"

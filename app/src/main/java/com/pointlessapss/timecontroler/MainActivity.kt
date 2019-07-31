@@ -1,9 +1,12 @@
 package com.pointlessapss.timecontroler
 
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +14,8 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
 import com.google.gson.Gson
 import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
-import com.pointlessapss.timecontroler.fragments.AddTaskFragment
+import com.pointlessapss.timecontroler.fragments.FragmentAddTask
+import com.pointlessapss.timecontroler.fragments.FragmentOptions
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
@@ -105,7 +109,9 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit) {
 		Utils.makeDialog(this, R.layout.dialog_item_info, { dialog ->
 
-			dialog.findViewById<AppCompatTextView>(R.id.textTitle).text = item.title
+			val textTitle = dialog.findViewById<AppCompatEditText>(R.id.textTitle)
+			textTitle.setText(item.title)
+			Utils.toggleEditText(textTitle)
 			dialog.findViewById<AppCompatTextView>(R.id.textContent).text = Utils.createItemDescription(item)
 
 			dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
@@ -114,15 +120,22 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 			}
 
 			dialog.findViewById<View>(R.id.buttonEdit).setOnClickListener {
-				dialog.dismiss()
-				onTaskEditClick(item)
+				val rootView = dialog.window!!.decorView.rootView as ViewGroup
+
+				FragmentOptions.handleOptions(this, rootView, item, arrayOf(R.id.optionWeekdays, R.id.optionColor))
+
+				Utils.toggleEditText(textTitle, true)
+				dialog.findViewById<View>(R.id.buttonEdit).visibility = View.GONE
+				dialog.findViewById<View>(R.id.containerInfo).visibility = View.GONE
+				dialog.findViewById<View>(R.id.containerEdit).visibility = View.VISIBLE
+				TransitionManager.beginDelayedTransition(rootView, AutoTransition())
 			}
 
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 
 	private fun onTaskAddClick() {
-		AddTaskFragment().apply {
+		FragmentAddTask().apply {
 			setSaveListener { item ->
 				tasksCreated.add(item)
 				generateTodayTasks()
