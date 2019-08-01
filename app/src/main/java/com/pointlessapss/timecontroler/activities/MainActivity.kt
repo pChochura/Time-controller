@@ -3,7 +3,6 @@ package com.pointlessapss.timecontroler.activities
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +16,7 @@ import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
 import com.pointlessapss.timecontroler.fragments.FragmentAddTask
 import com.pointlessapss.timecontroler.fragments.FragmentOptions
+import com.pointlessapss.timecontroler.models.Event
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
@@ -55,12 +55,15 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 		for (i in 0 until prefs.getInt("tasks_created_size", 0)) {
 			tasksCreated.add(gson.fromJson(prefs.getString("tasks_created_$i", "{}"), Item::class.java))
 		}
+		for (i in 0 until prefs.getInt("tasks_done_size", 0)) {
+			tasksDone.add(gson.fromJson(prefs.getString("tasks_done_$i", "{}"), Item::class.java))
+		}
 	}
 
-	private fun saveItem(item: Item) {
-		val n = prefs.getInt("tasks_created_size", 0)
-		prefs.put("tasks_created_size", n + 1)
-		prefs.put("tasks_created_$n", Gson().toJson(item))
+	private fun saveItem(item: Item, text: String = "tasks_created") {
+		val n = prefs.getInt("${text}_size", 0)
+		prefs.put("${text}_size", n + 1)
+		prefs.put("${text}_$n", Gson().toJson(item))
 	}
 
 	private fun generateTodayTasks() {
@@ -93,10 +96,17 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 	private fun setCalendar() {
 		calendar.setOnMonthChangeListener {
 			val text = SimpleDateFormat("MMMM", Locale.getDefault()).format(it.time)
-			Log.d("LOG!", "changed to: $text")
 			supportActionBar?.title = text
 		}
-//		onMonthScroll(Calendar.getInstance().time)
+		calendar.setGetMonthEventListener {
+			return@setGetMonthEventListener tasksDone.filter { task ->
+				task.startDate!!.get(Calendar.MONTH) == it.get(
+					Calendar.MONTH
+				)
+			}.map { task ->
+				Event(task.startDate!!, task.color)
+			}
+		}
 	}
 
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit, toEdit: Boolean = false) {
@@ -122,7 +132,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 			}
 		}
 
-		DialogUtil.create(dialogItemInfo, this,
+		DialogUtil.create(
+			dialogItemInfo, this,
 			R.layout.dialog_item_info, { statefulDialog ->
 				val dialog = statefulDialog.dialog
 				val rootView = dialog.window!!.decorView.rootView as ViewGroup
@@ -161,8 +172,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 		setItem.set(item, Calendar.getInstance())
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
-
-//			calendar.addEvent(Event(setItem.color, setItem.startDate!!.timeInMillis), true)
+			saveItem(setItem, "tasks_done")
 		}, true)
 	}
 
@@ -171,8 +181,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 		setItem.set(item, Calendar.getInstance())
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
-
-//			calendar.addEvent(Event(setItem.color, setItem.startDate!!.timeInMillis), true)
+			saveItem(setItem, "tasks_done")
 		})
 	}
 

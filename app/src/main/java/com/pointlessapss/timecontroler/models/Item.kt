@@ -23,7 +23,11 @@ data class Item(var title: String = "") {
 
 	fun set(item: Item, date: Calendar) {
 		title = item.title
-		startDate = item.startDate
+		startDate = (if (item.startDate == null) {
+			date
+		} else {
+			item.startDate!!
+		}).clone() as Calendar
 		startDate?.set(Calendar.DAY_OF_YEAR, date.get(Calendar.DAY_OF_YEAR))
 		startDate?.set(Calendar.YEAR, date.get(Calendar.YEAR))
 		amount = item.amount

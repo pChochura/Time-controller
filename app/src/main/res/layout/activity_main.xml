@@ -24,6 +24,8 @@
                         android:layout_height="300dp"
                         android:nestedScrollingEnabled="true"
                         app:cv_font_size_days="15sp"
+                        app:cv_font_size_labels="10sp"
+                        app:cv_color_selected_day="@color/colorPrimaryLight"
                         app:cv_color_text_current_month="@color/colorText1"
                         app:cv_color_text_other_month="@color/colorText2"/>
 
