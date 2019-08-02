@@ -3,17 +3,13 @@ package com.pointlessapss.timecontroler.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.OverScroller
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
@@ -21,11 +17,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.ViewCompat
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Event
 import com.pointlessapss.timecontroler.models.Padding
+import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.utils.dp
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -40,21 +37,19 @@ class CalendarView(
 ) : View(context, attrs, defStyleAttr, defStyleRes), NestedScrollingChild {
 
 	private var onMonthChangeListener: ((currentMonth: Calendar) -> Unit)? = null
-	private var onGetMonthEventListener: ((currentMonth: Calendar) -> List<Event>)? = null
 
 	private lateinit var scroller: OverScroller
 	private lateinit var gestureDetector: GestureDetector
 
-	private var isTouching = false
+	private val eventsAll = mutableListOf<Event>()
 
 	private val swipeMinDistance = 5
 	private val swipeThresholdVelocity = 300
-	private val snappingThreshold = 2
 	private val scrollDuration = 300
 	private val numberOfDays = 7
 	private val numberOfRows = 6
 	private val radiusEvents = 3.dp
-	private val formatLabel = SimpleDateFormat("EEE", Locale.getDefault())
+	private val formatLabel = Utils.formatWeekdayShort
 
 	private var firstDayOfWeek = Calendar.MONDAY
 
@@ -63,6 +58,7 @@ class CalendarView(
 	private lateinit var selectedDay: Calendar
 
 	private var offset = 0
+	private var maxEventsInRow = 0
 
 	private var mWidth = 0f
 	private var mHeight = 0f
@@ -98,34 +94,65 @@ class CalendarView(
 
 	constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0, 0)
 
-	@SuppressLint("ClickableViewAccessibility")
-	override fun onTouchEvent(event: MotionEvent): Boolean {
-		when {
-			event.action == MotionEvent.ACTION_UP -> {
-				isTouching = false
-				invalidate()
-			}
-			event.action == MotionEvent.ACTION_DOWN -> {
-				if (!scroller.isFinished) {
-					return false
-				}
-				isTouching = true
-			}
-		}
+	fun addEvents(events: List<Event>) {
+		eventsAll.addAll(events)
+		post { calculateEventPos() }
+		invalidate()
+	}
 
-		return gestureDetector.onTouchEvent(event)
+	fun addEvent(event: Event) {
+		eventsAll.add(event)
+		post { calculateEventPos() }
+		invalidate()
 	}
 
 	fun setOnMonthChangeListener(onMonthChangeListener: (currentMonth: Calendar) -> Unit) {
 		this.onMonthChangeListener = onMonthChangeListener
 	}
 
-	fun setGetMonthEventListener(onGetMonthEventListener: (currentMonth: Calendar) -> List<Event>) {
-		this.onGetMonthEventListener = onGetMonthEventListener
-	}
-
 	init {
 		init(context, attrs)
+	}
+
+	private fun calculateEventPos() {
+		val eventsByDay = eventsAll.groupingBy { Utils.formatDate.format(it.date.time) }.eachCount()
+		val indexByDay = mutableMapOf<String, Int>()
+		for (event in eventsAll) {
+			val key = Utils.formatDate.format(event.date.time)
+			val realSize = eventsByDay.getOrElse(key) { 0 }
+			val size =  min(realSize, maxEventsInRow)
+			val index = indexByDay.getOrElse(key) { 0 }
+			indexByDay[key] = index + 1
+
+			if (realSize > maxEventsInRow && index >= maxEventsInRow - 1) {
+				if (index == maxEventsInRow - 1) {
+					event.color = 0
+				} else {
+					event.rect = null
+					continue
+				}
+			}
+
+			val month = (event.date.clone() as Calendar).apply {
+				firstDayOfWeek = this@CalendarView.firstDayOfWeek
+				set(Calendar.WEEK_OF_MONTH, 1)
+				set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+			}
+
+			val dayOffset = abs(event.date.get(Calendar.DAY_OF_YEAR) - month.get(Calendar.DAY_OF_YEAR))
+			val posY = dayOffset / numberOfDays
+			val y = posY * mDayHeight + mDayHeight / 2
+			val posX = dayOffset - posY * numberOfDays
+			var x = posX * mDayWidth + mDayWidth / 2
+			val verticalOffset = textSizeLabels + paddingLabels.vertical + mDayHeight / 4 + paddingEvents.top
+			val horizontalOffset = (index - size / 2) * (radiusEvents * 2 + paddingEvents.horizontal)
+
+			if (size % 2 == 0) {
+				x += radiusEvents + paddingEvents.left
+			}
+
+			event.rect = Rect((x + horizontalOffset).toInt(), (y + verticalOffset).toInt(), 0, 0)
+		}
 	}
 
 	private fun calculateSize() {
@@ -135,6 +162,9 @@ class CalendarView(
 
 			mDayWidth = mWidth / numberOfDays
 			mDayHeight = (mHeight - textSizeLabels - paddingLabels.vertical) / numberOfRows
+
+			maxEventsInRow =
+				((mDayWidth - paddingEvents.horizontal) / (radiusEvents * 2 + paddingEvents.horizontal)).toInt()
 		}
 	}
 
@@ -234,18 +264,24 @@ class CalendarView(
 	}
 
 	private fun prepareGestureDetector(context: Context) {
-		scroller = OverScroller(context, LinearInterpolator())
+		scroller = OverScroller(context, LinearOutSlowInInterpolator())
 		gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
 			override fun onDown(e: MotionEvent): Boolean {
 				scroller.forceFinished(true)
-				startNestedScroll(ViewCompat.SCROLL_AXIS_HORIZONTAL or ViewCompat.SCROLL_AXIS_VERTICAL)
 				return true
 			}
 
 			override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
 				offset -= distanceX.toInt()
+				var axis = ViewCompat.SCROLL_AXIS_HORIZONTAL
+				var dy = 0
+				if (distanceY < 50) {
+					axis = axis or ViewCompat.SCROLL_AXIS_VERTICAL
+					dy = distanceY.toInt()
+				}
+				dispatchNestedScroll(distanceX.toInt(), dy, 0, 0, null)
+				startNestedScroll(axis)
 				invalidate()
-				dispatchNestedScroll(distanceX.toInt(), distanceY.toInt(), 0, 0, null)
 				return true
 			}
 
@@ -273,26 +309,38 @@ class CalendarView(
 		})
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
+	override fun onTouchEvent(event: MotionEvent): Boolean {
+		when {
+			event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL -> {
+				snap()
+			}
+			event.action == MotionEvent.ACTION_DOWN -> {
+				if (!scroller.isFinished) {
+					return false
+				}
+			}
+		}
+
+		return gestureDetector.onTouchEvent(event)
+	}
+
+	private fun snap() {
+		val wantedOffset = round(offset / mWidth) * mWidth
+		val diff = offset - wantedOffset
+		scroller.startScroll(offset, 0, (-diff).toInt(), 0, scrollDuration)
+		invalidate()
+	}
+
 	private fun updateOffset() {
 		if (scroller.computeScrollOffset()) {
 			offset = scroller.currX
-		}
-		if (!isTouching) {
-			val wantedOffset = round(offset / mWidth) * mWidth
-			val diff = offset - wantedOffset
-			if (abs(diff) >= snappingThreshold) {
-				if (scroller.isFinished) {
-					scroller.startScroll(offset, 0, (-diff).toInt(), 0, scrollDuration)
-				}
-				invalidate()
-			} else {
-				if (scroller.isFinished && offset != 0) {
-					currentMonth.add(Calendar.MONTH, -offset.sign)
-					offset = 0
-					onMonthChangeListener?.invoke(currentMonth)
-					invalidate()
-				}
+			if (scroller.isFinished && offset != 0) {
+				currentMonth.add(Calendar.MONTH, -offset.sign)
+				offset = 0
+				onMonthChangeListener?.invoke(currentMonth)
 			}
+			invalidate()
 		}
 	}
 
@@ -382,48 +430,31 @@ class CalendarView(
 	}
 
 	private fun drawEvents(canvas: Canvas, month: Calendar, offset: Float) {
-		onGetMonthEventListener?.invoke(month)?.also { events ->
-			val maxEventsInRow = ((mDayWidth - paddingEvents.horizontal) / (radiusEvents * 2 + paddingEvents.horizontal)).toInt()
-			val date = month.clone() as Calendar
-			date.set(Calendar.WEEK_OF_MONTH, 1)
-			date.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
-			val format = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-			val eventsByDay = events.groupingBy { format.format(it.date.time) }.eachCount()
-			val indexByDay = mutableMapOf<String, Int>()
+		val currentMonth = month.get(Calendar.MONTH)
+		val currentYear = month.get(Calendar.YEAR)
 
-			for (i in 0..events.lastIndex) {
-				val key = format.format(events[i].date.time)
-				val size = eventsByDay.getValue(key)
-				if (size > maxEventsInRow) {
-					continue
+		eventsAll.filter { it.date.get(Calendar.MONTH) == currentMonth && it.date.get(Calendar.YEAR) == currentYear }
+			.forEach { event ->
+				event.rect?.also {
+					val x = it.left
+					val y = it.top
+
+					if (event.color == 0) {
+						canvas.drawLines(floatArrayOf(
+							x + offset, (y - radiusEvents).toFloat(),
+							x + offset, (y + radiusEvents).toFloat(),
+							x + offset - radiusEvents, y.toFloat(),
+							x + offset + radiusEvents, y.toFloat()
+						), paintEvents.apply { color = colorCurrentMonth; strokeWidth = 1.dp.toFloat() })
+					} else {
+						canvas.drawCircle(
+							x + offset,
+							y.toFloat(),
+							radiusEvents.toFloat(),
+							paintEvents.apply { color = event.color }
+						)
+					}
 				}
-
-				val index = indexByDay[key] ?: 0
-
-				val halfSize = min(size, maxEventsInRow) / 2
-				val dayOffset = abs(events[i].date.get(Calendar.DAY_OF_YEAR) - date.get(Calendar.DAY_OF_YEAR))
-				val x = (dayOffset - (dayOffset / numberOfRows) * numberOfRows) * mDayWidth + mDayWidth / 2
-				val y = dayOffset / numberOfRows * mDayHeight + mDayHeight / 2 + textSizeLabels + paddingLabels.vertical + mDayHeight / 4 + paddingEvents.top
-				var horizontalOffset = (index - halfSize) * (radiusEvents * 2 + paddingEvents.horizontal)
-
-				if (size % 2 == 0) {
-					horizontalOffset += radiusEvents + paddingEvents.left
-				}
-
-				canvas.drawCircle(x + offset + horizontalOffset, y, radiusEvents.toFloat(), paintEvents.apply { color = events[i].color })
-
-				indexByDay[key] = index + 1
 			}
-		}
 	}
 }
-
-
-
-
-
-
-
-
-
-

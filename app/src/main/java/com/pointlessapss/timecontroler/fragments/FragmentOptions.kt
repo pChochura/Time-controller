@@ -20,7 +20,6 @@ import com.pointlessapss.timecontroler.adapters.ColorsAdapter
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
-import java.text.SimpleDateFormat
 import java.util.*
 
 class FragmentOptions private constructor(
@@ -28,8 +27,6 @@ class FragmentOptions private constructor(
 	private val rootView: ViewGroup,
 	private val item: Item
 ) {
-
-	private val weekDayFormat = SimpleDateFormat("EEE", Locale.getDefault())
 
 	companion object {
 
@@ -93,8 +90,7 @@ class FragmentOptions private constructor(
 		if (item.startDate == null) {
 			return
 		}
-		(layout[1] as AppCompatTextView).text =
-			SimpleDateFormat("HH:mm", Locale.getDefault()).format(item.startDate!!.time)
+		(layout[1] as AppCompatTextView).text = Utils.formatTime.format(item.startDate!!.time)
 	}
 
 	private fun refreshOptionColor() {
@@ -123,8 +119,7 @@ class FragmentOptions private constructor(
 			(layout[1] as AppCompatTextView).text = activity.resources.getString(R.string.today)
 			return
 		}
-		(layout[1] as AppCompatTextView).text =
-			SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(item.startDate!!.time)
+		(layout[1] as AppCompatTextView).text = Utils.formatDate.format(item.startDate!!.time)
 	}
 
 	private fun showSelectWeekdaysDialog(callbackOk: () -> Unit) {
@@ -138,7 +133,7 @@ class FragmentOptions private constructor(
 				val id = activity.resources.getIdentifier("weekday$i", "id", activity.packageName)
 
 				dialog.findViewById<MaterialButton>(id).apply {
-					text = weekDayFormat.format(day.time).toUpperCase()
+					text = Utils.formatWeekdayShort.format(day.time).toUpperCase()
 					backgroundTintList = getSelectedColor(weekdays[i - 1])
 				}.setOnClickListener {
 					weekdays[i - 1] = !weekdays[i - 1]

@@ -19,8 +19,17 @@ val Int.dp: Int
 	get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 object Utils {
-	val dateFormat
-		get() = SimpleDateFormat("HH:mm, dd MMMM", Locale.getDefault())
+	val formatDate
+		get() = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
+	val formatTime
+		get() = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+	val formatWeekdayShort
+		get() = SimpleDateFormat("EEE", Locale.getDefault())
+
+	val formatMonthLong
+		get() = SimpleDateFormat("MMMM", Locale.getDefault())
 
 	const val UNDEFINED_WINDOW_SIZE = Integer.MAX_VALUE
 
@@ -52,14 +61,12 @@ object Utils {
 		val day = Calendar.getInstance()
 		day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
 
-		val format = SimpleDateFormat("EEE", Locale.getDefault())
-
 		val str = StringBuilder()
 
 		weekdays.forEach {
 			if (it) {
 				str.append(", ")
-					.append(format.format(day.time))
+					.append(formatWeekdayShort.format(day.time))
 			}
 			day.add(Calendar.DAY_OF_MONTH, 1)
 		}
@@ -72,17 +79,15 @@ object Utils {
 			return context.resources.getString(R.string.whole_day)
 		}
 
-		val format = SimpleDateFormat("HH:mm", Locale.getDefault())
-
 		if (item.amount == 0f) {
-			return format.format(item.startDate!!.time)
+			return formatTime.format(item.startDate!!.time)
 		}
 
 		val endTime = Calendar.getInstance()
 		endTime.timeInMillis = item.startDate!!.timeInMillis
 		endTime.add(Calendar.HOUR_OF_DAY, item.amount.toInt())
 		endTime.add(Calendar.MINUTE, ((item.amount - item.amount.toInt()) * 60).toInt())
-		return "${format.format(item.startDate!!.time)} - ${format.format(endTime.time)}"
+		return "${formatTime.format(item.startDate!!.time)} - ${formatTime.format(endTime.time)}"
 	}
 
 	fun getColors(context: Context): IntArray {

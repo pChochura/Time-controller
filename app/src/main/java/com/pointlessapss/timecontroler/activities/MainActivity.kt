@@ -22,7 +22,6 @@ import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
 import net.grandcentrix.tray.AppPreferences
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener {
@@ -95,18 +94,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 	private fun setCalendar() {
 		calendar.setOnMonthChangeListener {
-			val text = SimpleDateFormat("MMMM", Locale.getDefault()).format(it.time)
+			val text = Utils.formatMonthLong.format(it.time)
 			supportActionBar?.title = text
 		}
-		calendar.setGetMonthEventListener {
-			return@setGetMonthEventListener tasksDone.filter { task ->
-				task.startDate!!.get(Calendar.MONTH) == it.get(
-					Calendar.MONTH
-				)
-			}.map { task ->
-				Event(task.startDate!!, task.color)
-			}
-		}
+		calendar.addEvents(tasksDone.map { task -> Event(task.startDate!!, task.color) })
 	}
 
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit, toEdit: Boolean = false) {
@@ -169,18 +160,22 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 	private fun onTaskEditClick(item: Item) {
 		val setItem = Item()
-		setItem.set(item, Calendar.getInstance())
+		setItem.set(item, Calendar.getInstance().apply { firstDayOfWeek = Calendar.MONDAY })
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
+			calendar.addEvent(Event(setItem.startDate!!, setItem.color))
+
 			saveItem(setItem, "tasks_done")
 		}, true)
 	}
 
 	private fun onTaskClick(item: Item) {
 		val setItem = Item()
-		setItem.set(item, Calendar.getInstance())
+		setItem.set(item, Calendar.getInstance().apply { firstDayOfWeek = Calendar.MONDAY })
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
+			calendar.addEvent(Event(setItem.startDate!!, setItem.color))
+
 			saveItem(setItem, "tasks_done")
 		})
 	}
@@ -201,6 +196,6 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 	}
 
 	override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-		supportActionBar?.title = SimpleDateFormat("MMMM", Locale.getDefault()).format(firstDayOfNewMonth!!)
+		supportActionBar?.title = Utils.formatMonthLong.format(firstDayOfNewMonth!!)
 	}
 }
