@@ -106,6 +106,20 @@ class CalendarView(
 		invalidate()
 	}
 
+	fun scrollLeft() {
+		val wantedOffset = -mWidth
+		val diff = offset - wantedOffset
+		scroller.startScroll(offset, 0, (-diff).toInt(), 0, scrollDuration)
+		invalidate()
+	}
+
+	fun scrollRight() {
+		val wantedOffset = mWidth
+		val diff = offset - wantedOffset
+		scroller.startScroll(offset, 0, (-diff).toInt(), 0, scrollDuration)
+		invalidate()
+	}
+
 	fun setOnMonthChangeListener(onMonthChangeListener: (currentMonth: Calendar) -> Unit) {
 		this.onMonthChangeListener = onMonthChangeListener
 	}
@@ -120,7 +134,7 @@ class CalendarView(
 		for (event in eventsAll) {
 			val key = Utils.formatDate.format(event.date.time)
 			val realSize = eventsByDay.getOrElse(key) { 0 }
-			val size =  min(realSize, maxEventsInRow)
+			val size = min(realSize, maxEventsInRow)
 			val index = indexByDay.getOrElse(key) { 0 }
 			indexByDay[key] = index + 1
 
@@ -303,6 +317,14 @@ class CalendarView(
 				selectedDay.set(Calendar.WEEK_OF_MONTH, 1)
 				selectedDay.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 				selectedDay.add(Calendar.DAY_OF_MONTH, dayOffset)
+
+				val monthDiff = currentMonth.get(Calendar.MONTH) - selectedDay.get(Calendar.MONTH)
+				if (monthDiff < 0) {
+					scrollLeft()
+				} else if (monthDiff > 0) {
+					scrollRight()
+				}
+
 				invalidate()
 				return true
 			}
@@ -415,11 +437,18 @@ class CalendarView(
 						x + mDayWidth / 2,
 						y + verticalOffset - paint.textSize / 4,
 						mDayHeight / 4,
-						paintToday
+						paintToday.apply {
+							color = if (currentMonth) {
+								colorToday
+							} else {
+								ColorUtils.blendARGB(colorToday, Color.WHITE, 0.8f)
+							}
+						}
 					)
-					paintCurrentMonth.color = colorTextToday
+					paint.color = colorTextToday
 				} else {
 					paintCurrentMonth.color = colorCurrentMonth
+					paintOtherMonth.color = colorOtherMonth
 				}
 
 				canvas.drawText(text, x + horizontalOffset, y + verticalOffset, paint)
@@ -431,30 +460,48 @@ class CalendarView(
 
 	private fun drawEvents(canvas: Canvas, month: Calendar, offset: Float) {
 		val currentMonth = month.get(Calendar.MONTH)
-		val currentYear = month.get(Calendar.YEAR)
+		month.set(Calendar.WEEK_OF_MONTH, 1)
+		month.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 
-		eventsAll.filter { it.date.get(Calendar.MONTH) == currentMonth && it.date.get(Calendar.YEAR) == currentYear }
-			.forEach { event ->
-				event.rect?.also {
-					val x = it.left
-					val y = it.top
+		eventsAll.filter {
+			isBetween(
+				it.date,
+				month,
+				(month.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, numberOfDays * numberOfRows) })
+		}.forEach { event ->
+			event.rect?.also {
+				val x = it.left
+				var y = it.top
 
-					if (event.color == 0) {
-						canvas.drawLines(floatArrayOf(
-							x + offset, (y - radiusEvents).toFloat(),
-							x + offset, (y + radiusEvents).toFloat(),
-							x + offset - radiusEvents, y.toFloat(),
-							x + offset + radiusEvents, y.toFloat()
-						), paintEvents.apply { color = colorCurrentMonth; strokeWidth = 1.dp.toFloat() })
-					} else {
-						canvas.drawCircle(
-							x + offset,
-							y.toFloat(),
-							radiusEvents.toFloat(),
-							paintEvents.apply { color = event.color }
-						)
-					}
+				val monthDiff = event.date.get(Calendar.MONTH) - currentMonth
+				val diff = monthDiff.sign * (numberOfRows - 2) * mDayHeight
+
+				y += diff.toInt()
+
+				if (event.color == 0) {
+					canvas.drawLines(floatArrayOf(
+						x + offset, (y - radiusEvents).toFloat(),
+						x + offset, (y + radiusEvents).toFloat(),
+						x + offset - radiusEvents, y.toFloat(),
+						x + offset + radiusEvents, y.toFloat()
+					), paintEvents.apply { color = colorCurrentMonth; strokeWidth = 1.dp.toFloat() })
+				} else {
+					canvas.drawCircle(
+						x + offset,
+						y.toFloat(),
+						radiusEvents.toFloat(),
+						paintEvents.apply {
+							color = if (monthDiff == 0) {
+								event.color
+							} else {
+								ColorUtils.blendARGB(event.color, Color.WHITE, 0.8f)
+							}
+						}
+					)
 				}
 			}
+		}
 	}
+
+	private fun isBetween(date: Calendar, start: Calendar, end: Calendar) = date.after(start) && date.before(end)
 }
