@@ -82,7 +82,7 @@ class FragmentOptions private constructor(
 
 	private fun refreshOptionWeekdays() {
 		val layout = rootView.findViewById<FrameLayout>(R.id.optionWeekdays)
-		(layout[1] as AppCompatTextView).text = Utils.joinWeekdaysToString(activity, item.defaultWeekdays)
+		(layout[1] as AppCompatTextView).text = Utils.joinWeekdaysToString(activity, item.weekdays)
 	}
 
 	private fun refreshOptionStartTime() {
@@ -127,7 +127,7 @@ class FragmentOptions private constructor(
 			val day = Calendar.getInstance()
 			day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
 
-			val weekdays = item.defaultWeekdays.clone()
+			val weekdays = item.weekdays.clone()
 
 			for (i in 1..7) {
 				val id = activity.resources.getIdentifier("weekday$i", "id", activity.packageName)
@@ -143,7 +143,7 @@ class FragmentOptions private constructor(
 			}
 
 			dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
-				weekdays.copyInto(item.defaultWeekdays)
+				weekdays.copyInto(item.weekdays)
 				dialog.dismiss()
 				callbackOk.invoke()
 			}
@@ -151,9 +151,9 @@ class FragmentOptions private constructor(
 	}
 
 	private fun showSelectTimeDialog(callbackOk: () -> Unit) {
-		val day = Calendar.getInstance()
-		val hour = day.get(Calendar.HOUR_OF_DAY)
-		val minute = day.get(Calendar.MINUTE)
+		val time = item.startDate ?: Calendar.getInstance()
+		val hour = time.get(Calendar.HOUR_OF_DAY)
+		val minute = time.get(Calendar.MINUTE)
 
 		DialogUtil.create(activity, R.layout.dialog_time_picker, { dialog ->
 			val picker = dialog.findViewById<TimePicker>(R.id.timePicker)
@@ -169,15 +169,14 @@ class FragmentOptions private constructor(
 			}
 
 			dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
-				val date = Calendar.getInstance()
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-					date.set(Calendar.HOUR_OF_DAY, picker.hour)
-					date.set(Calendar.MINUTE, picker.minute)
+					time.set(Calendar.HOUR_OF_DAY, picker.hour)
+					time.set(Calendar.MINUTE, picker.minute)
 				} else {
-					date.set(Calendar.HOUR_OF_DAY, picker.currentHour)
-					date.set(Calendar.MINUTE, picker.currentMinute)
+					time.set(Calendar.HOUR_OF_DAY, picker.currentHour)
+					time.set(Calendar.MINUTE, picker.currentMinute)
 				}
-				item.startDate = date
+				item.startDate = time
 				dialog.dismiss()
 				callbackOk.invoke()
 			}
@@ -191,11 +190,11 @@ class FragmentOptions private constructor(
 			picker.apply {
 				setIs24HourView(true)
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-					this.hour = 0
-					this.minute = 0
+					this.hour = item.amount.toInt()
+					this.minute = ((item.amount - item.amount.toInt()) * 60).toInt()
 				} else {
-					this.currentHour = 0
-					this.currentMinute = 0
+					this.currentHour = item.amount.toInt()
+					this.currentMinute = ((item.amount - item.amount.toInt()) * 60).toInt()
 				}
 			}
 
@@ -220,16 +219,15 @@ class FragmentOptions private constructor(
 		DialogUtil.create(activity, R.layout.dialog_date_picker, { dialog ->
 			val picker = dialog.findViewById<DatePicker>(R.id.datePicker)
 
-			if (item.startDate == null) {
-				item.startDate = Calendar.getInstance()
-			}
-			val year = item.startDate!!.get(Calendar.YEAR)
-			val month = item.startDate!!.get(Calendar.MONTH)
-			val day = item.startDate!!.get(Calendar.DAY_OF_MONTH)
+			val date = item.startDate ?: Calendar.getInstance()
+			val year = date.get(Calendar.YEAR)
+			val month = date.get(Calendar.MONTH)
+			val day = date.get(Calendar.DAY_OF_MONTH)
 			picker.init(year, month, day) { _, y, m, d ->
-				item.startDate?.set(Calendar.YEAR, y)
-				item.startDate?.set(Calendar.MONTH, m)
-				item.startDate?.set(Calendar.DAY_OF_MONTH, d)
+				date.set(Calendar.YEAR, y)
+				date.set(Calendar.MONTH, m)
+				date.set(Calendar.DAY_OF_MONTH, d)
+				item.startDate = date
 			}
 
 			dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {

@@ -10,10 +10,9 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.sundeepk.compactcalendarview.CompactCalendarView
-import com.google.gson.Gson
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
+import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.fragments.FragmentAddTask
 import com.pointlessapss.timecontroler.fragments.FragmentOptions
 import com.pointlessapss.timecontroler.models.Event
@@ -21,16 +20,17 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
-import net.grandcentrix.tray.AppPreferences
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.util.*
 
-class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener {
+class MainActivity : AppCompatActivity() {
 
-	private val tasksCreated = mutableListOf<Item>()
-	private val tasksDone = mutableListOf<Item>()
-	private val tasksToday = mutableListOf<Item>()
-	private lateinit var prefs: AppPreferences
+	private var tasksCreated = mutableListOf<Item>()
+	private var tasksDone = mutableListOf<Item>()
+	private var tasksToday = mutableListOf<Item>()
 	private lateinit var listTodayAdapter: ListTodayAdapter
+	private lateinit var db: AppDatabase
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -38,38 +38,50 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 		init()
 		loadData()
-		generateTodayTasks()
 		setTodayList()
 		setCalendar()
 	}
 
 	private fun init() {
-		prefs = AppPreferences(applicationContext)
 		supportActionBar?.elevation = 0f
 		bottomNavigation.selectedItemId = R.id.home
+
+		db = AppDatabase.invoke(this)
 	}
 
 	private fun loadData() {
-		val gson = Gson()
-		for (i in 0 until prefs.getInt("tasks_created_size", 0)) {
-			tasksCreated.add(gson.fromJson(prefs.getString("tasks_created_$i", "{}"), Item::class.java))
-		}
-		for (i in 0 until prefs.getInt("tasks_done_size", 0)) {
-			tasksDone.add(gson.fromJson(prefs.getString("tasks_done_$i", "{}"), Item::class.java))
+		doAsync {
+			tasksCreated.clear()
+			tasksCreated.addAll(db.itemDao().getAll().toMutableList())
+			generateTodayTasks()
+
+			tasksDone.clear()
+			tasksDone.addAll(db.itemDao().getAll(true).toMutableList())
+
+			uiThread {
+				calendar.addEvents(tasksDone.map { task -> Event(task.startDate!!, task.color) })
+				listTodayAdapter.notifyDataSetChanged()
+			}
 		}
 	}
 
-	private fun saveItem(item: Item, text: String = "tasks_created") {
-		val n = prefs.getInt("${text}_size", 0)
-		prefs.put("${text}_size", n + 1)
-		prefs.put("${text}_$n", Gson().toJson(item))
+	private fun insertItemDone(item: Item) {
+		doAsync {
+			db.itemDao().insertAllDone(item)
+		}
+	}
+
+	private fun insertItemCreated(item: Item) {
+		doAsync {
+			db.itemDao().insertAll(item)
+		}
 	}
 
 	private fun generateTodayTasks() {
 		val day = Calendar.getInstance()
 		val currentDay = day.get(Calendar.DAY_OF_WEEK)
 		tasksToday.clear()
-		tasksToday.addAll(tasksCreated.filter { it.defaultWeekdays[currentDay - 1] }.sortedBy { it.startDate })
+		tasksToday.addAll(tasksCreated.filter { it.weekdays[currentDay - 1] }.sortedBy { it.startDate })
 	}
 
 	private fun setTodayList() {
@@ -97,7 +109,6 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 			val text = Utils.formatMonthLong.format(it.time)
 			supportActionBar?.title = text
 		}
-		calendar.addEvents(tasksDone.map { task -> Event(task.startDate!!, task.color) })
 	}
 
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit, toEdit: Boolean = false) {
@@ -159,25 +170,29 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 	}
 
 	private fun onTaskEditClick(item: Item) {
-		val setItem = Item()
-		setItem.set(item, Calendar.getInstance().apply { firstDayOfWeek = Calendar.MONDAY })
-		showInfoItemDialog(setItem, {
-			tasksDone.add(setItem)
-			calendar.addEvent(Event(setItem.startDate!!, setItem.color))
-
-			saveItem(setItem, "tasks_done")
-		}, true)
+		showTaskPreview(item, true)
 	}
 
 	private fun onTaskClick(item: Item) {
+		showTaskPreview(item)
+	}
+
+	private fun showTaskPreview(item: Item, editable: Boolean = false) {
 		val setItem = Item()
-		setItem.set(item, Calendar.getInstance().apply { firstDayOfWeek = Calendar.MONDAY })
+		setItem.set(item, calendar.getSelectedDay().apply {
+			firstDayOfWeek = Calendar.MONDAY
+			if (item.startDate == null) {
+				val day = Calendar.getInstance()
+				set(Calendar.HOUR_OF_DAY, day.get(Calendar.HOUR_OF_DAY))
+				set(Calendar.MINUTE, day.get(Calendar.MINUTE))
+			}
+		})
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
 			calendar.addEvent(Event(setItem.startDate!!, setItem.color))
 
-			saveItem(setItem, "tasks_done")
-		})
+			insertItemDone(setItem)
+		}, editable)
 	}
 
 	private fun onTaskAddClick() {
@@ -187,15 +202,13 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 				generateTodayTasks()
 				listTodayAdapter.notifyDataSetChanged()
 
-				saveItem(item)
+				insertItemCreated(item)
 			}
 		}.show(supportFragmentManager, "addTaskFragment")
 	}
 
-	override fun onDayClick(dateClicked: Date?) {
-	}
-
-	override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-		supportActionBar?.title = Utils.formatMonthLong.format(firstDayOfNewMonth!!)
+	override fun onStop() {
+		db.close()
+		super.onStop()
 	}
 }

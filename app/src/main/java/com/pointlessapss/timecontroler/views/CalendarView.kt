@@ -96,14 +96,12 @@ class CalendarView(
 
 	fun addEvents(events: List<Event>) {
 		eventsAll.addAll(events)
-		post { calculateEventPos() }
-		invalidate()
+		post { refresh() }
 	}
 
 	fun addEvent(event: Event) {
 		eventsAll.add(event)
-		post { calculateEventPos() }
-		invalidate()
+		post { refresh() }
 	}
 
 	fun scrollLeft() {
@@ -122,6 +120,15 @@ class CalendarView(
 
 	fun setOnMonthChangeListener(onMonthChangeListener: (currentMonth: Calendar) -> Unit) {
 		this.onMonthChangeListener = onMonthChangeListener
+	}
+
+	fun getSelectedDay(): Calendar {
+		return selectedDay
+	}
+
+	private fun refresh() {
+		calculateEventPos()
+		invalidate()
 	}
 
 	init {
@@ -503,5 +510,13 @@ class CalendarView(
 		}
 	}
 
-	private fun isBetween(date: Calendar, start: Calendar, end: Calendar) = date.after(start) && date.before(end)
+	private fun isBetween(date: Calendar, start: Calendar, end: Calendar): Boolean {
+		start.apply {
+			add(Calendar.DAY_OF_MONTH, -1)
+		}
+		end.apply {
+			add(Calendar.DAY_OF_MONTH, 1)
+		}
+		return date.after(start) && date.before(end) || date == start || date == end
+	}
 }
