@@ -206,9 +206,4 @@ class MainActivity : AppCompatActivity() {
 			}
 		}.show(supportFragmentManager, "addTaskFragment")
 	}
-
-	override fun onStop() {
-		db.close()
-		super.onStop()
-	}
 }
