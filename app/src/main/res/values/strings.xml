@@ -17,4 +17,5 @@
     <string name="today">Today</string>
     <string name="message_empty_title">Please specify the task`s title.\nIt would be easier to identify them.</string>
     <string name="whole_day">Whole day</string>
+    <string name="day_history">Day history</string>
 </resources>

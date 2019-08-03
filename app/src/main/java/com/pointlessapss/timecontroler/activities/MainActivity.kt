@@ -1,6 +1,7 @@
 package com.pointlessapss.timecontroler.activities
 
 import android.os.Bundle
+import android.os.Handler
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
+import com.pointlessapss.timecontroler.adapters.ListHistoryAdapter
 import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.fragments.FragmentAddTask
@@ -29,7 +31,9 @@ class MainActivity : AppCompatActivity() {
 	private var tasksCreated = mutableListOf<Item>()
 	private var tasksDone = mutableListOf<Item>()
 	private var tasksToday = mutableListOf<Item>()
+	private var tasksHistory = mutableListOf<Item>()
 	private lateinit var listTodayAdapter: ListTodayAdapter
+	private lateinit var listHistoryAdapter: ListHistoryAdapter
 	private lateinit var db: AppDatabase
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 		init()
 		loadData()
 		setTodayList()
+		setHistoryList()
 		setCalendar()
 	}
 
@@ -59,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 			tasksDone.addAll(db.itemDao().getAll(true).toMutableList())
 
 			uiThread {
-				calendar.addEvents(tasksDone.map { task -> Event(task.startDate!!, task.color) })
+				calendar.addEvents(tasksDone.map { task -> Event(task) })
 				listTodayAdapter.notifyDataSetChanged()
 			}
 		}
@@ -74,6 +79,12 @@ class MainActivity : AppCompatActivity() {
 	private fun insertItemCreated(item: Item) {
 		doAsync {
 			db.itemDao().insertAll(item)
+		}
+	}
+
+	private fun deleteItemDone(item: Item) {
+		doAsync {
+			db.itemDao().delete(item)
 		}
 	}
 
@@ -104,11 +115,52 @@ class MainActivity : AppCompatActivity() {
 		listToday.adapter = listTodayAdapter
 	}
 
+	private fun setHistoryList() {
+		listHistoryAdapter = ListHistoryAdapter(tasksHistory)
+		listHistoryAdapter.setOnClickListener {
+			tasksDone.remove(tasksHistory[it])
+			calendar.removeEventById(tasksHistory[it].id)
+			deleteItemDone(tasksHistory[it])
+			tasksHistory.removeAt(it)
+			Handler().post {
+				refreshListHistory()
+			}
+		}
+		listHistory.layoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
+		listHistory.adapter = listHistoryAdapter
+	}
+
 	private fun setCalendar() {
 		calendar.setOnMonthChangeListener {
 			val text = Utils.formatMonthLong.format(it.time)
 			supportActionBar?.title = text
 		}
+		calendar.setOnDaySelectedListener { day ->
+			showDayHistory(day)
+		}
+	}
+
+	private fun showDayHistory(day: Calendar) {
+		tasksHistory.clear()
+		tasksHistory.addAll(tasksDone.filter {
+			it.startDate?.get(Calendar.DAY_OF_YEAR) == day.get(Calendar.DAY_OF_YEAR)
+					&& it.startDate?.get(Calendar.YEAR) == day.get(Calendar.YEAR)
+		})
+		refreshListHistory()
+	}
+
+	private fun refreshListHistory() {
+		listHistoryAdapter.notifyDataSetChanged()
+
+		if (tasksHistory.isEmpty()) {
+			listHistory.visibility = View.GONE
+			labelHistory.visibility = View.GONE
+		} else {
+			listHistory.visibility = View.VISIBLE
+			labelHistory.visibility = View.VISIBLE
+		}
+
+		TransitionManager.beginDelayedTransition(layout, AutoTransition())
 	}
 
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit, toEdit: Boolean = false) {
@@ -152,6 +204,7 @@ class MainActivity : AppCompatActivity() {
 				dialog.findViewById<AppCompatTextView>(R.id.textContent).text = Utils.createItemDescription(this, item)
 
 				dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
+					item.title = textTitle.text.toString()
 					dialog.dismiss()
 					callbackOk.invoke()
 				}
@@ -189,7 +242,8 @@ class MainActivity : AppCompatActivity() {
 		})
 		showInfoItemDialog(setItem, {
 			tasksDone.add(setItem)
-			calendar.addEvent(Event(setItem.startDate!!, setItem.color))
+			calendar.addEvent(Event(setItem))
+			showDayHistory(calendar.getSelectedDay())
 
 			insertItemDone(setItem)
 		}, editable)
