@@ -176,19 +176,6 @@ class CalendarView(
 		}
 	}
 
-	private fun calculateSize() {
-		post {
-			mWidth = width.toFloat()
-			mHeight = height.toFloat()
-
-			mDayWidth = mWidth / numberOfDays
-			mDayHeight = (mHeight - textSizeLabels - paddingLabels.vertical) / numberOfRows
-
-			maxEventsInRow =
-				((mDayWidth - paddingEvents.horizontal) / (radiusEvents * 2 + paddingEvents.horizontal)).toInt()
-		}
-	}
-
 	private fun init(context: Context, attrs: AttributeSet) {
 		val a = context.theme.obtainStyledAttributes(attrs, R.styleable.CalendarView, 0, 0)
 
@@ -228,8 +215,6 @@ class CalendarView(
 		selectedDay = currentMonth.clone() as Calendar
 
 		prepareGestureDetector(context)
-
-		calculateSize()
 	}
 
 	private fun obtainStyles(a: TypedArray?, context: Context) {
@@ -294,14 +279,8 @@ class CalendarView(
 
 			override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
 				offset -= distanceX.toInt()
-				var axis = ViewCompat.SCROLL_AXIS_HORIZONTAL
-				var dy = 0
-				if (distanceY < 50) {
-					axis = axis or ViewCompat.SCROLL_AXIS_VERTICAL
-					dy = distanceY.toInt()
-				}
-				dispatchNestedScroll(distanceX.toInt(), dy, 0, 0, null)
-				startNestedScroll(axis)
+				startNestedScroll(ViewCompat.SCROLL_AXIS_HORIZONTAL or ViewCompat.SCROLL_AXIS_VERTICAL)
+				dispatchNestedScroll(distanceX.toInt(), distanceY.toInt(), 0, 0, null)
 				invalidate()
 				return true
 			}
@@ -336,6 +315,20 @@ class CalendarView(
 				return true
 			}
 		})
+	}
+
+	override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+		super.onSizeChanged(w, h, oldw, oldh)
+		if (w != oldw || h != oldh) {
+			mWidth = w.toFloat()
+			mHeight = h.toFloat()
+
+			mDayWidth = mWidth / numberOfDays
+			mDayHeight = (mHeight - textSizeLabels - paddingLabels.vertical) / numberOfRows
+
+			maxEventsInRow =
+				((mDayWidth - paddingEvents.horizontal) / (radiusEvents * 2 + paddingEvents.horizontal)).toInt()
+		}
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -510,13 +503,8 @@ class CalendarView(
 		}
 	}
 
-	private fun isBetween(date: Calendar, start: Calendar, end: Calendar): Boolean {
-		start.apply {
+	private fun isBetween(date: Calendar, start: Calendar, end: Calendar) =
+		date.after((start.clone() as Calendar).apply {
 			add(Calendar.DAY_OF_MONTH, -1)
-		}
-		end.apply {
-			add(Calendar.DAY_OF_MONTH, 1)
-		}
-		return date.after(start) && date.before(end) || date == start || date == end
-	}
+		}) && date.before(end)
 }
