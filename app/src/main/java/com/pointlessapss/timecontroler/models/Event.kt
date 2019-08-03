@@ -3,4 +3,8 @@ package com.pointlessapss.timecontroler.models
 import android.graphics.Rect
 import java.util.*
 
-class Event(val date: Calendar, var color: Int, var rect: Rect? = null)
+class Event(item: Item, var rect: Rect? = null) {
+	var date = item.startDate!!
+	var color = item.color
+	var id = item.id
+}

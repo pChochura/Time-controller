@@ -40,7 +40,7 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 		val card: CardView = itemView.findViewById(R.id.card)
 
 		init {
-			itemView.findViewById<View>(R.id.card).setOnClickListener {
+			card.setOnClickListener {
 				clickListener.click(adapterPosition, adapterPosition == items.size)
 			}
 			buttonConfigure.setOnClickListener {
@@ -61,7 +61,7 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		if (pos < items.size) {
-			holder.card.cardElevation = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics)
+			holder.card.cardElevation = 1f
 			holder.buttonConfigure.visibility = View.VISIBLE
 
 			setColor(holder, items[pos].color)

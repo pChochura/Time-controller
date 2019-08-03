@@ -37,6 +37,7 @@ class CalendarView(
 ) : View(context, attrs, defStyleAttr, defStyleRes), NestedScrollingChild {
 
 	private var onMonthChangeListener: ((currentMonth: Calendar) -> Unit)? = null
+	private var onDaySelectedListener: ((selectedDay: Calendar) -> Unit)? = null
 
 	private lateinit var scroller: OverScroller
 	private lateinit var gestureDetector: GestureDetector
@@ -104,6 +105,11 @@ class CalendarView(
 		post { refresh() }
 	}
 
+	fun removeEventById(id: Int) {
+		eventsAll.removeAll { it.id == id }
+		post { refresh() }
+	}
+
 	fun scrollLeft() {
 		val wantedOffset = -mWidth
 		val diff = offset - wantedOffset
@@ -120,6 +126,12 @@ class CalendarView(
 
 	fun setOnMonthChangeListener(onMonthChangeListener: (currentMonth: Calendar) -> Unit) {
 		this.onMonthChangeListener = onMonthChangeListener
+		post { this.onMonthChangeListener?.invoke(currentMonth) }
+	}
+
+	fun setOnDaySelectedListener(onDaySelectedListener: (selectedDay: Calendar) -> Unit) {
+		this.onDaySelectedListener = onDaySelectedListener
+		post { this.onDaySelectedListener?.invoke(selectedDay) }
 	}
 
 	fun getSelectedDay(): Calendar {
@@ -215,6 +227,8 @@ class CalendarView(
 		selectedDay = currentMonth.clone() as Calendar
 
 		prepareGestureDetector(context)
+
+		onMonthChangeListener?.invoke(currentMonth)
 	}
 
 	private fun obtainStyles(a: TypedArray?, context: Context) {
@@ -310,6 +324,8 @@ class CalendarView(
 				} else if (monthDiff > 0) {
 					scrollRight()
 				}
+
+				onDaySelectedListener?.invoke(selectedDay)
 
 				invalidate()
 				return true
@@ -462,6 +478,13 @@ class CalendarView(
 		val currentMonth = month.get(Calendar.MONTH)
 		month.set(Calendar.WEEK_OF_MONTH, 1)
 		month.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+		val eventOffset =
+			if ((month.clone() as Calendar).apply {
+					set(Calendar.MONTH, currentMonth + 1)
+					set(Calendar.WEEK_OF_MONTH, 1)
+					set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+				}.get(Calendar.DAY_OF_MONTH) == 1) 1
+			else 2
 
 		eventsAll.filter {
 			isBetween(
@@ -474,7 +497,7 @@ class CalendarView(
 				var y = it.top
 
 				val monthDiff = event.date.get(Calendar.MONTH) - currentMonth
-				val diff = monthDiff.sign * (numberOfRows - 2) * mDayHeight
+				val diff = monthDiff.sign * (numberOfRows - eventOffset) * mDayHeight
 
 				y += diff.toInt()
 
@@ -503,8 +526,8 @@ class CalendarView(
 		}
 	}
 
-	private fun isBetween(date: Calendar, start: Calendar, end: Calendar) =
-		date.after((start.clone() as Calendar).apply {
-			add(Calendar.DAY_OF_MONTH, -1)
-		}) && date.before(end)
+	private fun isBetween(date: Calendar, start: Calendar, end: Calendar): Boolean {
+		val realDate = (date.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, 1) }
+		return realDate.after(start) && realDate.before(end)
+	}
 }
