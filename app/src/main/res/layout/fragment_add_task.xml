@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
@@ -10,6 +10,9 @@
             android:id="@+id/textTaskName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_margin="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -23,12 +26,23 @@
             android:textStyle="bold"
             android:hint="@string/text_task_name"/>
 
-    <include layout="@layout/fragment_options" />
+    <include
+            layout="@layout/fragment_options"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/buttonSave"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textTaskName"/>
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSave"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:textAppearance="@style/ButtonText"
             android:backgroundTint="@color/colorPrimaryDark"
@@ -41,4 +55,4 @@
             android:gravity="center"
             android:text="@string/save"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
