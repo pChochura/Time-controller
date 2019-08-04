@@ -9,7 +9,7 @@ interface ItemDao {
 	@Query("SELECT * FROM items WHERE done LIKE :done")
 	fun getAll(done: Boolean = false): List<Item>
 
-	@Insert
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	fun insertAll(vararg items: Item)
 
 	@Transaction

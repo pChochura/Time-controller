@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.NonNull
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.graphics.ColorUtils
-import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
@@ -21,7 +19,7 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 	RecyclerView.Adapter<ListHistoryAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
-	lateinit var clickListener: (Int) -> Unit
+	lateinit var clickListener: ClickListener
 
 	init {
 		setHasStableIds(true)
@@ -36,13 +34,16 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 		val textTaskDescription: AppCompatTextView = itemView.findViewById(R.id.textTaskDescription)
 
 		init {
+			itemView.findViewById<View>(R.id.card).setOnClickListener {
+				clickListener.click(adapterPosition)
+			}
 			itemView.findViewById<View>(R.id.buttonRemove).setOnClickListener {
-				clickListener.invoke(adapterPosition)
+				clickListener.clickRemove(adapterPosition)
 			}
 		}
 	}
 
-	fun setOnClickListener(clickListener: (Int) -> Unit) {
+	fun setOnClickListener(clickListener: ClickListener) {
 		this.clickListener = clickListener
 	}
 
@@ -70,4 +71,9 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 	}
 
 	override fun getItemCount() = items.size
+
+	interface ClickListener {
+		fun clickRemove(pos: Int)
+		fun click(pos: Int)
+	}
 }

@@ -117,15 +117,27 @@ class MainActivity : AppCompatActivity() {
 
 	private fun setHistoryList() {
 		listHistoryAdapter = ListHistoryAdapter(tasksHistory)
-		listHistoryAdapter.setOnClickListener {
-			tasksDone.remove(tasksHistory[it])
-			calendar.removeEventById(tasksHistory[it].id)
-			deleteItemDone(tasksHistory[it])
-			tasksHistory.removeAt(it)
-			Handler().post {
-				refreshListHistory()
+		listHistoryAdapter.setOnClickListener(object : ListHistoryAdapter.ClickListener {
+			override fun clickRemove(pos: Int) {
+				tasksDone.remove(tasksHistory[pos])
+				calendar.removeEventById(tasksHistory[pos].id)
+				deleteItemDone(tasksHistory[pos])
+				tasksHistory.removeAt(pos)
+				Handler().post {
+					refreshListHistory()
+				}
 			}
-		}
+
+			override fun click(pos: Int) {
+				showTaskPreview(tasksHistory[pos], true) { item ->
+					tasksDone[tasksDone.indexOfFirst { it.id == tasksHistory[pos].id }] = item
+					calendar.setEventById(Event(item, id = tasksHistory[pos].id))
+					showDayHistory(calendar.getSelectedDay())
+
+					insertItemDone(item)
+				}
+			}
+		})
 		listHistory.layoutManager = LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
 		listHistory.adapter = listHistoryAdapter
 	}
@@ -230,7 +242,7 @@ class MainActivity : AppCompatActivity() {
 		showTaskPreview(item)
 	}
 
-	private fun showTaskPreview(item: Item, editable: Boolean = false) {
+	private fun showTaskPreview(item: Item, editable: Boolean = false, callback: ((Item) -> Unit)? = null) {
 		val setItem = Item()
 		setItem.set(item, calendar.getSelectedDay().apply {
 			firstDayOfWeek = Calendar.MONDAY
@@ -241,6 +253,10 @@ class MainActivity : AppCompatActivity() {
 			}
 		})
 		showInfoItemDialog(setItem, {
+			if (callback != null) {
+				callback.invoke(setItem)
+				return@showInfoItemDialog
+			}
 			tasksDone.add(setItem)
 			calendar.addEvent(Event(setItem))
 			showDayHistory(calendar.getSelectedDay())

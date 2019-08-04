@@ -111,6 +111,14 @@ class CalendarView(
 		post { refresh() }
 	}
 
+	fun setEventById(event: Event, id: Int = event.id) {
+		val index = eventsAll.indexOfFirst { it.id == id }
+		if (index != -1) {
+			eventsAll[index] = event
+			post { refresh() }
+		}
+	}
+
 	fun scrollLeft() {
 		val wantedOffset = -mWidth
 		val diff = offset - wantedOffset

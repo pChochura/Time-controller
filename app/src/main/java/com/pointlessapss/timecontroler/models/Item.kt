@@ -22,6 +22,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 		"${amount.toInt()}:${String.format("%02d", ((amount - amount.toInt()) * 60).toInt())}"
 
 	fun set(item: Item, date: Calendar) {
+		id = item.id
 		title = item.title
 		startDate = ((if (item.startDate == null) {
 			date
