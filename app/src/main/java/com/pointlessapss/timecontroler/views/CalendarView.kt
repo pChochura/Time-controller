@@ -24,6 +24,7 @@ import com.pointlessapss.timecontroler.models.Padding
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.utils.dp
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.round
@@ -172,7 +173,7 @@ class CalendarView(
 				set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 			}
 
-			val dayOffset = abs(event.date.get(Calendar.DAY_OF_YEAR) - month.get(Calendar.DAY_OF_YEAR))
+			val dayOffset = abs(TimeUnit.MILLISECONDS.toDays(event.date.timeInMillis - month.timeInMillis))
 			val posY = dayOffset / numberOfDays
 			val y = posY * mDayHeight + mDayHeight / 2
 			val posX = dayOffset - posY * numberOfDays
@@ -319,10 +320,12 @@ class CalendarView(
 				selectedDay.add(Calendar.DAY_OF_MONTH, dayOffset)
 
 				val monthDiff = currentMonth.get(Calendar.MONTH) - selectedDay.get(Calendar.MONTH)
-				if (monthDiff < 0) {
-					scrollLeft()
-				} else if (monthDiff > 0) {
-					scrollRight()
+				if (monthDiff != 0) {
+					if (currentMonth.before(selectedDay)) {
+						scrollLeft()
+					} else {
+						scrollRight()
+					}
 				}
 
 				onDaySelectedListener?.invoke(selectedDay)
