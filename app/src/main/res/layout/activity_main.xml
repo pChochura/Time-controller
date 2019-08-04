@@ -2,69 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground">
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
+            android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
-
-        <LinearLayout
-                android:id="@+id/layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            <com.pointlessapss.timecontroler.views.CalendarView
-                    android:id="@+id/calendar"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:nestedScrollingEnabled="true"
-                    app:cv_font_size_days="15sp"
-                    app:cv_font_size_labels="10sp"
-                    app:cv_color_selected_day="@color/colorPrimaryLight"
-                    app:cv_color_text_current_month="@color/colorText1"
-                    app:cv_color_text_other_month="@color/colorText2"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Label"
-                    android:visibility="gone"
-                    android:id="@+id/labelHistory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/day_history"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:visibility="gone"
-                    tools:listitem="@layout/item_history"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Label"
-                    android:id="@+id/labelToday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tasks_today"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listToday"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_today"/>
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
+            app:layout_constraintBottom_toTopOf="@id/bottomNavigation"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"

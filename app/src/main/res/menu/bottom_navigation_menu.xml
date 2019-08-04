@@ -2,21 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/stats"
+            android:id="@+id/analytics"
             android:icon="@drawable/ic_stats"
-            android:title="Stats"
+            android:title="@string/analytics"
             android:checked="false"/>
 
     <item
             android:id="@+id/home"
             android:icon="@drawable/ic_home"
-            android:title="Home"
+            android:title="@string/home"
             android:checked="true"/>
 
     <item
             android:id="@+id/settings"
             android:icon="@drawable/ic_settings"
-            android:title="Settings"
+            android:title="@string/settings"
             android:checked="false"/>
 
 </menu>
