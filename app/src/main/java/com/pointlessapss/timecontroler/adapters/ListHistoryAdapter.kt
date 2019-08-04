@@ -59,7 +59,7 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 		holder.textTaskName.text = items[pos].title
 		holder.textTaskDescription.text = Utils.createItemDescription(context, items[pos])
 		holder.textFootnote.text = items[pos].getTimeAmount()
-		if (items[pos].amount != 0f) {
+		if (items[pos].amount != 0f && !items[pos].wholeDay) {
 			holder.textFootnote.visibility = View.VISIBLE
 		} else {
 			holder.textFootnote.visibility = View.GONE

@@ -75,7 +75,7 @@ object Utils {
 	}
 
 	fun createItemDescription(context: Context, item: Item): String {
-		if (item.startDate == null) {
+		if (item.startDate == null || item.wholeDay) {
 			return context.resources.getString(R.string.whole_day)
 		}
 

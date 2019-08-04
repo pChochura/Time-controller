@@ -5,11 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.pointlessapss.timecontroler.converters.Converters
 import com.pointlessapss.timecontroler.models.Item
 
 @TypeConverters(Converters::class)
-@Database(entities = [Item::class], version = 1)
+@Database(entities = [Item::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
 	abstract fun itemDao(): ItemDao
 
@@ -24,6 +26,10 @@ abstract class AppDatabase : RoomDatabase() {
 		private fun buildDatabase(context: Context) = Room.databaseBuilder(
 			context,
 			AppDatabase::class.java, "database"
-		).build()
+		).addMigrations(object : Migration(1, 2) {
+			override fun migrate(database: SupportSQLiteDatabase) {
+				database.execSQL("ALTER TABLE items ADD COLUMN wholeDay INTEGER")
+			}
+		}).build()
 	}
 }

@@ -88,7 +88,7 @@ class FragmentOptions private constructor(
 	private fun refreshOptionStartTime() {
 		val layout = rootView.findViewById<FrameLayout>(R.id.optionStartTime)
 		(layout[1] as AppCompatTextView).text =
-			if (item.startDate == null) activity.resources.getString(R.string.start_time)
+			if (item.startDate == null || item.wholeDay) activity.resources.getString(R.string.start_time)
 			else Utils.formatTime.format(item.startDate!!.time)
 	}
 
@@ -167,7 +167,7 @@ class FragmentOptions private constructor(
 			}
 
 			dialog.findViewById<View>(R.id.buttonRemove).setOnClickListener {
-				item.startDate = null
+				item.wholeDay = true
 				dialog.dismiss()
 				callbackOk.invoke()
 			}
@@ -180,6 +180,7 @@ class FragmentOptions private constructor(
 					time.set(Calendar.HOUR_OF_DAY, picker.currentHour)
 					time.set(Calendar.MINUTE, picker.currentMinute)
 				}
+				item.wholeDay = false
 				item.startDate = time
 				dialog.dismiss()
 				callbackOk.invoke()

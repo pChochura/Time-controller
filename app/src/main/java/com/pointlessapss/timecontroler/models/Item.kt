@@ -16,6 +16,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "weekdays") var weekdays = BooleanArray(7)
 	@ColumnInfo(name = "color") @ColorInt var color = 0
 	@ColumnInfo(name = "amount") @FloatRange(from = 0.0) var amount = 0.0f
+	@ColumnInfo(name = "wholeDay") var wholeDay: Boolean = true
 	@ColumnInfo(name = "done") var done: Boolean = false
 
 	fun getTimeAmount() =
@@ -35,6 +36,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 			}
 		amount = item.amount
 		color = item.color
+		wholeDay = item.wholeDay
 		item.weekdays.copyInto(weekdays)
 	}
 }
