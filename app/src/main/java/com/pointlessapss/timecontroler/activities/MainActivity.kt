@@ -119,12 +119,14 @@ class MainActivity : AppCompatActivity() {
 		listHistoryAdapter = ListHistoryAdapter(tasksHistory)
 		listHistoryAdapter.setOnClickListener(object : ListHistoryAdapter.ClickListener {
 			override fun clickRemove(pos: Int) {
-				tasksDone.remove(tasksHistory[pos])
-				calendar.removeEventById(tasksHistory[pos].id)
-				deleteItemDone(tasksHistory[pos])
-				tasksHistory.removeAt(pos)
-				Handler().post {
-					refreshListHistory()
+				DialogUtil.showMessage(this@MainActivity, resources.getString(R.string.want_to_remove), true) {
+					tasksDone.remove(tasksHistory[pos])
+					calendar.removeEventById(tasksHistory[pos].id)
+					deleteItemDone(tasksHistory[pos])
+					tasksHistory.removeAt(pos)
+					Handler().post {
+						refreshListHistory()
+					}
 				}
 			}
 
@@ -257,7 +259,7 @@ class MainActivity : AppCompatActivity() {
 				callback.invoke(setItem)
 				return@showInfoItemDialog
 			}
-			tasksDone.add(setItem)
+			tasksDone.add(setItem.apply { id = UUID.randomUUID().hashCode() })
 			calendar.addEvent(Event(setItem))
 			showDayHistory(calendar.getSelectedDay())
 

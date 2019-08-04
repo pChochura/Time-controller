@@ -32,6 +32,7 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 		val textTaskName: AppCompatTextView = itemView.findViewById(R.id.textTaskName)
 		val textTaskDescription: AppCompatTextView = itemView.findViewById(R.id.textTaskDescription)
+		val textFootnote: AppCompatTextView = itemView.findViewById(R.id.textFootnote)
 
 		init {
 			itemView.findViewById<View>(R.id.card).setOnClickListener {
@@ -57,6 +58,12 @@ class ListHistoryAdapter(private val items: MutableList<Item>) :
 		setColor(holder, items[pos].color)
 		holder.textTaskName.text = items[pos].title
 		holder.textTaskDescription.text = Utils.createItemDescription(context, items[pos])
+		holder.textFootnote.text = items[pos].getTimeAmount()
+		if (items[pos].amount != 0f) {
+			holder.textFootnote.visibility = View.VISIBLE
+		} else {
+			holder.textFootnote.visibility = View.GONE
+		}
 	}
 
 	private fun setColor(@NonNull holder: DataObjectHolder, @ColorInt color: Int) {

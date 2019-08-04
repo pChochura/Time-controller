@@ -4,10 +4,10 @@ import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
+import androidx.appcompat.widget.AppCompatTextView
+import com.pointlessapss.timecontroler.R
+import org.jetbrains.anko.find
 import kotlin.math.min
 
 class DialogUtil private constructor(
@@ -38,6 +38,22 @@ class DialogUtil private constructor(
 					statefulDialog.toggle()
 				}
 			}
+		}
+
+		fun showMessage(activity: Activity, content: String, clickable: Boolean = false, callback: (() -> Unit)? = null) {
+			create(activity, R.layout.dialog_message, { dialog ->
+				if (clickable) {
+					dialog.find<View>(R.id.buttonOk).apply {
+						setOnClickListener {
+							callback?.invoke()
+							dialog.dismiss()
+						}
+					}.visibility = View.VISIBLE
+				}
+
+				dialog.findViewById<AppCompatTextView>(R.id.textContent).text = content
+
+			}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 		}
 	}
 
