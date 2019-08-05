@@ -13,6 +13,7 @@
     <color name="colorBackground">#FFFFFF</color>
     <color name="colorTaskDefault">#D1EBD1</color>
     <color name="colorTransparent">#00000000</color>
+    <color name="colorRim">#EBEBEB</color>
 
 
     <color name="color0">#F44336</color>

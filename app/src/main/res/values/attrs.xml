@@ -13,4 +13,19 @@
         <attr name="cv_font_size_days" format="dimension"/>
         <attr name="cv_font_typeface" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="ProgressWheel">
+        <attr name="pw_color_text_label" format="color"/>
+        <attr name="pw_color_text_value" format="color"/>
+        <attr name="pw_color_progress" format="color"/>
+        <attr name="pw_color_rim" format="color"/>
+        <attr name="pw_font_size_label" format="dimension"/>
+        <attr name="pw_font_size_value" format="dimension"/>
+        <attr name="pw_font_typeface" format="reference"/>
+        <attr name="pw_width_progress" format="dimension"/>
+        <attr name="pw_padding_label_value" format="dimension"/>
+        <attr name="pw_progress" format="float"/>
+        <attr name="pw_label" format="string"/>
+        <attr name="pw_value" format="string"/>
+    </declare-styleable>
 </resources>
