@@ -1,33 +1,14 @@
 package com.pointlessapss.timecontroler.activities
 
 import android.os.Bundle
-import android.os.Handler
-import android.transition.AutoTransition
-import android.transition.TransitionManager
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
-import com.pointlessapss.timecontroler.adapters.ListHistoryAdapter
-import com.pointlessapss.timecontroler.adapters.ListTodayAdapter
 import com.pointlessapss.timecontroler.database.AppDatabase
-import com.pointlessapss.timecontroler.fragments.FragmentAddTask
 import com.pointlessapss.timecontroler.fragments.FragmentAnalytics
 import com.pointlessapss.timecontroler.fragments.FragmentHome
-import com.pointlessapss.timecontroler.fragments.FragmentOptions
-import com.pointlessapss.timecontroler.models.Event
-import com.pointlessapss.timecontroler.models.Item
-import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 		init()
 		setFragments()
-		setFragment(HOME)
+		setFragment(ANALYTICS)
 	}
 
 	private fun init() {

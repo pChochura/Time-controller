@@ -90,6 +90,20 @@ object Utils {
 		return "${formatTime.format(item.startDate!!.time)} - ${formatTime.format(endTime.time)}"
 	}
 
+	fun getMonthWeekdaysCount(weekdays: BooleanArray, month: Calendar): Int {
+		val currentMonth = month.get(Calendar.MONTH)
+		var count = 0
+		month.set(Calendar.DAY_OF_MONTH, 1)
+		while (month.get(Calendar.MONTH) == currentMonth) {
+			if (weekdays[month.get(Calendar.DAY_OF_WEEK) - 1]) {
+				count++
+			}
+
+			month.add(Calendar.DAY_OF_MONTH, 1)
+		}
+		return count
+	}
+
 	fun getColors(context: Context): IntArray {
 		val numberOfColors = 16
 		val output = IntArray(numberOfColors)
