@@ -39,4 +39,17 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 		wholeDay = item.wholeDay
 		item.weekdays.copyInto(weekdays)
 	}
+
+	fun toMap(): Map<String, Any?> {
+		return mutableMapOf(
+			"id" to id,
+			"title" to title,
+			"startDate" to startDate?.timeInMillis,
+			"weekdays" to weekdays.toList(),
+			"color" to color,
+			"amount" to amount,
+			"wholeDay" to wholeDay,
+			"done" to done
+		)
+	}
 }

@@ -7,6 +7,7 @@ import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.fragments.FragmentAnalytics
 import com.pointlessapss.timecontroler.fragments.FragmentHome
+import com.pointlessapss.timecontroler.fragments.SettingsFragment
 import com.pointlessapss.timecontroler.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
 		init()
 		setFragments()
-		setFragment(ANALYTICS)
+		setFragment(HOME)
 	}
 
 	private fun init() {
@@ -65,6 +66,9 @@ class MainActivity : AppCompatActivity() {
 				val text = Utils.formatMonthLong.format(it.time)
 				supportActionBar?.title = text
 			}
+		}
+		fragments[SETTINGS] = SettingsFragment().apply {
+			setDb(db)
 		}
 	}
 

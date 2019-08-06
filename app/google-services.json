@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "725914980325",
+    "firebase_url": "https://time-tracker-885be.firebaseio.com",
+    "project_id": "time-tracker-885be",
+    "storage_bucket": "time-tracker-885be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725914980325:android:4ba368f3ae76a7f3",
+        "android_client_info": {
+          "package_name": "com.pointlessapss.timecontroler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "725914980325-r2d0kpqnio5dku2gv1ak1tboe6vvv95s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pointlessapss.timecontroler",
+            "certificate_hash": "de19c5b8f5569edae454b6ea695a70b1cf5dd6f2"
+          }
+        },
+        {
+          "client_id": "725914980325-hrfqupgmpgkbt4ujnl4l51bhrv7kfbvh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi26sg0gsvWnGL4tLC0bc1ufpoJjrEMaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "725914980325-hrfqupgmpgkbt4ujnl4l51bhrv7kfbvh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
