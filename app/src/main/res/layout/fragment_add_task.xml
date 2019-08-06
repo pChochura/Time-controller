@@ -7,6 +7,7 @@
         android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatEditText
+            style="@style/Title"
             android:id="@+id/textTaskName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

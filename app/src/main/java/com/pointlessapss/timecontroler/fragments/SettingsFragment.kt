@@ -80,7 +80,7 @@ class SettingsFragment : Fragment() {
 		}
 	}
 
-	fun displayUserInfo() {
+	private fun displayUserInfo() {
 		auth?.currentUser?.also {
 			rootView!!.find<MaterialButton>(R.id.accountName).apply {
 				text = it.displayName

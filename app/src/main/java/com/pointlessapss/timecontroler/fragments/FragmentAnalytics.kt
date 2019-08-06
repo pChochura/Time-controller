@@ -22,9 +22,11 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.tabs.TabLayout
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ListDayCountAdapter
+import com.pointlessapss.timecontroler.adapters.ListDayCountMonthlyAdapter
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
+import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.utils.ValueFormatters
 import org.jetbrains.anko.doAsync
@@ -96,7 +98,11 @@ class FragmentAnalytics : Fragment() {
 
 	private fun setDayCountList() {
 		listDayCount.layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
-		listDayCount.adapter = ListDayCountAdapter(tasksByTitle.toList())
+		listDayCount.adapter = ListDayCountAdapter(tasksByTitle.toList()).apply {
+			setOnClickListener { pos ->
+				showDayCountInfo(tasksByTitle.toList()[pos])
+			}
+		}
 	}
 
 	private fun setHoursChart() {
@@ -187,6 +193,17 @@ class FragmentAnalytics : Fragment() {
 				}
 			)
 		}.invalidate()
+	}
+
+	private fun showDayCountInfo(pair: Pair<String, MutableList<Item>?>) {
+		DialogUtil.create(activity!!, R.layout.dialog_day_count_info, { dialog ->
+			dialog.find<RecyclerView>(R.id.listDayCountMonthly).apply {
+				layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
+				adapter = ListDayCountMonthlyAdapter(pair.second!!)
+			}
+
+
+		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 
 	fun setDb(db: AppDatabase) {

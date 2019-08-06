@@ -28,4 +28,19 @@
         <attr name="pw_label" format="string"/>
         <attr name="pw_value" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="ProgressLine">
+        <attr name="pl_color_text_label" format="color"/>
+        <attr name="pl_color_text_value" format="color"/>
+        <attr name="pl_color_progress" format="color"/>
+        <attr name="pl_color_rim" format="color"/>
+        <attr name="pl_font_size_label" format="dimension"/>
+        <attr name="pl_font_size_value" format="dimension"/>
+        <attr name="pl_font_typeface" format="reference"/>
+        <attr name="pl_width_progress" format="dimension"/>
+        <attr name="pl_padding_label_value" format="dimension"/>
+        <attr name="pl_progress" format="float"/>
+        <attr name="pl_label" format="string"/>
+        <attr name="pl_value" format="string"/>
+    </declare-styleable>
 </resources>

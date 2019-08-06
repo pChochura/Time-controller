@@ -7,6 +7,7 @@
         android:background="@drawable/dialog_background">
 
     <androidx.appcompat.widget.AppCompatTextView
+            style="@style/Title"
             android:id="@+id/textTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

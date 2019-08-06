@@ -12,11 +12,13 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressWheel
+import org.jetbrains.anko.find
 
 class ListDayCountAdapter(private val items: List<Pair<String, MutableList<Item>?>>) :
 	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
 
-	lateinit var context: Context
+	private lateinit var onClickListener: (Int) -> Unit
+	private lateinit var context: Context
 
 	private val map = items.map { pair ->
 		var count = 0
@@ -44,6 +46,16 @@ class ListDayCountAdapter(private val items: List<Pair<String, MutableList<Item>
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 		val textTaskName: AppCompatTextView = itemView.findViewById(R.id.textTaskName)
 		val progressWheel: ProgressWheel = itemView.findViewById(R.id.progressWheel)
+
+		init {
+			itemView.find<View>(R.id.card).setOnClickListener {
+				onClickListener.invoke(adapterPosition)
+			}
+		}
+	}
+
+	fun setOnClickListener(onClickListener: (Int) -> Unit) {
+		this.onClickListener = onClickListener
 	}
 
 	@NonNull
