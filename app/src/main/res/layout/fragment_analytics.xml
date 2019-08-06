@@ -16,10 +16,10 @@
                 android:id="@+id/labelMonthProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/month_progress"/>
+                android:text="@string/day_count"/>
 
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listMonthProgress"
+                android:id="@+id/listDayCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -41,7 +41,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="1dp"
+                app:cardElevation="1px"
                 app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@android:color/white">
 
@@ -63,7 +63,7 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
-                <com.github.mikephil.charting.charts.CandleStickChart
+                <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/chartHours"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"

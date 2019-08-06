@@ -13,10 +13,25 @@ import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressWheel
 
-class ListMonthProgressAdapter(private val items: List<Pair<MonthGroup, MutableList<Item>?>>) :
-	RecyclerView.Adapter<ListMonthProgressAdapter.DataObjectHolder>() {
+class ListDayCountAdapter(private val items: List<Pair<String, MutableList<Item>?>>) :
+	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
+
+	private val map = items.map { pair ->
+		var count = 0
+		pair.second!!.groupingBy { MonthGroup(it) }
+			.aggregate { _, acc: MutableList<Item>?, e, first ->
+				if (first) {
+					mutableListOf(e)
+				} else {
+					acc?.apply { add(e) }
+				}
+			}.keys.forEach { key ->
+			count += Utils.getMonthWeekdaysCount(key.item.weekdays, key.calendar)
+		}
+		count
+	}
 
 	init {
 		setHasStableIds(true)
@@ -38,10 +53,10 @@ class ListMonthProgressAdapter(private val items: List<Pair<MonthGroup, MutableL
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
-		holder.textTaskName.text = items[pos].first.title
+		holder.textTaskName.text = items[pos].first
 		items[pos].second?.also { list ->
 			holder.progressWheel.apply {
-				setProgress(list.size.toFloat() / Utils.getMonthWeekdaysCount(list.first().weekdays, items[pos].first.calendar))
+				setProgress(list.size.toFloat() / map[pos])
 				setValue(list.size.toString())
 				setProgressColor(list.first().color)
 				setLabel(context.resources.getQuantityString(R.plurals.day, list.size))

@@ -1,7 +1,7 @@
 package com.pointlessapss.timecontroler.fragments
 
 import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,20 +11,22 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.charts.CandleStickChart
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.CandleData
-import com.github.mikephil.charting.data.CandleDataSet
-import com.github.mikephil.charting.data.CandleEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.tabs.TabLayout
 import com.pointlessapss.timecontroler.R
-import com.pointlessapss.timecontroler.adapters.ListMonthProgressAdapter
+import com.pointlessapss.timecontroler.adapters.ListDayCountAdapter
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
+import com.pointlessapss.timecontroler.utils.Utils
+import com.pointlessapss.timecontroler.utils.ValueFormatters
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
@@ -32,12 +34,24 @@ import java.util.*
 
 class FragmentAnalytics : Fragment() {
 
+	private val axisValues = Calendar.getInstance().let {
+		(Calendar.JANUARY..Calendar.DECEMBER).map { month ->
+			Utils.formatMonthLong.format(it.apply { set(Calendar.MONTH, month) }.time)
+		}
+	}
+
 	private var rootView: ViewGroup? = null
 
 	private lateinit var db: AppDatabase
-	private lateinit var tasksByMonth: Map<MonthGroup, MutableList<Item>?>
+	private lateinit var tasksByTitle: Map<String, MutableList<Item>?>
+	private lateinit var tasksAll: MutableList<Item>
 
 	private lateinit var listDayCount: RecyclerView
+	private lateinit var font: Typeface
+	private lateinit var chartHours: BarChart
+	private lateinit var tabsHours: TabLayout
+	private var textColor: Int = 0
+	private var textColor2: Int = 0
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		if (rootView == null) {
@@ -45,7 +59,7 @@ class FragmentAnalytics : Fragment() {
 
 			init()
 			getTasks {
-				setMonthProgressList()
+				setDayCountList()
 				setHoursChart()
 			}
 		}
@@ -54,21 +68,17 @@ class FragmentAnalytics : Fragment() {
 
 	private fun getTasks(callback: () -> Unit) {
 		doAsync {
-			tasksByMonth =
-				db.itemDao().getAll(true)
-					.filter { it.startDate?.get(Calendar.MONTH) == Calendar.JULY }
-					.groupingBy {
-						MonthGroup(
-							it.startDate!!.get(Calendar.MONTH),
-							it.startDate!!.get(Calendar.YEAR),
-							it.title
-						)
+			val year = Calendar.getInstance().get(Calendar.YEAR)
+			tasksAll = db.itemDao().getAll(true).filter { it.startDate?.get(Calendar.YEAR) == year }.toMutableList()
+			tasksByTitle = tasksAll
+				.groupingBy { it.title }
+				.aggregate { _, acc: MutableList<Item>?, e, first ->
+					if (first) {
+						mutableListOf(e)
+					} else {
+						acc?.apply { add(e) }
 					}
-					.aggregate { _, acc: MutableList<Item>?, e, first ->
-						if (first) {
-							mutableListOf(e)
-						} else acc?.apply { add(e) }
-					}
+				}
 			uiThread {
 				callback.invoke()
 			}
@@ -76,112 +86,106 @@ class FragmentAnalytics : Fragment() {
 	}
 
 	private fun init() {
-		listDayCount = rootView!!.find(R.id.listMonthProgress)
+		font = ResourcesCompat.getFont(context!!, R.font.josefin_sans)!!
+		textColor = ContextCompat.getColor(context!!, R.color.colorText1)
+		textColor2 = ContextCompat.getColor(context!!, R.color.colorText2)
+		listDayCount = rootView!!.find(R.id.listDayCount)
+		chartHours = rootView!!.find(R.id.chartHours)
+		tabsHours = rootView!!.find(R.id.tabsHours)
 	}
 
-	private fun setMonthProgressList() {
+	private fun setDayCountList() {
 		listDayCount.layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
-		listDayCount.adapter = ListMonthProgressAdapter(tasksByMonth.toList())
+		listDayCount.adapter = ListDayCountAdapter(tasksByTitle.toList())
 	}
 
 	private fun setHoursChart() {
-		val font = ResourcesCompat.getFont(context!!, R.font.josefin_sans)
-		val textColor = ContextCompat.getColor(context!!, R.color.colorText1)
-		val chartHours = rootView!!.find<CandleStickChart>(R.id.chartHours)
-		val tabsHours = rootView!!.find<TabLayout>(R.id.tabsHours)
-
 		chartHours.apply {
-			description = Description().apply { text = "" }
-			axisLeft.setDrawLabels(false)
-			setPinchZoom(false)
-			isDoubleTapToZoomEnabled = false
+			legend.isEnabled = false
+			description.isEnabled = false
+			isHighlightPerDragEnabled = false
+			isHighlightPerTapEnabled = false
+			setScaleEnabled(false)
 			xAxis.apply {
-				textSize = 5f
-				position = XAxis.XAxisPosition.BOTTOM
-				granularity = 1f
-				isGranularityEnabled = true
-				setAvoidFirstLastClipping(true)
-				valueFormatter = object : ValueFormatter() {
-					override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-						return String.format(Locale.getDefault(), "%02.0f", value)
-					}
-				}
-				typeface = font
+				formatAxis()
 				setDrawGridLines(false)
-				setLabelCount(31, true)
+				position = XAxis.XAxisPosition.BOTTOM
+				valueFormatter = IndexAxisValueFormatter(axisValues)
 			}
 			axisRight.apply {
-				textSize = 5f
-				granularity = 1f
-				isGranularityEnabled = true
-				valueFormatter = object : ValueFormatter() {
-					override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-						return String.format(Locale.getDefault(), "%02.0f:00", value)
-					}
-				}
-				typeface = font
+				formatAxis()
+				axisMinimum = 0f
+				valueFormatter = ValueFormatters.axisFormatter
 			}
-			legend.isEnabled = false
-
-			isHighlightPerDragEnabled = false
-		}
-
-		val values = mutableListOf<CandleEntry>()
-		tasksByMonth.values.forEachIndexed { i, list ->
-			if (list?.first()?.wholeDay == false) {
-				list.forEachIndexed { index, item ->
-					val min = item.startDate!!.get(Calendar.HOUR_OF_DAY).toFloat()
-					val max = min + item.amount
-					values.add(
-						CandleEntry(
-							index.toFloat(),
-							max,
-							min,
-							max,
-							min
-						)
-					)
-				}
-
-				tabsHours.addTab(tabsHours.newTab().apply {
-					text = list.first().title
-					if (i == 0) {
-						select()
-					}
-				})
+			axisLeft.apply {
+				formatAxis()
+				axisMinimum = 0f
+				valueFormatter = ValueFormatters.axisFormatter
+				setDrawLabels(false)
 			}
 		}
 
-		val set = CandleDataSet(values, "").apply {
-			valueTypeface = font
-			colors = tasksByMonth.map { it.value?.first()?.color }
-			shadowColor = Color.DKGRAY
-			shadowWidth = 0.7f
-			increasingPaintStyle = Paint.Style.FILL
-			decreasingPaintStyle = Paint.Style.FILL
-			neutralColor = Color.BLUE
-			increasingColor = Color.GREEN
-			decreasingColor = Color.RED
-			setDrawValues(true)
-			valueFormatter = object : ValueFormatter() {
-				override fun getCandleLabel(candleEntry: CandleEntry?): String {
-					return String.format(Locale.getDefault(), "%.0f", candleEntry?.bodyRange)
-				}
-			}
+
+		tasksByTitle.filter { it.value?.find { item -> item.wholeDay } == null }.keys.forEach { title ->
+			tabsHours.addTab(tabsHours.newTab().apply {
+				text = title
+			})
 		}
 
-//		cds.setColor(Color.rgb(80, 80, 80));
-//		cds.setShadowColor(Color.DKGRAY);
-//		cds.setShadowWidth(0.7f);
-//		cds.setDecreasingColor(Color.RED);
-//		cds.setDecreasingPaintStyle(Paint.Style.FILL);
-//		cds.setIncreasingColor(Color.rgb(122, 242, 84));
-//		cds.setIncreasingPaintStyle(Paint.Style.STROKE);
-//		cds.setNeutralColor(Color.BLUE);
-//		cds.setValueTextColor(Color.RED);
+		showChart(tasksByTitle.toList()[0])
+
+		tabsHours.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+			override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+			override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+			override fun onTabSelected(tab: TabLayout.Tab?) {
+				showChart(tasksByTitle.toList()[tab!!.position])
+			}
+		})
+	}
+
+	private fun AxisBase.formatAxis() {
+		typeface = font
+		textSize = 8f
+		granularity = 1f
+		isGranularityEnabled = true
+		setCenterAxisLabels(false)
+		textColor = this@FragmentAnalytics.textColor
+
+	}
+
+	private fun showChart(data: Pair<String, MutableList<Item>?>) {
+		val values = data.second!!
+			.groupingBy { MonthGroup(it) }
+			.aggregate { _, acc: Float?, e, first ->
+				if (first) {
+					e.amount
+				} else {
+					acc?.plus(e.amount)
+				}
+			}.map {
+				BarEntry(it.key.calendar.get(Calendar.MONTH).toFloat(), it.value!!)
+			}
 
 		chartHours.apply {
-			data = CandleData(set)
+			this.data = BarData(BarDataSet(values, data.first).apply {
+				valueTypeface = font
+				valueTextSize = 10f
+				color = data.second!!.first().color
+				valueFormatter = ValueFormatters.entryFormatter
+			})
+			axisRight.removeAllLimitLines()
+			axisRight.addLimitLine(
+				LimitLine(
+					data.second!!.fold(0f) { acc, item ->
+						acc + item.amount
+					} / values.size,
+					context.getString(R.string.month_average)
+				).apply {
+					textSize = 10f
+					typeface = font
+					lineColor = Color.BLACK
+				}
+			)
 		}.invalidate()
 	}
 
