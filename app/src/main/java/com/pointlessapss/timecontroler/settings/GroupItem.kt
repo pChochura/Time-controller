@@ -76,6 +76,7 @@ class GroupItem(context: Context) : LinearLayout(context) {
 			id = item.id
 		}
 		toggle(item.toggle)
+		alpha = item.alpha
 		refresh()
 	}
 
@@ -86,6 +87,7 @@ class GroupItem(context: Context) : LinearLayout(context) {
 		var hideDivider: Boolean = false,
 		var toggle: Boolean = true,
 		var visibility: Boolean = true,
+		var alpha: Float = 1f,
 		var id: Int = 0,
 		var imageColor: Int = 0,
 		var imageId: Int = 0

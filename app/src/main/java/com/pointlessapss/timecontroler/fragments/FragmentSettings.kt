@@ -63,7 +63,9 @@ class FragmentSettings : FragmentBase() {
 							subTitle = resources.getString(R.string.google_account_name),
 							imageId = R.drawable.ic_google,
 							id = ID_ACCOUNT_INFO,
-							visibility = false
+							visibility = false,
+							toggle = false,
+							alpha = 1f
 						),
 						GroupItem.Item(
 							title = resources.getString(R.string.sign_in),
@@ -120,7 +122,8 @@ class FragmentSettings : FragmentBase() {
 										}
 									}
 							},
-							id = ID_SYNC_BUTTON_DOWNLOAD
+							id = ID_SYNC_BUTTON_DOWNLOAD,
+							hideDivider = true
 						)
 					)
 					.build()
