@@ -47,7 +47,7 @@ class FragmentHome : FragmentBase() {
 	private lateinit var layout: ViewGroup
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		if (rootView == null || forceRefresh) {
+		if (rootView == null || isRefreshForced()) {
 			rootView = inflater.inflate(R.layout.fragment_home, container, false) as ViewGroup
 
 			init()
