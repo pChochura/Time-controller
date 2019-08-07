@@ -139,8 +139,6 @@ class FragmentAnalytics : FragmentBase() {
 			})
 		}
 
-		showChart(tasksByTitle.toList()[0])
-
 		tabsHours.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 			override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 			override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
@@ -148,6 +146,10 @@ class FragmentAnalytics : FragmentBase() {
 				showChart(tasksByTitle.toList()[tab!!.position])
 			}
 		})
+
+		if (tasksByTitle.isNotEmpty()) {
+			showChart(tasksByTitle.toList()[0])
+		}
 	}
 
 	private fun AxisBase.formatAxis() {
@@ -204,7 +206,8 @@ class FragmentAnalytics : FragmentBase() {
 			}
 
 			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first
-			dialog.find<AppCompatTextView>(R.id.textDescription).text = resources.getString(R.string.item_count_monthly_description, pair.second!!.size)
+			dialog.find<AppCompatTextView>(R.id.textDescription).text =
+				resources.getString(R.string.item_count_monthly_description, pair.second!!.size)
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 

@@ -96,18 +96,21 @@ class FragmentHome : FragmentBase() {
 	private fun insertItemDone(item: Item) {
 		doAsync {
 			db.itemDao().insertAllDone(item)
+			onForceRefreshListener?.invoke()
 		}
 	}
 
 	private fun insertItemCreated(item: Item) {
 		doAsync {
 			db.itemDao().insertAll(item)
+			onForceRefreshListener?.invoke()
 		}
 	}
 
 	private fun deleteItemDone(item: Item) {
 		doAsync {
 			db.itemDao().delete(item)
+			onForceRefreshListener?.invoke()
 		}
 	}
 

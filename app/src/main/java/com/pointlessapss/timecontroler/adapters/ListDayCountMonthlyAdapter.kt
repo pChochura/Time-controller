@@ -61,7 +61,7 @@ class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) :
 
 		val max = Utils.getMonthWeekdaysCount(map[pos].first.item.weekdays, map[pos].first.calendar, today)
 		val value = map[pos].second!!.size
-		holder.progressLine.setValue(value.toString())
+		holder.progressLine.setValue(String.format(Locale.getDefault(), "%d / %d", value, max))
 		holder.progressLine.setLabel(Utils.formatMonthLong.format(map[pos].first.calendar.time))
 		holder.progressLine.setProgress(value.toFloat() / max)
 	}

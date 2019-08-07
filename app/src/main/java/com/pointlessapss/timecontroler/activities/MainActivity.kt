@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 						supportActionBar?.title = Utils.formatMonthLong.format(time)
 					}
 				}
-				R.id.settings-> {
+				R.id.settings -> {
 					setFragment(SETTINGS)
 					supportActionBar?.title = resources.getString(R.string.settings)
 				}
@@ -65,6 +65,9 @@ class MainActivity : AppCompatActivity() {
 	private fun setFragments() {
 		fragments[ANALYTICS] = FragmentAnalytics().apply {
 			setDb(db)
+			onForceRefreshListener = {
+				fragments.forEach { it?.forceRefresh = true }
+			}
 		}
 		fragments[HOME] = FragmentHome().apply {
 			setDb(db)
@@ -72,10 +75,13 @@ class MainActivity : AppCompatActivity() {
 				val text = Utils.formatMonthLong.format(it.time)
 				supportActionBar?.title = text
 			}
+			onForceRefreshListener = {
+				fragments.forEach { it?.forceRefresh = true }
+			}
 		}
 		fragments[SETTINGS] = FragmentSettings().apply {
 			setDb(db)
-			setOnForceRefreshListener {
+			onForceRefreshListener = {
 				fragments.forEach { it?.forceRefresh = true }
 			}
 		}
