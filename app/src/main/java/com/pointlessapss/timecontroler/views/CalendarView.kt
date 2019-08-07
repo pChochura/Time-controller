@@ -147,6 +147,10 @@ class CalendarView(
 		return selectedDay
 	}
 
+	fun getCurrentMonth(): Calendar {
+		return currentMonth
+	}
+
 	private fun refresh() {
 		calculateEventPos()
 		invalidate()

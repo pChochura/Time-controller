@@ -67,6 +67,8 @@ class FragmentHome : FragmentBase() {
 		this.onMonthChangeListener = onMonthChangeListener
 	}
 
+	fun getCurrentMonth(): Calendar = calendar.getCurrentMonth()
+
 	private fun init() {
 		calendar = rootView!!.find(R.id.calendar)
 		labelHistory = rootView!!.find(R.id.labelHistory)

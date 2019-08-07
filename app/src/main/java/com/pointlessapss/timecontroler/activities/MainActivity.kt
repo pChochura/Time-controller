@@ -43,12 +43,17 @@ class MainActivity : AppCompatActivity() {
 			when (it.itemId) {
 				R.id.analytics -> {
 					setFragment(ANALYTICS)
+					supportActionBar?.title = resources.getString(R.string.analytics)
 				}
 				R.id.home -> {
 					setFragment(HOME)
+					(fragments[HOME] as? FragmentHome)?.getCurrentMonth()?.time?.let { time ->
+						supportActionBar?.title = Utils.formatMonthLong.format(time)
+					}
 				}
 				R.id.settings-> {
 					setFragment(SETTINGS)
+					supportActionBar?.title = resources.getString(R.string.settings)
 				}
 			}
 			true
