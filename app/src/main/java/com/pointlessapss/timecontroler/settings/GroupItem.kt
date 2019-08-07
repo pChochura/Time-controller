@@ -10,6 +10,11 @@ class GroupItem(context: Context) : LinearLayout(context) {
 	private var header: String? = null
 	private var items: Array<out Item>? = null
 
+	fun withVisibility(visible: Boolean): GroupItem {
+		this.visibility = if (visible) View.VISIBLE else View.GONE
+		return this
+	}
+
 	fun withId(id: Int): GroupItem {
 		this.id = id
 		return this
@@ -26,7 +31,7 @@ class GroupItem(context: Context) : LinearLayout(context) {
 	}
 
 	fun build(): LinearLayout {
-		return LinearLayout(context).apply {
+		return apply {
 			orientation = VERTICAL
 			layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 			header?.also { title ->

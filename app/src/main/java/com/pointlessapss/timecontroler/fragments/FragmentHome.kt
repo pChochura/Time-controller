@@ -26,7 +26,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 import java.util.*
 
-class FragmentHome : Fragment() {
+class FragmentHome : FragmentBase() {
 
 	private var rootView: ViewGroup? = null
 
@@ -47,7 +47,7 @@ class FragmentHome : Fragment() {
 	private lateinit var layout: ViewGroup
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		if (rootView == null) {
+		if (rootView == null || forceRefresh) {
 			rootView = inflater.inflate(R.layout.fragment_home, container, false) as ViewGroup
 
 			init()

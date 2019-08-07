@@ -26,7 +26,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.findOptional
 
-class FragmentSettings : Fragment() {
+class FragmentSettings : FragmentBase() {
 
 	private var rootView: ViewGroup? = null
 
@@ -86,7 +86,7 @@ class FragmentSettings : Fragment() {
 			)
 			addView(
 				GroupItem(context)
-//					.apply { visibility = View.GONE }
+					.withVisibility(false)
 					.withId(ID_SYNC_GROUP)
 					.withHeader(resources.getString(R.string.synchronization))
 					.with(
@@ -136,6 +136,7 @@ class FragmentSettings : Fragment() {
 			setSubtitle(resources.getString(R.string.tap_to_sign_in))
 			refresh()
 		}
+		rootView!!.find<View>(ID_SYNC_GROUP).visibility = View.GONE
 		TransitionManager.beginDelayedTransition(rootView!!.find(R.id.bg), AutoTransition())
 	}
 
@@ -165,7 +166,7 @@ class FragmentSettings : Fragment() {
 				refresh()
 			}
 
-			rootView!!.findOptional<View>(ID_SYNC_GROUP)?.visibility = View.VISIBLE
+			rootView!!.find<View>(ID_SYNC_GROUP).visibility = View.VISIBLE
 
 			TransitionManager.beginDelayedTransition(rootView!!.find(R.id.bg), AutoTransition())
 		}

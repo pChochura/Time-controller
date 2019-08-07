@@ -6,8 +6,9 @@ import androidx.fragment.app.Fragment
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.fragments.FragmentAnalytics
+import com.pointlessapss.timecontroler.fragments.FragmentBase
 import com.pointlessapss.timecontroler.fragments.FragmentHome
-import com.pointlessapss.timecontroler.fragments.SettingsFragment
+import com.pointlessapss.timecontroler.fragments.FragmentSettings
 import com.pointlessapss.timecontroler.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var db: AppDatabase
 
 	private var currentFragment: Fragment? = null
-	private var fragments = arrayOfNulls<Fragment>(3)
+	private var fragments = arrayOfNulls<FragmentBase>(3)
 	private var history = mutableListOf<Int>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +68,11 @@ class MainActivity : AppCompatActivity() {
 				supportActionBar?.title = text
 			}
 		}
-		fragments[SETTINGS] = SettingsFragment().apply {
+		fragments[SETTINGS] = FragmentSettings().apply {
 			setDb(db)
+			setOnForceRefreshListener {
+				fragments.forEach { it?.forceRefresh = true }
+			}
 		}
 	}
 

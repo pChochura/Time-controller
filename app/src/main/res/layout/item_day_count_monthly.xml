@@ -9,7 +9,7 @@
     <com.pointlessapss.timecontroler.views.ProgressLine
             android:id="@+id/progressLine"
             android:layout_width="0dp"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -18,7 +18,7 @@
             app:pl_label="Days"
             app:pl_padding_label_value="5dp"
             app:pl_font_size_label="18sp"
-            app:pl_font_size_value="45sp"
+            app:pl_font_size_value="25sp"
             app:pl_progress="0.5"
             app:pl_value="25"
             app:pl_width_progress="10dp"

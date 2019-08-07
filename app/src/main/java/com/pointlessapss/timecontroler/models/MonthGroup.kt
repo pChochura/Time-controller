@@ -13,7 +13,7 @@ class MonthGroup(val item: Item) : Comparable<MonthGroup> {
 			set(Calendar.YEAR, year)
 		}
 
-	override fun compareTo(other: MonthGroup) = compareValuesBy(this, other, { item.title }, { year }, { month })
+	override fun compareTo(other: MonthGroup) = compareValuesBy(this, other, { year }, { month })
 
 	override fun equals(other: Any?): Boolean {
 		if (other !is MonthGroup) {

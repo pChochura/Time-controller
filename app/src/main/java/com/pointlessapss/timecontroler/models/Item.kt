@@ -1,11 +1,16 @@
 package com.pointlessapss.timecontroler.models
 
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.gson.reflect.TypeToken
+import com.google.protobuf.Internal
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Entity(tableName = "items")
 class Item(@ColumnInfo(name = "title") var title: String = "") {
@@ -51,5 +56,23 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 			"wholeDay" to wholeDay,
 			"done" to done
 		)
+	}
+
+	companion object {
+		fun fromDocument(doc: DocumentSnapshot): List<Item>? {
+			return doc.data?.entries?.map { entry ->
+				val item = entry.value as Map<*, *>
+				Item(item["title"].toString()).apply {
+					id = item["id"].toString().toInt()
+					weekdays = (item["weekdays"] as ArrayList<*>).map { it.toString().toBoolean() }.toBooleanArray()
+					startDate = Calendar.getInstance()
+						.apply { item["startDate"]?.let { timeInMillis = it.toString().toLong() } }
+					color = item["color"].toString().toInt()
+					amount = item["amount"].toString().toFloat()
+					wholeDay = item["wholeDay"].toString().toBoolean()
+					done = item["done"].toString().toBoolean()
+				}
+			}
+		}
 	}
 }

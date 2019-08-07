@@ -31,6 +31,7 @@
     <string name="synchronize_data">Synchronize data</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
+    <string name="item_count_monthly_description">Day count by this year: %d</string>
     <string name="tap_to_sign_in">Tap to sign in to your Google account</string>
     <string name="tap_to_sign_out">Tap to sign out to your Google account</string>
     <string name="google_account_name">Google account name</string>

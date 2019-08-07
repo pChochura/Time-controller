@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -34,7 +35,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 import java.util.*
 
-class FragmentAnalytics : Fragment() {
+class FragmentAnalytics : FragmentBase() {
 
 	private val axisValues = Calendar.getInstance().let {
 		(Calendar.JANUARY..Calendar.DECEMBER).map { month ->
@@ -56,7 +57,7 @@ class FragmentAnalytics : Fragment() {
 	private var textColor2: Int = 0
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		if (rootView == null) {
+		if (rootView == null || isRefreshForced()) {
 			rootView = inflater.inflate(R.layout.fragment_analytics, container, false) as ViewGroup
 
 			init()
