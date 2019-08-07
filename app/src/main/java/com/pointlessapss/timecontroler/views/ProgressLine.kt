@@ -16,6 +16,8 @@ import androidx.core.content.res.ResourcesCompat
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Padding
 import com.pointlessapss.timecontroler.utils.dp
+import kotlin.math.max
+import kotlin.math.min
 
 class ProgressLine(
 	context: Context,
@@ -27,9 +29,7 @@ class ProgressLine(
 	private var mWidth: Int = 0
 	private var mHeight: Int = 0
 
-	private var boundsLabel: Rect? = null
-
-	private var padding: Padding = Padding(verticalPadding = 10.dp)
+	private var padding: Padding = Padding(padding = 10.dp)
 
 	private lateinit var paintLabel: TextPaint
 	private lateinit var paintValue: TextPaint
@@ -101,14 +101,12 @@ class ProgressLine(
 					R.styleable.ProgressLine_pl_progress,
 					progress
 				)
-				padding.top = a.getDimension(
-					R.styleable.ProgressLine_pl_padding_label_value,
-					padding.top.toFloat()
-				).toInt()
-				padding.bottom = a.getDimension(
-					R.styleable.ProgressLine_pl_padding_label_value,
-					padding.bottom.toFloat()
-				).toInt()
+				padding = Padding(
+					a.getDimension(
+						R.styleable.ProgressLine_pl_padding_label_value,
+						padding.left.toFloat()
+					).toInt()
+				)
 				label = a.getString(R.styleable.ProgressLine_pl_label)
 				value = a.getString(R.styleable.ProgressLine_pl_value)
 
@@ -151,30 +149,6 @@ class ProgressLine(
 			strokeCap = Paint.Cap.ROUND
 			strokeWidth = widthProgress
 		}
-
-		calculateBounds()
-	}
-
-	private fun calculateBounds() {
-		if (label == null) {
-			return
-		}
-		val textWidthLabel = paintLabel.measureText(label)
-		if (boundsLabel != null) {
-			boundsLabel?.set(
-				textWidthLabel.toInt(),
-				(mHeight - widthProgress).toInt(),
-				0,
-				0
-			)
-		} else {
-			boundsLabel = Rect(
-				textWidthLabel.toInt(),
-				(mHeight - widthProgress).toInt(),
-				0,
-				0
-			)
-		}
 	}
 
 	fun setProgress(progress: Float) {
@@ -187,7 +161,6 @@ class ProgressLine(
 
 	fun setLabel(label: String) {
 		this.label = label
-		calculateBounds()
 	}
 
 	fun setProgressColor(color: Int) {
@@ -195,13 +168,29 @@ class ProgressLine(
 		paintProgress.color = color
 	}
 
-	override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-		if (w != oldw || h != oldh) {
-			mWidth = w
-			mHeight = h
+	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+		val desiredWidth = suggestedMinimumWidth + paddingLeft + paddingRight
+		val desiredHeight = widthProgress + max(textSizeValue, textSizeLabel) + paddingTop + paddingBottom
 
-			calculateBounds()
+		mWidth = measureDimension(desiredWidth, widthMeasureSpec)
+		mHeight = measureDimension(desiredHeight.toInt(), heightMeasureSpec)
+		setMeasuredDimension(mWidth, mHeight)
+	}
+
+	private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
+		var result: Int
+		val specMode = MeasureSpec.getMode(measureSpec)
+		val specSize = MeasureSpec.getSize(measureSpec)
+
+		if (specMode == MeasureSpec.EXACTLY) {
+			result = specSize
+		} else {
+			result = desiredSize
+			if (specMode == MeasureSpec.AT_MOST) {
+				result = min(result, specSize)
+			}
 		}
+		return result
 	}
 
 	override fun draw(canvas: Canvas) {
@@ -216,9 +205,9 @@ class ProgressLine(
 	private fun drawRim(canvas: Canvas) {
 		canvas.drawLine(
 			widthProgress,
-			mHeight - widthProgress,
+			mHeight - widthProgress / 2,
 			mWidth - widthProgress,
-			mHeight - widthProgress,
+			mHeight - widthProgress / 2,
 			paintRim
 		)
 	}
@@ -226,18 +215,21 @@ class ProgressLine(
 	private fun drawProgress(canvas: Canvas) {
 		canvas.drawLine(
 			widthProgress,
-			mHeight - widthProgress,
-			widthProgress + progress * (mWidth - 2 * widthProgress),
-			mHeight - widthProgress,
+			mHeight - widthProgress / 2,
+			widthProgress + progress.also { Log.d("LOG!", "$it") } * (mWidth - 2 * widthProgress),
+			mHeight - widthProgress / 2,
 			paintProgress
 		)
 	}
 
 	private fun drawLabel(canvas: Canvas) {
-		label?.also { l ->
-			boundsLabel?.also { b ->
-				canvas.drawText(l, b.left.toFloat(), b.top.toFloat(), paintLabel)
-			}
+		label?.also {
+			canvas.drawText(
+				it,
+				padding.left.toFloat(),
+				mHeight - widthProgress - paddingBottom - padding.bottom,
+				paintLabel
+			)
 		}
 	}
 
@@ -246,8 +238,8 @@ class ProgressLine(
 			val textWidthValue = paintValue.measureText(v)
 			canvas.drawText(
 				v,
-				mWidth - textWidthValue,
-				mHeight - widthProgress,
+				mWidth - textWidthValue - padding.right,
+				mHeight.toFloat() - widthProgress - paddingBottom - padding.bottom,
 				paintValue
 			)
 		}
