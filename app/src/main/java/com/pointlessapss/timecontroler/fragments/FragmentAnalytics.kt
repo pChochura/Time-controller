@@ -202,7 +202,8 @@ class FragmentAnalytics : Fragment() {
 				adapter = ListDayCountMonthlyAdapter(pair.second!!)
 			}
 
-
+			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first
+			dialog.find<AppCompatTextView>(R.id.textDescription).text = resources.getString(R.string.item_count_monthly_description, pair.second!!.size)
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 

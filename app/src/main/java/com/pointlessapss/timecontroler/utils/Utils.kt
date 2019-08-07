@@ -90,7 +90,7 @@ object Utils {
 		return "${formatTime.format(item.startDate!!.time)} - ${formatTime.format(endTime.time)}"
 	}
 
-	fun getMonthWeekdaysCount(weekdays: BooleanArray, month: Calendar): Int {
+	fun getMonthWeekdaysCount(weekdays: BooleanArray, month: Calendar, limit: Calendar? = null): Int {
 		val currentMonth = month.get(Calendar.MONTH)
 		var count = 0
 		month.set(Calendar.DAY_OF_MONTH, 1)
@@ -99,6 +99,9 @@ object Utils {
 				count++
 			}
 
+			if (limit?.before(month) == true) {
+				break
+			}
 			month.add(Calendar.DAY_OF_MONTH, 1)
 		}
 		return count

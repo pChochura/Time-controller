@@ -13,12 +13,15 @@ import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressWheel
 import org.jetbrains.anko.find
+import java.util.*
 
 class ListDayCountAdapter(private val items: List<Pair<String, MutableList<Item>?>>) :
 	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
 
 	private lateinit var onClickListener: (Int) -> Unit
 	private lateinit var context: Context
+
+	private val today = Calendar.getInstance()
 
 	private val map = items.map { pair ->
 		var count = 0
@@ -30,7 +33,7 @@ class ListDayCountAdapter(private val items: List<Pair<String, MutableList<Item>
 					acc?.apply { add(e) }
 				}
 			}.keys.forEach { key ->
-			count += Utils.getMonthWeekdaysCount(key.item.weekdays, key.calendar)
+			count += Utils.getMonthWeekdaysCount(key.item.weekdays, key.calendar, today)
 		}
 		count
 	}

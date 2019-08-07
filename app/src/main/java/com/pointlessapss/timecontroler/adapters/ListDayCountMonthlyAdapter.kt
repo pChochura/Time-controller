@@ -14,8 +14,10 @@ import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressLine
 import com.pointlessapss.timecontroler.views.ProgressWheel
 import org.jetbrains.anko.find
+import java.util.*
 
-class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) : RecyclerView.Adapter<ListDayCountMonthlyAdapter.DataObjectHolder>() {
+class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) :
+	RecyclerView.Adapter<ListDayCountMonthlyAdapter.DataObjectHolder>() {
 
 	private lateinit var context: Context
 
@@ -26,7 +28,9 @@ class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) : Recycle
 			} else {
 				acc?.apply { add(e) }
 			}
-		}.toList()
+		}.toList().sortedBy { it.first.calendar }
+
+	private val today = Calendar.getInstance()
 
 	init {
 		setHasStableIds(true)
@@ -43,15 +47,22 @@ class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) : Recycle
 	@NonNull
 	override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): DataObjectHolder {
 		context = parent.context
-		return DataObjectHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_day_count_monthly, parent, false))
+		return DataObjectHolder(
+			LayoutInflater.from(parent.context).inflate(
+				R.layout.item_day_count_monthly,
+				parent,
+				false
+			)
+		)
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		holder.progressLine.setProgressColor(items.first().color)
 
-		val max = Utils.getMonthWeekdaysCount(map[pos].first.item.weekdays, map[pos].first.calendar)
+		val max = Utils.getMonthWeekdaysCount(map[pos].first.item.weekdays, map[pos].first.calendar, today)
 		val value = map[pos].second!!.size
 		holder.progressLine.setValue(value.toString())
+		holder.progressLine.setLabel(Utils.formatMonthLong.format(map[pos].first.calendar.time))
 		holder.progressLine.setProgress(value.toFloat() / max)
 	}
 
