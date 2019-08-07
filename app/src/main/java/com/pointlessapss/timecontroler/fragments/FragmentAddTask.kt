@@ -13,12 +13,10 @@ import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import org.jetbrains.anko.find
 
-class FragmentAddTask : BottomSheetDialogFragment() {
+class FragmentAddTask(private val item: Item = Item()) : BottomSheetDialogFragment() {
 
 	private var rootView: ViewGroup? = null
 	private lateinit var saveListener: (Item) -> Unit
-
-	private val item = Item()
 
 	override fun getTheme() = R.style.AppBottomSheetDialogTheme
 
@@ -27,6 +25,8 @@ class FragmentAddTask : BottomSheetDialogFragment() {
 			rootView = inflater.inflate(R.layout.fragment_add_task, container, false) as ViewGroup
 
 			handleClicks()
+			rootView!!.find<AppCompatEditText>(R.id.textTaskName).setText(item.title)
+			FragmentOptions.handleOptions(activity!!, rootView!!, item)
 		}
 		return rootView
 	}
@@ -36,8 +36,8 @@ class FragmentAddTask : BottomSheetDialogFragment() {
 	}
 
 	private fun handleClicks() {
-		rootView?.findViewById<View>(R.id.buttonSave)?.setOnClickListener {
-			val textTaskName = rootView?.findViewById<AppCompatEditText>(R.id.textTaskName)
+		rootView?.find<View>(R.id.buttonSave)?.setOnClickListener {
+			val textTaskName = rootView?.find<AppCompatEditText>(R.id.textTaskName)
 
 			item.title = textTaskName?.text.toString()
 
@@ -50,7 +50,5 @@ class FragmentAddTask : BottomSheetDialogFragment() {
 
 			dismiss()
 		}
-
-		FragmentOptions.handleOptions(activity!!, rootView!!, item)
 	}
 }

@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 			}
 			onChangeFragmentListener = {
 				setFragment(fragment = it)
+				supportActionBar?.title = resources.getString(R.string.all_tasks)
 			}
 		}
 		fragments[SETTINGS] = FragmentSettings().apply {

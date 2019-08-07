@@ -41,12 +41,34 @@
                 android:visibility="gone"
                 tools:listitem="@layout/item_history"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Label"
-                android:id="@+id/labelToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tasks_today"/>
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/Label"
+                    android:id="@+id/labelToday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tasks_today"/>
+
+            <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:id="@+id/buttonShowAll"
+                    android:visibility="visible"
+                    android:textAppearance="@style/ButtonText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorText2"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    android:gravity="center"
+                    android:text="Show all"
+                    app:cornerRadius="5dp"
+                    app:rippleColor="@color/colorTaskDefault"
+                    android:layout_gravity="center_vertical|right"/>
+
+        </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listToday"

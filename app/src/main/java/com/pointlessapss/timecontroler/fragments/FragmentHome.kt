@@ -1,15 +1,12 @@
 package com.pointlessapss.timecontroler.fragments
 
-import android.os.Bundle
 import android.os.Handler
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
@@ -75,7 +72,10 @@ class FragmentHome : FragmentBase() {
 
 	private fun handleClicks() {
 		rootView!!.find<View>(R.id.buttonShowAll).setOnClickListener {
-			onChangeFragmentListener?.invoke(FragmentAllItems().apply { setTasks(tasksCreated) })
+			onChangeFragmentListener?.invoke(FragmentAllItems().apply {
+				setDb(db)
+				setTasks(tasksCreated)
+			})
 		}
 	}
 
@@ -242,7 +242,8 @@ class FragmentHome : FragmentBase() {
 
 				val textTitle = dialog.findViewById<AppCompatEditText>(R.id.textTitle)
 				textTitle.setText(item.title)
-				dialog.findViewById<AppCompatTextView>(R.id.textContent).text = Utils.createItemDescription(context!!, item)
+				dialog.findViewById<AppCompatTextView>(R.id.textContent).text =
+					Utils.createItemDescription(context!!, item)
 
 				dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
 					item.title = textTitle.text.toString()
