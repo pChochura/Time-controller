@@ -28,28 +28,23 @@ import org.jetbrains.anko.findOptional
 
 class FragmentSettings : FragmentBase() {
 
-	private var rootView: ViewGroup? = null
-
 	private lateinit var db: AppDatabase
 
 	private var auth: FirebaseAuth? = null
 	private var gso: GoogleSignInOptions? = null
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		if (rootView == null) {
-			rootView = inflater.inflate(R.layout.fragment_settings, container, false) as ViewGroup
+	override fun getLayoutId() = R.layout.fragment_settings
 
-			auth = FirebaseAuth.getInstance()
-			gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-				.requestIdToken(getString(R.string.default_web_client_id))
-				.requestProfile()
-				.requestEmail()
-				.build()
+	override fun created() {
+		auth = FirebaseAuth.getInstance()
+		gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+			.requestIdToken(getString(R.string.default_web_client_id))
+			.requestProfile()
+			.requestEmail()
+			.build()
 
-			init()
-			displayUserInfo()
-		}
-		return rootView
+		init()
+		displayUserInfo()
 	}
 
 	private fun init() {

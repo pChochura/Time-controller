@@ -28,8 +28,6 @@ import java.util.*
 
 class FragmentHome : FragmentBase() {
 
-	private var rootView: ViewGroup? = null
-
 	private var onMonthChangeListener: ((Calendar) -> Unit)? = null
 
 	private var tasksCreated = mutableListOf<Item>()
@@ -46,17 +44,15 @@ class FragmentHome : FragmentBase() {
 	private lateinit var listHistory: RecyclerView
 	private lateinit var layout: ViewGroup
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		if (rootView == null || isRefreshForced()) {
-			rootView = inflater.inflate(R.layout.fragment_home, container, false) as ViewGroup
+	override fun getLayoutId() = R.layout.fragment_home
 
-			init()
-			loadData()
-			setTodayList()
-			setHistoryList()
-			setCalendar()
-		}
-		return rootView
+	override fun created() {
+		init()
+		handleClicks()
+		loadData()
+		setTodayList()
+		setHistoryList()
+		setCalendar()
 	}
 
 	fun setDb(db: AppDatabase) {
@@ -67,7 +63,7 @@ class FragmentHome : FragmentBase() {
 		this.onMonthChangeListener = onMonthChangeListener
 	}
 
-	fun getCurrentMonth(): Calendar = calendar.getCurrentMonth()
+	fun getCurrentMonth(): Calendar? = if (::calendar.isInitialized) calendar.getCurrentMonth() else null
 
 	private fun init() {
 		calendar = rootView!!.find(R.id.calendar)
@@ -75,6 +71,12 @@ class FragmentHome : FragmentBase() {
 		listToday = rootView!!.find(R.id.listToday)
 		listHistory = rootView!!.find(R.id.listHistory)
 		layout = rootView!!.find(R.id.layout)
+	}
+
+	private fun handleClicks() {
+		rootView!!.find<View>(R.id.buttonShowAll).setOnClickListener {
+			onChangeFragmentListener?.invoke(FragmentAllItems().apply { setTasks(tasksCreated) })
+		}
 	}
 
 	private fun loadData() {

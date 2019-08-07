@@ -43,8 +43,6 @@ class FragmentAnalytics : FragmentBase() {
 		}
 	}
 
-	private var rootView: ViewGroup? = null
-
 	private lateinit var db: AppDatabase
 	private lateinit var tasksByTitle: Map<String, MutableList<Item>?>
 	private lateinit var tasksAll: MutableList<Item>
@@ -56,17 +54,14 @@ class FragmentAnalytics : FragmentBase() {
 	private var textColor: Int = 0
 	private var textColor2: Int = 0
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		if (rootView == null || isRefreshForced()) {
-			rootView = inflater.inflate(R.layout.fragment_analytics, container, false) as ViewGroup
+	override fun getLayoutId() = R.layout.fragment_analytics
 
-			init()
-			getTasks {
-				setDayCountList()
-				setHoursChart()
-			}
+	override fun created() {
+		init()
+		getTasks {
+			setDayCountList()
+			setHoursChart()
 		}
-		return rootView
 	}
 
 	private fun getTasks(callback: () -> Unit) {
