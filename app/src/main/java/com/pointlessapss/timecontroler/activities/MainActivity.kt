@@ -15,15 +15,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
 	companion object {
-		const val ANALYTICS = 0
-		const val HOME = 1
-		const val SETTINGS = 2
+		const val ANALYTICS = R.id.analytics
+		const val HOME = R.id.home
+		const val SETTINGS = R.id.settings
 	}
 
 	private lateinit var db: AppDatabase
 
 	private var currentFragment: Fragment? = null
-	private var fragments = arrayOfNulls<FragmentBase>(3)
+	private var fragments = mutableMapOf<Int, FragmentBase>()
 	private var history = mutableListOf<Int>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 		fragments[ANALYTICS] = FragmentAnalytics().apply {
 			setDb(db)
 			onForceRefreshListener = {
-				fragments.forEach { it?.forceRefresh = true }
+				fragments.values.forEach { it.forceRefresh = true }
 			}
 		}
 		fragments[HOME] = FragmentHome().apply {
@@ -76,25 +76,49 @@ class MainActivity : AppCompatActivity() {
 				supportActionBar?.title = text
 			}
 			onForceRefreshListener = {
-				fragments.forEach { it?.forceRefresh = true }
+				fragments.values.forEach { it.forceRefresh = true }
+			}
+			onChangeFragmentListener = {
+				setFragment(fragment = it)
 			}
 		}
 		fragments[SETTINGS] = FragmentSettings().apply {
 			setDb(db)
 			onForceRefreshListener = {
-				fragments.forEach { it?.forceRefresh = true }
+				fragments.values.forEach { it.forceRefresh = true }
 			}
 		}
 	}
 
-	private fun setFragment(pos: Int) {
-		history.remove(pos)
-		history.add(pos)
-		val fragment = fragments[pos]!!
-		val fragmentTransaction = supportFragmentManager.beginTransaction()
-		fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-		if (currentFragment != null) fragmentTransaction.replace(R.id.fragmentContainer, fragment).commit()
-		else fragmentTransaction.add(R.id.fragmentContainer, fragment).commit()
-		currentFragment = fragment
+	private fun setFragment(pos: Int = -1, fragment: FragmentBase? = fragments[pos]) {
+		if (fragment == currentFragment) {
+			return
+		}
+		fragment?.let {
+			val fragmentTransaction = supportFragmentManager.beginTransaction()
+			fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+			if (currentFragment != null) fragmentTransaction.replace(R.id.fragmentContainer, fragment).commit()
+			else fragmentTransaction.add(R.id.fragmentContainer, fragment).commit()
+			currentFragment = fragment
+			if (fragments.containsKey(pos)) {
+				history.remove(pos)
+				history.add(pos)
+
+				bottomNavigation.selectedItemId = pos
+			}
+		}
+	}
+
+	override fun onBackPressed() {
+		if (history.size <= 1 && currentFragment === fragments[HOME])
+			super.onBackPressed()
+		else if (history.size <= 1) {
+			setFragment(HOME)
+			history.removeAt(history.size - 1)
+		} else {
+			if (currentFragment === fragments[history[history.size - 1]])
+				history.removeAt(history.size - 1)
+			setFragment(history[history.size - 1])
+		}
 	}
 }
