@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.Typeface
 import android.text.TextPaint
 import android.util.AttributeSet
@@ -216,7 +215,7 @@ class ProgressLine(
 		canvas.drawLine(
 			widthProgress,
 			mHeight - widthProgress / 2,
-			widthProgress + progress.also { Log.d("LOG!", "$it") } * (mWidth - 2 * widthProgress),
+			widthProgress + progress * (mWidth - 2 * widthProgress),
 			mHeight - widthProgress / 2,
 			paintProgress
 		)

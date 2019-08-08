@@ -1,6 +1,7 @@
 package com.pointlessapss.timecontroler.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.pointlessapss.timecontroler.R
@@ -65,8 +66,8 @@ class MainActivity : AppCompatActivity() {
 	private fun setFragments() {
 		fragments[ANALYTICS] = FragmentAnalytics().apply {
 			setDb(db)
-			onForceRefreshListener = {
-				fragments.values.forEach { it.forceRefresh = true }
+			onForceRefreshListener = { fragment ->
+				fragments.values.forEach { if (it != fragment) it.forceRefresh = true }
 			}
 		}
 		fragments[HOME] = FragmentHome().apply {
@@ -75,18 +76,22 @@ class MainActivity : AppCompatActivity() {
 				val text = Utils.formatMonthLong.format(it.time)
 				supportActionBar?.title = text
 			}
-			onForceRefreshListener = {
-				fragments.values.forEach { it.forceRefresh = true }
+			onForceRefreshListener = { fragment ->
+				fragments.values.forEach { if (it != fragment) it.forceRefresh = true }
 			}
 			onChangeFragmentListener = {
-				setFragment(fragment = it)
+				setFragment(fragment = it.apply {
+					onForceRefreshListener = {
+						fragments.values.forEach { fragment -> fragment.forceRefresh = true }
+					}
+				})
 				supportActionBar?.title = resources.getString(R.string.all_tasks)
 			}
 		}
 		fragments[SETTINGS] = FragmentSettings().apply {
 			setDb(db)
-			onForceRefreshListener = {
-				fragments.values.forEach { it.forceRefresh = true }
+			onForceRefreshListener = { fragment ->
+				fragments.values.forEach { if (it != fragment) it.forceRefresh = true }
 			}
 		}
 	}
@@ -111,15 +116,16 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	override fun onBackPressed() {
-		if (history.size <= 1 && currentFragment === fragments[HOME])
+		if (history.size <= 1 && currentFragment === fragments[HOME]) {
 			super.onBackPressed()
-		else if (history.size <= 1) {
+		} else if (history.size <= 1) {
 			setFragment(HOME)
-			history.removeAt(history.size - 1)
+			history.removeAt(history.lastIndex)
 		} else {
-			if (currentFragment === fragments[history[history.size - 1]])
-				history.removeAt(history.size - 1)
-			setFragment(history[history.size - 1])
+			if (currentFragment === fragments[history.last()]) {
+				history.removeAt(history.lastIndex)
+			}
+			setFragment(history.last())
 		}
 	}
 }

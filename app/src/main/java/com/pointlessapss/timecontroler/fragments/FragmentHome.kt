@@ -40,6 +40,10 @@ class FragmentHome : FragmentBase() {
 	private lateinit var listToday: RecyclerView
 	private lateinit var listHistory: RecyclerView
 	private lateinit var layout: ViewGroup
+	private val autoTransition = AutoTransition().apply {
+		excludeTarget(R.id.listHistory, true)
+		excludeTarget(R.id.calendar, true)
+	}
 
 	override fun getLayoutId() = R.layout.fragment_home
 
@@ -90,7 +94,6 @@ class FragmentHome : FragmentBase() {
 
 			uiThread {
 				calendar.addEvents(tasksDone.map { task -> Event(task) })
-				listTodayAdapter.notifyDataSetChanged()
 			}
 		}
 	}
@@ -98,21 +101,21 @@ class FragmentHome : FragmentBase() {
 	private fun insertItemDone(item: Item) {
 		doAsync {
 			db.itemDao().insertAllDone(item)
-			onForceRefreshListener?.invoke()
+			onForceRefreshListener?.invoke(this@FragmentHome)
 		}
 	}
 
 	private fun insertItemCreated(item: Item) {
 		doAsync {
 			db.itemDao().insertAll(item)
-			onForceRefreshListener?.invoke()
+			onForceRefreshListener?.invoke(this@FragmentHome)
 		}
 	}
 
 	private fun deleteItemDone(item: Item) {
 		doAsync {
 			db.itemDao().delete(item)
-			onForceRefreshListener?.invoke()
+			onForceRefreshListener?.invoke(this@FragmentHome)
 		}
 	}
 
@@ -201,7 +204,7 @@ class FragmentHome : FragmentBase() {
 			labelHistory.visibility = View.VISIBLE
 		}
 
-		TransitionManager.beginDelayedTransition(layout, AutoTransition())
+		TransitionManager.beginDelayedTransition(layout, autoTransition)
 	}
 
 	private fun showInfoItemDialog(item: Item, callbackOk: () -> Unit, toEdit: Boolean = false) {
@@ -223,7 +226,7 @@ class FragmentHome : FragmentBase() {
 				}
 
 				Utils.toggleEditText(textTitle, toggled)
-				TransitionManager.beginDelayedTransition(rootView, AutoTransition())
+				TransitionManager.beginDelayedTransition(rootView, autoTransition)
 			}
 		}
 

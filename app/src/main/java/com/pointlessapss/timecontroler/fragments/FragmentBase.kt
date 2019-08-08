@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import com.pointlessapss.timecontroler.R
 
 abstract class FragmentBase : Fragment() {
 
 	var rootView: ViewGroup? = null
 
-	var onForceRefreshListener: (() -> Unit)? = null
+	var onForceRefreshListener: ((FragmentBase) -> Unit)? = null
 	var onChangeFragmentListener: ((FragmentBase) -> Unit)? = null
 	var forceRefresh = false
 

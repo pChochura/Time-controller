@@ -29,7 +29,7 @@ class ListHistoryAdapter(
 	}
 
 	override fun getItemId(position: Int): Long {
-		return (if (position >= items.size) position else items[position].id).toLong()
+		return position.toLong()
 	}
 
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
