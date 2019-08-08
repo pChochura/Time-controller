@@ -17,6 +17,7 @@ open class SettingsItem<T>(context: Context) : FrameLayout(context) {
 	private var textSubtitle: AppCompatTextView? = null
 	protected var image: AppCompatImageView
 	private var divider: View? = null
+	private var loader: View? = null
 	private var title: String? = null
 	private var subtitle: String? = null
 
@@ -30,6 +31,7 @@ open class SettingsItem<T>(context: Context) : FrameLayout(context) {
 		textSubtitle = find(R.id.textSubtitle)
 		image = find(R.id.image)
 		divider = find(R.id.divider)
+		loader = find(R.id.loader)
 
 		if (hasRipple()) {
 			isClickable = true
@@ -62,6 +64,20 @@ open class SettingsItem<T>(context: Context) : FrameLayout(context) {
 
 	private fun refreshSubtitle() {
 		textSubtitle?.text = subtitle
+	}
+
+	fun toggleLoader() {
+		loader?.let {
+			if (it.visibility == View.VISIBLE) {
+				it.visibility = View.GONE
+				if (getType() == Type.WITH_IMAGE) {
+					image.visibility = View.VISIBLE
+				}
+			} else {
+				it.visibility = View.VISIBLE
+				image.visibility = View.GONE
+			}
+		}
 	}
 
 	fun refresh() {

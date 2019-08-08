@@ -34,7 +34,6 @@
     <string name="item_count_monthly_description">Day count by this year: %d</string>
     <string name="tap_to_sign_in">Tap to sign in to your Google account</string>
     <string name="tap_to_sign_out">Tap to sign out from your Google account</string>
-    <string name="google_account_name">Google account name</string>
     <string name="upload">Upload data</string>
     <string name="tap_to_upload">Tap to save your data in the cloud</string>
     <string name="download">Download data</string>

@@ -1,15 +1,10 @@
 package com.pointlessapss.timecontroler.fragments
 
 import android.content.Intent
-import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.forEach
-import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -24,7 +19,6 @@ import com.pointlessapss.timecontroler.settings.ImageItem
 import com.pointlessapss.timecontroler.settings.SimpleItem
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.findOptional
 
 class FragmentSettings : FragmentBase() {
 
@@ -55,7 +49,6 @@ class FragmentSettings : FragmentBase() {
 					.withHeader(resources.getString(R.string.account))
 					.with(
 						GroupItem.Item(
-							subTitle = resources.getString(R.string.google_account_name),
 							imageId = R.drawable.ic_google,
 							id = ID_ACCOUNT_INFO,
 							visibility = false,
@@ -67,10 +60,7 @@ class FragmentSettings : FragmentBase() {
 							subTitle = resources.getString(R.string.tap_to_sign_in),
 							clickListener = {
 								if (auth?.currentUser == null) {
-									startActivityForResult(
-										GoogleSignIn.getClient(activity!!, gso!!).signInIntent,
-										RC_SIGN_IN
-									)
+									signIn()
 								} else {
 									signOut()
 								}
@@ -91,13 +81,7 @@ class FragmentSettings : FragmentBase() {
 							title = resources.getString(R.string.upload),
 							subTitle = resources.getString(R.string.tap_to_upload),
 							clickListener = {
-								val fDB = FirebaseFirestore.getInstance()
-								doAsync {
-									val list = db.itemDao().getAll().union(db.itemDao().getAll(true))
-									fDB.collection("users")
-										.document(auth!!.currentUser!!.uid)
-										.set(list.map { it.toMap() }.associateBy { it["id"].toString() })
-								}
+								uploadData()
 							},
 							id = ID_SYNC_BUTTON_UPLOAD
 						),
@@ -105,24 +89,60 @@ class FragmentSettings : FragmentBase() {
 							title = resources.getString(R.string.download),
 							subTitle = resources.getString(R.string.tap_to_download),
 							clickListener = {
-								val fDB = FirebaseFirestore.getInstance()
-								fDB.collection("users")
-									.document(auth!!.currentUser!!.uid)
-									.get()
-									.addOnSuccessListener {
-										Item.fromDocument(it)?.let { items ->
-											doAsync {
-												db.itemDao().insertAll(*items.toTypedArray())
-												onForceRefreshListener?.invoke()
-											}
-										}
-									}
+								downloadData()
 							},
 							id = ID_SYNC_BUTTON_DOWNLOAD,
 							hideDivider = true
 						)
 					)
 					.build()
+			)
+		}
+	}
+
+	private fun downloadData() {
+		rootView!!.find<SimpleItem>(ID_SYNC_BUTTON_DOWNLOAD).let { button ->
+			button.toggleLoader()
+			val fDB = FirebaseFirestore.getInstance()
+			fDB.collection("users")
+				.document(auth!!.currentUser!!.uid)
+				.get()
+				.addOnSuccessListener {
+					Item.fromDocument(it)?.let { items ->
+						doAsync {
+							db.itemDao().insertAll(*items.toTypedArray())
+							onForceRefreshListener?.invoke()
+						}
+					}
+				}
+				.addOnCompleteListener {
+					button.toggleLoader()
+				}
+		}
+	}
+
+	private fun uploadData() {
+		rootView!!.find<SimpleItem>(ID_SYNC_BUTTON_UPLOAD).let { button ->
+			button.toggleLoader()
+			val fDB = FirebaseFirestore.getInstance()
+			doAsync {
+				val list = db.itemDao().getAll().union(db.itemDao().getAll(true))
+				fDB.collection("users")
+					.document(auth!!.currentUser!!.uid)
+					.set(list.map { it.toMap() }.associateBy { it["id"].toString() })
+					.addOnCompleteListener {
+						button.toggleLoader()
+					}
+			}
+		}
+	}
+
+	private fun signIn() {
+		rootView!!.find<SimpleItem>(ID_ACCOUNT_BUTTON).let { button ->
+			button.toggleLoader()
+			startActivityForResult(
+				GoogleSignIn.getClient(activity!!, gso!!).signInIntent,
+				RC_SIGN_IN
 			)
 		}
 	}
@@ -146,6 +166,9 @@ class FragmentSettings : FragmentBase() {
 				val account = task.getResult(ApiException::class.java)
 				auth?.signInWithCredential(GoogleAuthProvider.getCredential(account!!.idToken, null))
 					?.addOnSuccessListener { displayUserInfo() }
+					?.addOnCompleteListener {
+						rootView!!.find<SimpleItem>(ID_ACCOUNT_BUTTON).toggleLoader()
+					}
 			} catch (e: ApiException) {
 			}
 		}
@@ -155,6 +178,7 @@ class FragmentSettings : FragmentBase() {
 		auth?.currentUser?.also { user ->
 			rootView!!.find<ImageItem>(ID_ACCOUNT_INFO).apply {
 				user.displayName?.let { name -> setTitle(name) }
+				user.email?.let { email -> setSubtitle(email) }
 				visibility = View.VISIBLE
 				refresh()
 			}
