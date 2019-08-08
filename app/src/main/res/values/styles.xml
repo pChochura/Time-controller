@@ -36,6 +36,7 @@
 
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
@@ -43,6 +44,7 @@
         <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="TimePicker" parent="Theme.AppCompat.Light.Dialog">
