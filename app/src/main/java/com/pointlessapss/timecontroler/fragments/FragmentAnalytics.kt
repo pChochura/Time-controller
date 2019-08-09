@@ -20,6 +20,7 @@ import com.google.android.material.tabs.TabLayout
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ListDayCountAdapter
 import com.pointlessapss.timecontroler.adapters.ListDayCountMonthlyAdapter
+import com.pointlessapss.timecontroler.adapters.ListPercentageAdapter
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
@@ -33,7 +34,7 @@ import java.util.*
 
 class FragmentAnalytics : FragmentBase() {
 
-	private val axisValues = Calendar.getInstance().let {
+	private val months = Calendar.getInstance().let {
 		(Calendar.JANUARY..Calendar.DECEMBER).map { month ->
 			Utils.formatMonthLong.format(it.apply { set(Calendar.MONTH, month) }.time)
 		}
@@ -41,12 +42,10 @@ class FragmentAnalytics : FragmentBase() {
 
 	private lateinit var db: AppDatabase
 	private lateinit var tasksByTitle: Map<String, MutableList<Item>?>
-	private lateinit var tasksAll: MutableList<Item>
+	private lateinit var tasksByDayPercentage: Map<Item?, Double?>
+	private lateinit var tasksDone: MutableList<Item>
 
-	private lateinit var listDayCount: RecyclerView
 	private lateinit var font: Typeface
-	private lateinit var chartHours: BarChart
-	private lateinit var tabsHours: TabLayout
 	private var textColor: Int = 0
 	private var textColor2: Int = 0
 
@@ -56,6 +55,7 @@ class FragmentAnalytics : FragmentBase() {
 		init()
 		getTasks {
 			setDayCountList()
+			setPercentageList()
 			setHoursChart()
 		}
 	}
@@ -63,14 +63,25 @@ class FragmentAnalytics : FragmentBase() {
 	private fun getTasks(callback: () -> Unit) {
 		doAsync {
 			val year = Calendar.getInstance().get(Calendar.YEAR)
-			tasksAll = db.itemDao().getAll(true).filter { it.startDate?.get(Calendar.YEAR) == year }.toMutableList()
-			tasksByTitle = tasksAll
+			val tasksCreated = db.itemDao().getAll()
+			tasksDone = db.itemDao().getAll(true).filter { it.startDate?.get(Calendar.YEAR) == year }.toMutableList()
+			tasksByTitle = tasksDone
 				.groupingBy { it.title }
 				.aggregate { _, acc: MutableList<Item>?, e, first ->
 					if (first) {
 						mutableListOf(e)
 					} else {
 						acc?.apply { add(e) }
+					}
+				}
+			tasksByDayPercentage =
+				tasksByTitle.filter { it.value?.find { item -> item.wholeDay } == null }.mapKeys { entry ->
+					tasksCreated.find { it.title == entry.key && !it.done }
+				}.mapValues { entry ->
+					entry.value?.let { list ->
+						list.sumByDouble { item ->
+							item.amount.toDouble()
+						} / (entry.key!!.amount * list.size)
 					}
 				}
 			uiThread {
@@ -83,22 +94,28 @@ class FragmentAnalytics : FragmentBase() {
 		font = ResourcesCompat.getFont(context!!, R.font.josefin_sans)!!
 		textColor = ContextCompat.getColor(context!!, R.color.colorText1)
 		textColor2 = ContextCompat.getColor(context!!, R.color.colorText2)
-		listDayCount = rootView!!.find(R.id.listDayCount)
-		chartHours = rootView!!.find(R.id.chartHours)
-		tabsHours = rootView!!.find(R.id.tabsHours)
 	}
 
 	private fun setDayCountList() {
-		listDayCount.layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
-		listDayCount.adapter = ListDayCountAdapter(tasksByTitle.toList()).apply {
-			setOnClickListener { pos ->
-				showDayCountInfo(tasksByTitle.toList()[pos])
+		rootView!!.find<RecyclerView>(R.id.listDayCount).apply {
+			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
+			adapter = ListDayCountAdapter(tasksByTitle.toList()).apply {
+				setOnClickListener { pos ->
+					showDayCountInfo(tasksByTitle.toList()[pos])
+				}
 			}
 		}
 	}
 
+	private fun setPercentageList() {
+		rootView!!.find<RecyclerView>(R.id.listPercentage).apply {
+			layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+			adapter = ListPercentageAdapter(tasksByDayPercentage.toList())
+		}
+	}
+
 	private fun setHoursChart() {
-		chartHours.apply {
+		rootView!!.find<BarChart>(R.id.chartHours).apply {
 			legend.isEnabled = false
 			description.isEnabled = false
 			isHighlightPerDragEnabled = false
@@ -108,7 +125,7 @@ class FragmentAnalytics : FragmentBase() {
 				formatAxis()
 				setDrawGridLines(false)
 				position = XAxis.XAxisPosition.BOTTOM
-				valueFormatter = IndexAxisValueFormatter(axisValues)
+				valueFormatter = IndexAxisValueFormatter(months)
 			}
 			axisRight.apply {
 				formatAxis()
@@ -125,12 +142,13 @@ class FragmentAnalytics : FragmentBase() {
 
 
 		tasksByTitle.filter { it.value?.find { item -> item.wholeDay } == null }.keys.forEach { title ->
-			tabsHours.addTab(tabsHours.newTab().apply {
-				text = title
-			})
+			rootView!!.find<TabLayout>(R.id.tabsHours)
+				.addTab(rootView!!.find<TabLayout>(R.id.tabsHours).newTab().apply {
+					text = title
+				})
 		}
 
-		tabsHours.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+		rootView!!.find<TabLayout>(R.id.tabsHours).addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 			override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 			override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
 			override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -166,7 +184,7 @@ class FragmentAnalytics : FragmentBase() {
 				BarEntry(it.key.calendar.get(Calendar.MONTH).toFloat(), it.value!!)
 			}
 
-		chartHours.apply {
+		rootView!!.find<BarChart>(R.id.chartHours).apply {
 			this.data = BarData(BarDataSet(values, data.first).apply {
 				valueTypeface = font
 				valueTextSize = 10f

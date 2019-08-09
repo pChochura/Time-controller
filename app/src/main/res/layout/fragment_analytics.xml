@@ -28,6 +28,22 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 style="@style/Label"
+                android:id="@+id/labelPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Average time spent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listPercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_percentage"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+                style="@style/Label"
                 android:id="@+id/labelHours"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

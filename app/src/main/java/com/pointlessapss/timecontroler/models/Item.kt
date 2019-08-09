@@ -1,16 +1,12 @@
 package com.pointlessapss.timecontroler.models
 
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.gson.reflect.TypeToken
-import com.google.protobuf.Internal
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Entity(tableName = "items")
 class Item(@ColumnInfo(name = "title") var title: String = "") {
@@ -24,8 +20,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "wholeDay") var wholeDay: Boolean = true
 	@ColumnInfo(name = "done") var done: Boolean = false
 
-	fun getTimeAmount() =
-		"${amount.toInt()}:${String.format("%02d", ((amount - amount.toInt()) * 60).toInt())}"
+	fun getTimeAmount(amt: Double = amount.toDouble()) =
+		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
 
 	fun set(item: Item, date: Calendar) {
 		id = item.id

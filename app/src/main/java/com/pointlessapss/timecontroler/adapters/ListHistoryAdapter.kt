@@ -87,7 +87,7 @@ class ListHistoryAdapter(
 			if (Utils.getLuminance(color) > 0.5f) {
 				ColorUtils.blendARGB(color, Color.BLACK, 0.5f)
 			} else {
-				color
+				ColorUtils.blendARGB(color, Color.WHITE, 0.5f)
 			}
 		)
 	}
