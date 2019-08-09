@@ -9,6 +9,7 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.uiThread
 
 class FragmentAllItems : FragmentBase() {
 
@@ -45,8 +46,10 @@ class FragmentAllItems : FragmentBase() {
 		DialogUtil.showMessage(activity!!, resources.getString(R.string.want_to_remove), true) {
 			doAsync {
 				db.itemDao().delete(items.removeAt(pos))
-				listHistoryAdapter.notifyDataSetChanged()
-				onForceRefreshListener?.invoke(this@FragmentAllItems)
+				uiThread {
+					listHistoryAdapter.notifyDataSetChanged()
+					onForceRefreshListener?.invoke(this@FragmentAllItems)
+				}
 			}
 		}
 	}
@@ -62,8 +65,10 @@ class FragmentAllItems : FragmentBase() {
 				}
 				doAsync {
 					db.itemDao().insertAll(item)
-					adapter.notifyDataSetChanged()
-					onForceRefreshListener?.invoke(this@FragmentAllItems)
+					uiThread {
+						adapter.notifyDataSetChanged()
+						onForceRefreshListener?.invoke(this@FragmentAllItems)
+					}
 				}
 			}
 		}.show(childFragmentManager, "editTaskFragment")
