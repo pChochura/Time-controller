@@ -18,6 +18,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "color") @ColorInt var color = 0
 	@ColumnInfo(name = "amount") @FloatRange(from = 0.0) var amount = 0.0f
 	@ColumnInfo(name = "wholeDay") var wholeDay: Boolean = true
+	@ColumnInfo(name = "prize") var prize: Prize? = null
+	@ColumnInfo(name = "tags") var tags: IntArray? = null
 	@ColumnInfo(name = "done") var done: Boolean = false
 
 	fun getTimeAmount(amt: Float = amount) =
@@ -50,6 +52,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 			"color" to color,
 			"amount" to amount,
 			"wholeDay" to wholeDay,
+			"prize" to prize,
+			"tags" to tags,
 			"done" to done
 		)
 	}
@@ -66,6 +70,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 					color = item["color"].toString().toInt()
 					amount = item["amount"].toString().toFloat()
 					wholeDay = item["wholeDay"].toString().toBoolean()
+					prize = item["prize"] as Prize
+					tags = (item["tags"] as ArrayList<*>).map { it.toString().toInt() }.toIntArray()
 					done = item["done"].toString().toBoolean()
 				}
 			}

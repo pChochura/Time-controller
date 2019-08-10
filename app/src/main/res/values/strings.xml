@@ -3,7 +3,7 @@
     <string name="tasks_today">Today\'s tasks</string>
     <string name="text_task_name">Task name</string>
     <string name="save">SAVE</string>
-    <string name="select_default_weekdays">Select weekdays</string>
+    <string name="select_weekdays">Select weekdays</string>
     <string name="select_color">Select color</string>
     <string name="select_time">Select time</string>
     <string name="color">Color</string>
@@ -44,6 +44,13 @@
     <string name="average_time_spent">Average time spent: %dh %02dm</string>
     <string name="time">%dh %02dm</string>
     <string name="timeDiff">%+dh %02dm</string>
+    <string name="prize">Prize</string>
+    <string name="tags">Tags</string>
+    <string name="select_prize">Select prize</string>
+    <string name="per_hour">Per hour</string>
+    <string name="per_day">Per day</string>
+    <string name="per_month">Per month</string>
+    <string name="per_task">Per task</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>

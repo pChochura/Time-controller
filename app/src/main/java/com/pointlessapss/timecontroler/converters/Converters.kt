@@ -1,7 +1,10 @@
+@file:Suppress("unused")
+
 package com.pointlessapss.timecontroler.converters
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.pointlessapss.timecontroler.models.Prize
 import java.util.*
 
 object Converters {
@@ -20,9 +23,17 @@ object Converters {
 
 	@JvmStatic
 	@TypeConverter
-	fun toString(array: BooleanArray): String = Gson().toJson(array)
+	fun toString(any: Any?): String = Gson().toJson(any)
 
 	@JvmStatic
 	@TypeConverter
-	fun fromList(string: String): BooleanArray = Gson().fromJson(string, BooleanArray::class.java)
+	fun toBooleanArray(string: String?): BooleanArray? = Gson().fromJson(string, BooleanArray::class.java)
+
+	@JvmStatic
+	@TypeConverter
+	fun toIntArray(string: String?): IntArray? = Gson().fromJson(string, IntArray::class.java)
+
+	@JvmStatic
+	@TypeConverter
+	fun toPrize(string: String?): Prize? = Gson().fromJson(string, Prize::class.java)
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/per_month"
+            android:title="Per month"
+            android:checked="true"/>
+
+    <item
+            android:id="@+id/per_day"
+            android:title="Per day"/>
+
+    <item
+            android:id="@+id/per_hour"
+            android:title="Per hour"/>
+
+    <item
+            android:id="@+id/per_task"
+            android:title="Per task"/>
+</menu>

@@ -239,6 +239,8 @@ class FragmentHome : FragmentBase() {
 				FragmentOptions.handleOptions(
 					activity!!, rootView, item, arrayOf(
 						R.id.optionWeekdays,
+						R.id.optionPrize,
+						R.id.optionTags,
 						R.id.optionColor
 					)
 				)
