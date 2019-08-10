@@ -48,6 +48,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	fun toMap(): Map<String, Any?> {
 		return mutableMapOf(
 			"id" to id,
+			"parentId" to parentId,
 			"title" to title,
 			"startDate" to startDate?.timeInMillis,
 			"weekdays" to weekdays.toList(),
@@ -66,6 +67,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 				val item = entry.value as Map<*, *>
 				Item(item["title"].toString()).apply {
 					id = item["id"].toString().toInt()
+					parentId = item["parentId"].toString().toIntOrNull()
 					weekdays = (item["weekdays"] as ArrayList<*>).map { it.toString().toBoolean() }.toBooleanArray()
 					startDate = Calendar.getInstance()
 						.apply { item["startDate"]?.let { timeInMillis = it.toString().toLong() } }
