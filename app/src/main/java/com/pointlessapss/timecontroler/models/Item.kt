@@ -20,7 +20,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "wholeDay") var wholeDay: Boolean = true
 	@ColumnInfo(name = "done") var done: Boolean = false
 
-	fun getTimeAmount(amt: Double = amount.toDouble()) =
+	fun getTimeAmount(amt: Float = amount) =
 		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
 
 	fun set(item: Item, date: Calendar) {

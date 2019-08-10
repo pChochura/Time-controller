@@ -14,6 +14,8 @@
     <color name="colorTaskDefault">#D1EBD1</color>
     <color name="colorTransparent">#00000000</color>
     <color name="colorRim">#EBEBEB</color>
+    <color name="colorMin">#FF3D00</color>
+    <color name="colorMax">#00E676</color>
 
 
     <color name="color0">#F44336</color>

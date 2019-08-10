@@ -16,11 +16,13 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressLine
 
-class ListPercentageAdapter(private var items: List<Pair<Item?, Double?>>) :
+class ListPercentageAdapter(var items: List<Pair<Item?, List<Float>?>>) :
 	RecyclerView.Adapter<ListPercentageAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
 	lateinit var clickListener: (Int) -> Unit
+
+	private val average = items.map { it.first to it.second!!.sum() / (it.second!!.size * it.first!!.amount) }
 
 	init {
 		setHasStableIds(true)
@@ -54,9 +56,9 @@ class ListPercentageAdapter(private var items: List<Pair<Item?, Double?>>) :
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		items[pos].first?.let { item ->
 			holder.textTaskName.text = item.title
-			holder.progress.setProgress(items[pos].second!!.toFloat())
-			holder.progress.setValue((items[pos].second!! * 100).toInt().toString() + "%")
-			holder.progress.setLabel(item.getTimeAmount(items[pos].second!! * item.amount))
+			holder.progress.setProgress(average[pos].second)
+			holder.progress.setValue((average[pos].second * 100).toInt().toString() + "%")
+			holder.progress.setLabel(item.getTimeAmount(average[pos].second * item.amount))
 			setColor(holder, item.color)
 		}
 	}

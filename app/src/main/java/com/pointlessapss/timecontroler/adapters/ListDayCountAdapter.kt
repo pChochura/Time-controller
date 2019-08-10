@@ -15,7 +15,7 @@ import com.pointlessapss.timecontroler.views.ProgressWheel
 import org.jetbrains.anko.find
 import java.util.*
 
-class ListDayCountAdapter(private val items: List<Pair<String, MutableList<Item>?>>) :
+class ListDayCountAdapter(val items: List<Pair<String, MutableList<Item>?>>) :
 	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
 
 	private lateinit var onClickListener: (Int) -> Unit

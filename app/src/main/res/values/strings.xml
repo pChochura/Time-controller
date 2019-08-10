@@ -39,6 +39,11 @@
     <string name="download">Download data</string>
     <string name="tap_to_download">Tap to get your data from the cloud</string>
     <string name="all_tasks">All tasks</string>
+    <string name="minimum_time_spent">Minimum time spent</string>
+    <string name="maximum_time_spent">Maximum time spent</string>
+    <string name="average_time_spent">Average time spent: %dh %02dm</string>
+    <string name="time">%dh %02dm</string>
+    <string name="timeDiff">%+dh %02dm</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>

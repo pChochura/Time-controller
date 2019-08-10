@@ -42,7 +42,7 @@ class FragmentAnalytics : FragmentBase() {
 
 	private lateinit var db: AppDatabase
 	private lateinit var tasksByTitle: Map<String, MutableList<Item>?>
-	private lateinit var tasksByDayPercentage: Map<Item?, Double?>
+	private lateinit var tasksByDayPercentage: Map<Item?, List<Float>?>
 	private lateinit var tasksDone: MutableList<Item>
 
 	private lateinit var font: Typeface
@@ -79,9 +79,7 @@ class FragmentAnalytics : FragmentBase() {
 					tasksCreated.find { it.title == entry.key && !it.done }
 				}.mapValues { entry ->
 					entry.value?.let { list ->
-						list.sumByDouble { item ->
-							item.amount.toDouble()
-						} / (entry.key!!.amount * list.size)
+						list.map { it.amount }
 					}
 				}
 			uiThread {
@@ -101,7 +99,7 @@ class FragmentAnalytics : FragmentBase() {
 			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
 			adapter = ListDayCountAdapter(tasksByTitle.toList()).apply {
 				setOnClickListener { pos ->
-					showDayCountInfo(tasksByTitle.toList()[pos])
+					showDayCountInfo(items[pos])
 				}
 			}
 		}
@@ -110,7 +108,11 @@ class FragmentAnalytics : FragmentBase() {
 	private fun setPercentageList() {
 		rootView!!.find<RecyclerView>(R.id.listPercentage).apply {
 			layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-			adapter = ListPercentageAdapter(tasksByDayPercentage.toList())
+			adapter = ListPercentageAdapter(tasksByDayPercentage.toList()).apply {
+				setOnClickListener { pos ->
+					showPercentageInfo(items[pos])
+				}
+			}
 		}
 	}
 
@@ -217,6 +219,50 @@ class FragmentAnalytics : FragmentBase() {
 			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first
 			dialog.find<AppCompatTextView>(R.id.textDescription).text =
 				resources.getString(R.string.item_count_monthly_description, pair.second!!.size)
+		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
+	}
+
+	private fun showPercentageInfo(pair: Pair<Item?, List<Float>?>) {
+		DialogUtil.create(activity!!, R.layout.dialog_percentage_info, { dialog ->
+			val average = pair.second!!.sum() / pair.second!!.size
+			val min = pair.second!!.min()!!
+			val max = pair.second!!.max()!!
+			val diffMin = min - pair.first!!.amount
+			val diffMax = max - pair.first!!.amount
+
+			dialog.apply {
+				find<AppCompatTextView>(R.id.textTitle).text = pair.first?.title
+				find<AppCompatTextView>(R.id.textDescription).text =
+					resources.getString(
+						R.string.average_time_spent,
+						average.toInt(),
+						((average - average.toInt()) * 60).toInt()
+					)
+				find<AppCompatTextView>(R.id.textTimeMin).text =
+					resources.getString(
+						R.string.time,
+						min.toInt(),
+						((min - min.toInt()) * 60).toInt()
+					)
+				find<AppCompatTextView>(R.id.textTimeDiffMin).text =
+					resources.getString(
+						R.string.timeDiff,
+						diffMin.toInt(),
+						((diffMin - diffMin.toInt()) * 60).toInt()
+					)
+				find<AppCompatTextView>(R.id.textTimeMax).text =
+					resources.getString(
+						R.string.time,
+						max.toInt(),
+						((max - max.toInt()) * 60).toInt()
+					)
+				find<AppCompatTextView>(R.id.textTimeDiffMax).text =
+					resources.getString(
+						R.string.timeDiff,
+						diffMax.toInt(),
+						((diffMax - diffMax.toInt()) * 60).toInt()
+					)
+			}
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 
