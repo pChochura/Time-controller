@@ -11,7 +11,7 @@ import com.pointlessapss.timecontroler.converters.Converters
 import com.pointlessapss.timecontroler.models.Item
 
 @TypeConverters(Converters::class)
-@Database(entities = [Item::class], version = 3)
+@Database(entities = [Item::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
 	abstract fun itemDao(): ItemDao
 
@@ -34,6 +34,10 @@ abstract class AppDatabase : RoomDatabase() {
 			override fun migrate(database: SupportSQLiteDatabase) {
 				database.execSQL("ALTER TABLE items ADD COLUMN prize TEXT")
 				database.execSQL("ALTER TABLE items ADD COLUMN tags TEXT")
+			}
+		}).addMigrations(object : Migration(3, 4) {
+			override fun migrate(database: SupportSQLiteDatabase) {
+				database.execSQL("ALTER TABLE items ADD COLUMN parentId INTEGER")
 			}
 		}).build()
 	}

@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity() {
 	private fun setFragments() {
 		fragments[ANALYTICS] = FragmentAnalytics().apply {
 			setDb(db)
-			onForceRefreshListener = { fragment ->
-				fragments.values.forEach { if (it != fragment) it.forceRefresh = true }
+			onForceRefreshListener = {
+				setFragments()
 			}
 		}
 		fragments[HOME] = FragmentHome().apply {
@@ -76,13 +76,13 @@ class MainActivity : AppCompatActivity() {
 				val text = Utils.formatMonthLong.format(it.time)
 				supportActionBar?.title = text
 			}
-			onForceRefreshListener = { fragment ->
-				fragments.values.forEach { if (it != fragment) it.forceRefresh = true }
+			onForceRefreshListener = {
+				setFragments()
 			}
 			onChangeFragmentListener = {
 				setFragment(fragment = it.apply {
 					onForceRefreshListener = {
-						fragments.values.forEach { fragment -> fragment.forceRefresh = true }
+						setFragments()
 					}
 				})
 				supportActionBar?.title = resources.getString(R.string.all_tasks)
@@ -90,8 +90,8 @@ class MainActivity : AppCompatActivity() {
 		}
 		fragments[SETTINGS] = FragmentSettings().apply {
 			setDb(db)
-			onForceRefreshListener = { fragment ->
-				fragments.values.forEach { if (it != fragment) it.forceRefresh = true }
+			onForceRefreshListener = {
+				setFragments()
 			}
 		}
 	}

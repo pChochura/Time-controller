@@ -13,6 +13,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 
 	@PrimaryKey var id = UUID.randomUUID().hashCode()
 
+	@ColumnInfo(name = "parentId") var parentId: Int? = null
 	@ColumnInfo(name = "startDate") var startDate: Calendar? = null
 	@ColumnInfo(name = "weekdays") var weekdays = BooleanArray(7)
 	@ColumnInfo(name = "color") @ColorInt var color = 0
@@ -25,8 +26,9 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	fun getTimeAmount(amt: Float = amount) =
 		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
 
-	fun set(item: Item, date: Calendar) {
-		id = item.id
+	fun setParent(item: Item, date: Calendar) {
+		parentId = item.id
+		id = UUID.randomUUID().hashCode()
 		title = item.title
 		startDate = ((if (item.startDate == null) {
 			date

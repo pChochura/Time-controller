@@ -41,9 +41,10 @@ class FragmentAnalytics : FragmentBase() {
 	}
 
 	private lateinit var db: AppDatabase
-	private lateinit var tasksByTitle: Map<String, MutableList<Item>?>
+	private lateinit var tasksByParent: Map<Int?, MutableList<Item>?>
 	private lateinit var tasksByDayPercentage: Map<Item?, List<Float>?>
 	private lateinit var tasksDone: MutableList<Item>
+	private lateinit var tasksCreated: List<Item>
 
 	private lateinit var font: Typeface
 	private var textColor: Int = 0
@@ -63,10 +64,10 @@ class FragmentAnalytics : FragmentBase() {
 	private fun getTasks(callback: () -> Unit) {
 		doAsync {
 			val year = Calendar.getInstance().get(Calendar.YEAR)
-			val tasksCreated = db.itemDao().getAll()
+			tasksCreated = db.itemDao().getAll()
 			tasksDone = db.itemDao().getAll(true).filter { it.startDate?.get(Calendar.YEAR) == year }.toMutableList()
-			tasksByTitle = tasksDone
-				.groupingBy { it.title }
+			tasksByParent = tasksDone
+				.groupingBy { it.parentId }
 				.aggregate { _, acc: MutableList<Item>?, e, first ->
 					if (first) {
 						mutableListOf(e)
@@ -75,8 +76,8 @@ class FragmentAnalytics : FragmentBase() {
 					}
 				}
 			tasksByDayPercentage =
-				tasksByTitle.filter { it.value?.find { item -> item.wholeDay } == null }.mapKeys { entry ->
-					tasksCreated.find { it.title == entry.key && !it.done }
+				tasksByParent.filter { it.value?.find { item -> item.wholeDay } == null }.mapKeys { entry ->
+					tasksCreated.find { it.id == entry.key && !it.done }
 				}.mapValues { entry ->
 					entry.value?.let { list ->
 						list.map { it.amount }
@@ -97,11 +98,12 @@ class FragmentAnalytics : FragmentBase() {
 	private fun setDayCountList() {
 		rootView!!.find<RecyclerView>(R.id.listDayCount).apply {
 			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
-			adapter = ListDayCountAdapter(tasksByTitle.toList()).apply {
-				setOnClickListener { pos ->
-					showDayCountInfo(items[pos])
+			adapter =
+				ListDayCountAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }?.title!! to entry.value }).apply {
+					setOnClickListener { pos ->
+						showDayCountInfo(items[pos])
+					}
 				}
-			}
 		}
 	}
 
@@ -143,10 +145,10 @@ class FragmentAnalytics : FragmentBase() {
 		}
 
 
-		tasksByTitle.filter { it.value?.find { item -> item.wholeDay } == null }.keys.forEach { title ->
+		tasksByParent.filter { it.value?.find { item -> item.wholeDay } == null }.keys.forEach { parentId ->
 			rootView!!.find<TabLayout>(R.id.tabsHours)
 				.addTab(rootView!!.find<TabLayout>(R.id.tabsHours).newTab().apply {
-					text = title
+					text = tasksCreated.find { it.id == parentId }?.title
 				})
 		}
 
@@ -154,12 +156,12 @@ class FragmentAnalytics : FragmentBase() {
 			override fun onTabReselected(tab: TabLayout.Tab?) = Unit
 			override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
 			override fun onTabSelected(tab: TabLayout.Tab?) {
-				showChart(tasksByTitle.toList()[tab!!.position])
+				showChart(tasksByParent.toList()[tab!!.position])
 			}
 		})
 
-		if (tasksByTitle.isNotEmpty()) {
-			showChart(tasksByTitle.toList()[0])
+		if (tasksByParent.isNotEmpty()) {
+			showChart(tasksByParent.toList()[0])
 		}
 	}
 
@@ -173,7 +175,7 @@ class FragmentAnalytics : FragmentBase() {
 
 	}
 
-	private fun showChart(data: Pair<String, MutableList<Item>?>) {
+	private fun showChart(data: Pair<Int?, MutableList<Item>?>) {
 		val values = data.second!!
 			.groupingBy { MonthGroup(it) }
 			.aggregate { _, acc: Float?, e, first ->
@@ -187,7 +189,7 @@ class FragmentAnalytics : FragmentBase() {
 			}
 
 		rootView!!.find<BarChart>(R.id.chartHours).apply {
-			this.data = BarData(BarDataSet(values, data.first).apply {
+			this.data = BarData(BarDataSet(values, tasksCreated.find { it.id == data.first }?.title).apply {
 				valueTypeface = font
 				valueTextSize = 10f
 				color = data.second!!.first().color

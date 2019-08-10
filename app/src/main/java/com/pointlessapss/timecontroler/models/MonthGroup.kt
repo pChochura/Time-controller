@@ -22,7 +22,7 @@ class MonthGroup(val item: Item) : Comparable<MonthGroup> {
 		if (other.hashCode() != hashCode()) {
 			return false
 		}
-		if (other.item.title != item.title || other.year != year || other.month != month) {
+		if (other.item.parentId != item.parentId || other.year != year || other.month != month) {
 			return false
 		}
 		return true
@@ -31,7 +31,7 @@ class MonthGroup(val item: Item) : Comparable<MonthGroup> {
 	override fun hashCode(): Int {
 		var result = month
 		result = 31 * result + year
-		result = 31 * result + item.title.hashCode()
+		result = 31 * result + item.parentId.hashCode()
 		return result
 	}
 }

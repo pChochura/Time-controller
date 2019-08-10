@@ -3,9 +3,9 @@ package com.pointlessapss.timecontroler.fragments
 import android.os.Handler
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -151,10 +151,10 @@ class FragmentHome : FragmentBase() {
 		listHistoryAdapter.setOnClickListener(object : ListHistoryAdapter.ClickListener {
 			override fun clickRemove(pos: Int) {
 				DialogUtil.showMessage(activity!!, resources.getString(R.string.want_to_remove), true) {
-					tasksDone.remove(tasksHistory[pos])
-					calendar.removeEventById(tasksHistory[pos].id)
-					deleteItemDone(tasksHistory[pos])
-					tasksHistory.removeAt(pos)
+					val item = tasksHistory.removeAt(pos)
+					tasksDone.remove(item)
+					calendar.removeEventById(item.id)
+					deleteItemDone(item)
 					Handler().post {
 						refreshListHistory()
 					}
@@ -212,20 +212,18 @@ class FragmentHome : FragmentBase() {
 			override fun toggle() {
 				toggled = !toggled
 
-				val textTitle = dialog.findViewById<AppCompatEditText>(R.id.textTitle)
 				val rootView = dialog.window!!.decorView.rootView as ViewGroup
 
 				if (toggled) {
-					dialog.findViewById<View>(R.id.buttonEdit).visibility = View.GONE
-					dialog.findViewById<View>(R.id.containerInfo).visibility = View.GONE
-					dialog.findViewById<View>(R.id.containerEdit).visibility = View.VISIBLE
+					dialog.find<View>(R.id.buttonEdit).visibility = View.GONE
+					dialog.find<View>(R.id.containerInfo).visibility = View.GONE
+					dialog.find<View>(R.id.containerEdit).visibility = View.VISIBLE
 				} else {
-					dialog.findViewById<View>(R.id.buttonEdit).visibility = View.VISIBLE
-					dialog.findViewById<View>(R.id.containerInfo).visibility = View.VISIBLE
-					dialog.findViewById<View>(R.id.containerEdit).visibility = View.GONE
+					dialog.find<View>(R.id.buttonEdit).visibility = View.VISIBLE
+					dialog.find<View>(R.id.containerInfo).visibility = View.VISIBLE
+					dialog.find<View>(R.id.containerEdit).visibility = View.GONE
 				}
 
-				Utils.toggleEditText(textTitle, toggled)
 				TransitionManager.beginDelayedTransition(rootView, autoTransition)
 			}
 		}
@@ -245,25 +243,21 @@ class FragmentHome : FragmentBase() {
 					)
 				)
 
-				val textTitle = dialog.findViewById<AppCompatEditText>(R.id.textTitle)
-				textTitle.setText(item.title)
-				dialog.findViewById<AppCompatTextView>(R.id.textContent).text =
+				dialog.find<AppCompatTextView>(R.id.textTitle).text = item.title
+				dialog.find<AppCompatTextView>(R.id.textContent).text =
 					Utils.createItemDescription(context!!, item)
 
-				dialog.findViewById<View>(R.id.buttonOk).setOnClickListener {
-					item.title = textTitle.text.toString()
+				dialog.find<View>(R.id.buttonOk).setOnClickListener {
 					dialog.dismiss()
 					callbackOk.invoke()
 				}
 
-				dialog.findViewById<View>(R.id.buttonEdit).setOnClickListener {
+				dialog.find<View>(R.id.buttonEdit).setOnClickListener {
 					statefulDialog.toggle()
 				}
 
 				if (toEdit) {
 					statefulDialog.showToggled = true
-				} else {
-					Utils.toggleEditText(textTitle)
 				}
 			}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT
 		)
@@ -279,7 +273,7 @@ class FragmentHome : FragmentBase() {
 
 	private fun showTaskPreview(item: Item, editable: Boolean = false, callback: ((Item) -> Unit)? = null) {
 		val setItem = Item()
-		setItem.set(item, calendar.getSelectedDay().apply {
+		setItem.setParent(item, calendar.getSelectedDay().apply {
 			firstDayOfWeek = Calendar.MONDAY
 			if (item.startDate == null) {
 				val day = Calendar.getInstance()
@@ -292,7 +286,7 @@ class FragmentHome : FragmentBase() {
 				callback.invoke(setItem)
 				return@showInfoItemDialog
 			}
-			tasksDone.add(setItem.apply { id = UUID.randomUUID().hashCode() })
+			tasksDone.add(setItem)
 			calendar.addEvent(Event(setItem))
 			showDayHistory(calendar.getSelectedDay())
 

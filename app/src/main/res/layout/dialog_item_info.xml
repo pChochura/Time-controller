@@ -6,7 +6,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_background">
 
-    <androidx.appcompat.widget.AppCompatEditText
+    <androidx.appcompat.widget.AppCompatTextView
             style="@style/Title"
             android:id="@+id/textTitle"
             android:layout_width="0dp"
@@ -20,7 +20,6 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/colorText1"
-            android:background="@android:color/transparent"
             android:textSize="20sp"
             android:gravity="center"
             android:textStyle="bold"
