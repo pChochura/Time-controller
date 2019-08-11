@@ -27,9 +27,9 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
 
 	fun setParent(item: Item, date: Calendar) {
+		set(item)
 		parentId = item.id
 		id = UUID.randomUUID().hashCode()
-		title = item.title
 		startDate = ((if (item.startDate == null) {
 			date
 		} else {
@@ -39,9 +39,19 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 				set(Calendar.DAY_OF_YEAR, date.get(Calendar.DAY_OF_YEAR))
 				set(Calendar.YEAR, date.get(Calendar.YEAR))
 			}
+	}
+
+	fun set(item: Item) {
+		id = item.id
+		parentId = item.parentId
+		startDate = item.startDate?.let { it.clone() as Calendar }
+		title = item.title
 		amount = item.amount
 		color = item.color
 		wholeDay = item.wholeDay
+		prize = item.prize
+		tags = item.tags
+		done = item.done
 		item.weekdays.copyInto(weekdays)
 	}
 

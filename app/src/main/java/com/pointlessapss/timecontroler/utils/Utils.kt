@@ -58,20 +58,15 @@ object Utils {
 			return context.resources.getString(R.string.weekdays)
 		}
 
-		val day = Calendar.getInstance()
-		day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+		val date = Calendar.getInstance()
 
-		val str = StringBuilder()
-
-		weekdays.forEach {
-			if (it) {
-				str.append(", ")
-					.append(formatWeekdayShort.format(day.time))
-			}
-			day.add(Calendar.DAY_OF_MONTH, 1)
-		}
-
-		return str.substring(2)
+		return (Calendar.SUNDAY..Calendar.SATURDAY)
+			.filter { weekdays[it - 1] }
+			.map { day ->
+				formatWeekdayShort.format(date.apply {
+					set(Calendar.DAY_OF_WEEK, day)
+				}.time)
+			}.joinToString { it }
 	}
 
 	fun createItemDescription(context: Context, item: Item): String {

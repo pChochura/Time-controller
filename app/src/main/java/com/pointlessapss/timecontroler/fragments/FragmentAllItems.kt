@@ -55,8 +55,7 @@ class FragmentAllItems : FragmentBase() {
 	}
 
 	private fun clickEdit(pos: Int, adapter: ListHistoryAdapter) {
-		val item = if (adapter.getItemViewType(pos) == 0) Item() else items[pos]
-		FragmentAddTask(item).apply {
+		FragmentAddTask(items.getOrNull(pos)).apply {
 			setSaveListener { item ->
 				if (adapter.getItemViewType(pos) == 1) {
 					items[pos] = item

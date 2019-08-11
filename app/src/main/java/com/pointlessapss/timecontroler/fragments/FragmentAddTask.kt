@@ -16,7 +16,9 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import org.jetbrains.anko.find
 
-class FragmentAddTask(private val item: Item = Item()) : BottomSheetDialogFragment() {
+class FragmentAddTask(private val rootItem: Item? = null) : BottomSheetDialogFragment() {
+
+	private val item = rootItem?.let { Item().apply { set(it) } } ?: Item()
 
 	private var rootView: ViewGroup? = null
 	private lateinit var saveListener: (Item) -> Unit
@@ -61,7 +63,7 @@ class FragmentAddTask(private val item: Item = Item()) : BottomSheetDialogFragme
 				return@setOnClickListener
 			}
 
-			saveListener.invoke(item)
+			saveListener.invoke(rootItem?.apply { set(item) } ?: item)
 
 			dismiss()
 		}
