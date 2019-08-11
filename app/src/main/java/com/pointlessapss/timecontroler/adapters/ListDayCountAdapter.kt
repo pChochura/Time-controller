@@ -15,7 +15,7 @@ import com.pointlessapss.timecontroler.views.ProgressWheel
 import org.jetbrains.anko.find
 import java.util.*
 
-class ListDayCountAdapter(val items: List<Pair<String, MutableList<Item>?>>) :
+class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
 
 	private lateinit var onClickListener: (Int) -> Unit
@@ -33,7 +33,7 @@ class ListDayCountAdapter(val items: List<Pair<String, MutableList<Item>?>>) :
 					acc?.apply { add(e) }
 				}
 			}.keys.forEach { key ->
-			count += Utils.getMonthWeekdaysCount(key.item.weekdays, key.calendar, today)
+			count += Utils.getMonthWeekdaysCount(pair.first.weekdays, key.calendar, today)
 		}
 		count
 	}
@@ -68,7 +68,7 @@ class ListDayCountAdapter(val items: List<Pair<String, MutableList<Item>?>>) :
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
-		holder.textTaskName.text = items[pos].first
+		holder.textTaskName.text = items[pos].first.title
 		items[pos].second?.also { list ->
 			holder.progressWheel.apply {
 				setProgress(list.size.toFloat() / map[pos])

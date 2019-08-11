@@ -99,7 +99,7 @@ class FragmentAnalytics : FragmentBase() {
 		rootView!!.find<RecyclerView>(R.id.listDayCount).apply {
 			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
 			adapter =
-				ListDayCountAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }?.title!! to entry.value }).apply {
+				ListDayCountAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }!! to entry.value }).apply {
 					setOnClickListener { pos ->
 						showDayCountInfo(items[pos])
 					}
@@ -144,13 +144,14 @@ class FragmentAnalytics : FragmentBase() {
 			}
 		}
 
-
-		tasksByParent.filter { it.value?.find { item -> item.wholeDay } == null }.keys.forEach { parentId ->
-			rootView!!.find<TabLayout>(R.id.tabsHours)
-				.addTab(rootView!!.find<TabLayout>(R.id.tabsHours).newTab().apply {
-					text = tasksCreated.find { it.id == parentId }?.title
-				})
-		}
+		tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key } }
+			.filter { it?.wholeDay == null }
+			.forEach { parent ->
+				rootView!!.find<TabLayout>(R.id.tabsHours)
+					.addTab(rootView!!.find<TabLayout>(R.id.tabsHours).newTab().apply {
+						text = parent?.title
+					})
+			}
 
 		rootView!!.find<TabLayout>(R.id.tabsHours).addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 			override fun onTabReselected(tab: TabLayout.Tab?) = Unit
@@ -211,14 +212,14 @@ class FragmentAnalytics : FragmentBase() {
 		}.invalidate()
 	}
 
-	private fun showDayCountInfo(pair: Pair<String, MutableList<Item>?>) {
+	private fun showDayCountInfo(pair: Pair<Item, MutableList<Item>?>) {
 		DialogUtil.create(activity!!, R.layout.dialog_day_count_info, { dialog ->
 			dialog.find<RecyclerView>(R.id.listDayCountMonthly).apply {
 				layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
-				adapter = ListDayCountMonthlyAdapter(pair.second!!)
+				adapter = ListDayCountMonthlyAdapter(pair)
 			}
 
-			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first
+			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first.title
 			dialog.find<AppCompatTextView>(R.id.textDescription).text =
 				resources.getString(R.string.item_count_monthly_description, pair.second!!.size)
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -235,11 +236,13 @@ class FragmentAnalytics : FragmentBase() {
 			dialog.apply {
 				find<AppCompatTextView>(R.id.textTitle).text = pair.first?.title
 				find<AppCompatTextView>(R.id.textDescription).text =
-					resources.getString(
-						R.string.average_time_spent,
-						average.toInt(),
-						((average - average.toInt()) * 60).toInt()
-					)
+					resources.let {
+						it.getString(
+							R.string.item_description,
+							it.getString(R.string.average_time_spent),
+							it.getString(R.string.timeDiff, average.toInt(), ((average - average.toInt()) * 60).toInt())
+						)
+					}
 				find<AppCompatTextView>(R.id.textTimeMin).text =
 					resources.getString(
 						R.string.time,

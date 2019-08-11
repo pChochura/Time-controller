@@ -5,30 +5,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.NonNull
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressLine
-import com.pointlessapss.timecontroler.views.ProgressWheel
 import org.jetbrains.anko.find
 import java.util.*
 
-class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) :
+class ListDayCountMonthlyAdapter(private val items: Pair<Item, MutableList<Item>?>) :
 	RecyclerView.Adapter<ListDayCountMonthlyAdapter.DataObjectHolder>() {
 
 	private lateinit var context: Context
 
-	private val map = items.groupingBy { MonthGroup(it) }
-		.aggregate { _, acc: MutableList<Item>?, e, first ->
+	private val map = items.second?.groupingBy { MonthGroup(it) }
+		?.aggregate { _, acc: MutableList<Item>?, e, first ->
 			if (first) {
 				mutableListOf(e)
 			} else {
 				acc?.apply { add(e) }
 			}
-		}.toList().sortedBy { it.first.calendar }
+		}?.toList()?.sortedBy { it.first.calendar }!!
 
 	private val today = Calendar.getInstance()
 
@@ -57,9 +55,9 @@ class ListDayCountMonthlyAdapter(private val items: MutableList<Item>) :
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
-		holder.progressLine.setProgressColor(items.first().color)
+		holder.progressLine.setProgressColor(items.first.color)
 
-		val max = Utils.getMonthWeekdaysCount(map[pos].first.item.weekdays, map[pos].first.calendar, today)
+		val max = Utils.getMonthWeekdaysCount(items.first.weekdays, map[pos].first.calendar, today)
 		val value = map[pos].second!!.size
 		holder.progressLine.setValue(String.format(Locale.getDefault(), "%d / %d", value, max))
 		holder.progressLine.setLabel(Utils.formatMonthLong.format(map[pos].first.calendar.time))

@@ -41,7 +41,8 @@
     <string name="all_tasks">All tasks</string>
     <string name="minimum_time_spent">Minimum time spent</string>
     <string name="maximum_time_spent">Maximum time spent</string>
-    <string name="average_time_spent">Average time spent: %dh %02dm</string>
+    <string name="average_time_spent">Average time spent</string>
+    <string name="item_description">%s: %s</string>
     <string name="time">%dh %02dm</string>
     <string name="timeDiff">%+dh %02dm</string>
     <string name="prize">Prize</string>

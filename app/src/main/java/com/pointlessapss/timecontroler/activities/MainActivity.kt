@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 	private var currentFragment: Fragment? = null
 	private var fragments = mutableMapOf<Int, FragmentBase>()
 	private var history = mutableListOf<Int>()
+	private var fragmentLoaded = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -34,13 +35,17 @@ class MainActivity : AppCompatActivity() {
 		init()
 		setFragments()
 		setFragment(HOME)
+		fragmentLoaded = true
 	}
 
 	private fun init() {
 		supportActionBar?.elevation = 0f
-		bottomNavigation.selectedItemId = R.id.home
+		bottomNavigation.selectedItemId = HOME
 
 		bottomNavigation.setOnNavigationItemSelectedListener {
+			if (!fragmentLoaded) {
+				return@setOnNavigationItemSelectedListener true
+			}
 			when (it.itemId) {
 				R.id.analytics -> {
 					setFragment(ANALYTICS)
@@ -69,6 +74,9 @@ class MainActivity : AppCompatActivity() {
 			onForceRefreshListener = {
 				setFragments()
 			}
+			onLoadedFragmentListener = {
+				fragmentLoaded = true
+			}
 		}
 		fragments[HOME] = FragmentHome().apply {
 			setDb(db)
@@ -79,10 +87,16 @@ class MainActivity : AppCompatActivity() {
 			onForceRefreshListener = {
 				setFragments()
 			}
+			onLoadedFragmentListener = {
+				fragmentLoaded = true
+			}
 			onChangeFragmentListener = {
 				setFragment(fragment = it.apply {
 					onForceRefreshListener = {
 						setFragments()
+					}
+					onLoadedFragmentListener = {
+						fragmentLoaded = true
 					}
 				})
 				supportActionBar?.title = resources.getString(R.string.all_tasks)
@@ -93,6 +107,9 @@ class MainActivity : AppCompatActivity() {
 			onForceRefreshListener = {
 				setFragments()
 			}
+			onLoadedFragmentListener = {
+				fragmentLoaded = true
+			}
 		}
 	}
 
@@ -101,6 +118,7 @@ class MainActivity : AppCompatActivity() {
 			return
 		}
 		fragment?.let {
+			fragmentLoaded = false
 			val fragmentTransaction = supportFragmentManager.beginTransaction()
 			fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
 			if (currentFragment != null) fragmentTransaction.replace(R.id.fragmentContainer, fragment).commit()

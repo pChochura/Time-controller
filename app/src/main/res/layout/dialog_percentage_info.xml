@@ -38,7 +38,7 @@
             android:textColor="@color/colorText1"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="@string/average_time_spent"/>
+            android:text="@string/item_description"/>
 
     <androidx.cardview.widget.CardView
             android:id="@+id/cardTimeMin"
