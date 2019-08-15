@@ -60,7 +60,7 @@ class ListHistoryAdapter(
 		context = parent.context
 		return DataObjectHolder(
 			LayoutInflater.from(parent.context).inflate(
-				if (viewType == 1) R.layout.item_history else R.layout.item_history_add,
+				if (viewType == 1) R.layout.item_history else R.layout.item_add,
 				parent,
 				false
 			)

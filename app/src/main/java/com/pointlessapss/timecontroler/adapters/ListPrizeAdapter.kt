@@ -26,20 +26,9 @@ class ListPrizeAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 	private lateinit var context: Context
 
 	private val map = items.map { pair ->
-		when (pair.first.prize!!.type) {
-			Prize.Type.PER_MONTH -> {
-				pair.second!!.groupBy { MonthGroup(it) }.size * pair.first.prize!!.amount
-			}
-			Prize.Type.PER_TASK -> {
-				pair.second!!.size * pair.first.prize!!.amount
-			}
-			Prize.Type.PER_HOUR -> {
-				pair.second!!.sumByDouble { it.amount.toDouble() }.toFloat()
-			}
-			Prize.Type.PER_DAY -> {
-				pair.second!!.groupBy { Utils.formatDate.format(it.startDate!!.time) }.size * pair.first.prize!!.amount
-			}
-		}
+		Prize.getPrizeSum(pair.first.prize!!, (pair.first.settlements?.let { settlements ->
+			pair.second?.partition { it.startDate!!.before(settlements.last()) }?.first
+		} ?: pair.second)!!)
 	}
 
 	init {

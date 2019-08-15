@@ -31,7 +31,7 @@
     <string name="synchronize_data">Synchronize data</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
-    <string name="item_count_monthly_description">Day count by this year: %d</string>
+    <string name="day_count_this_year">Day count by this year</string>
     <string name="tap_to_sign_in">Tap to sign in to your Google account</string>
     <string name="tap_to_sign_out">Tap to sign out from your Google account</string>
     <string name="upload">Upload data</string>
@@ -54,6 +54,8 @@
     <string name="per_task">Per task</string>
     <string name="since_last_settlement">Since last settlement</string>
     <string name="amount">Amount</string>
+    <string name="period">Period</string>
+    <string name="select_month">Select month</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>

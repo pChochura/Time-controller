@@ -2,6 +2,7 @@ package com.pointlessapss.timecontroler.fragments
 
 import android.graphics.Color
 import android.graphics.Typeface
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -18,16 +19,15 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.tabs.TabLayout
 import com.pointlessapss.timecontroler.R
-import com.pointlessapss.timecontroler.adapters.ListDayCountAdapter
-import com.pointlessapss.timecontroler.adapters.ListDayCountMonthlyAdapter
-import com.pointlessapss.timecontroler.adapters.ListPercentageAdapter
-import com.pointlessapss.timecontroler.adapters.ListPrizeAdapter
+import com.pointlessapss.timecontroler.adapters.*
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
+import com.pointlessapss.timecontroler.models.Prize
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.utils.ValueFormatters
+import com.pointlessapss.timecontroler.views.MonthPickerView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
@@ -103,7 +103,7 @@ class FragmentAnalytics : FragmentBase() {
 			adapter =
 				ListPrizeAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }!! to entry.value }.filter { it.first.prize != null }).apply {
 					setOnClickListener { pos ->
-
+						showPrizeInfo(items[pos])
 					}
 				}
 		}
@@ -226,6 +226,54 @@ class FragmentAnalytics : FragmentBase() {
 		}.invalidate()
 	}
 
+	private fun showPrizeInfo(pair: Pair<Item, MutableList<Item>?>) {
+		DialogUtil.create(activity!!, R.layout.dialog_prize_info, { dialog ->
+			dialog.find<RecyclerView>(R.id.listPrizePeriodically).apply {
+				layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
+				adapter = ListPrizePeriodicallyAdapter(pair).apply {
+					setOnClickListener {
+						showPeriodPickerDialog {
+							if (pair.first.settlements == null) {
+								pair.first.settlements = mutableListOf(it)
+							} else {
+								pair.first.settlements?.add(it)
+							}
+							doAsync {
+								db.itemDao().insertAll(pair.first)
+							}
+							notifyDataSetChanged()
+						}
+					}
+				}
+			}
+
+			val sinceLastSettlement = Prize.getPrizeSum(pair.first.prize!!,
+				(pair.first.settlements?.let { settlements ->
+					pair.second?.partition { it.startDate!!.before(settlements.last()) }?.first
+				} ?: pair.second)!!
+			)
+
+			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first.title
+			dialog.find<AppCompatTextView>(R.id.textDescription).text =
+				resources.let {
+					it.getString(
+						R.string.item_description,
+						it.getString(R.string.since_last_settlement),
+						sinceLastSettlement.toString()
+					)
+				}
+		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
+	}
+
+	private fun showPeriodPickerDialog(callbackOk: (Calendar) -> Unit) {
+		DialogUtil.create(activity!!, R.layout.dialog_picker_month, { dialog ->
+			dialog.find<View>(R.id.buttonOk).setOnClickListener {
+				callbackOk.invoke(dialog.find<MonthPickerView>(R.id.monthPicker).selectedDate)
+				dialog.dismiss()
+			}
+		}, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+	}
+
 	private fun showDayCountInfo(pair: Pair<Item, MutableList<Item>?>) {
 		DialogUtil.create(activity!!, R.layout.dialog_day_count_info, { dialog ->
 			dialog.find<RecyclerView>(R.id.listDayCountMonthly).apply {
@@ -235,7 +283,13 @@ class FragmentAnalytics : FragmentBase() {
 
 			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first.title
 			dialog.find<AppCompatTextView>(R.id.textDescription).text =
-				resources.getString(R.string.item_count_monthly_description, pair.second!!.size)
+				resources.let {
+					it.getString(
+						R.string.item_description,
+						it.getString(R.string.day_count_this_year),
+						pair.second!!.size.toString()
+					)
+				}
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 

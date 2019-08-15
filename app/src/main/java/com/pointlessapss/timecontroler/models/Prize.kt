@@ -2,6 +2,7 @@ package com.pointlessapss.timecontroler.models
 
 import android.content.Context
 import com.pointlessapss.timecontroler.R
+import com.pointlessapss.timecontroler.utils.Utils
 
 class Prize(var type: Type, var amount: Float) {
 	enum class Type(val id: Int) {
@@ -23,4 +24,23 @@ class Prize(var type: Type, var amount: Float) {
 	}
 
 	fun describe(context: Context) = "${Type.asText(type.id, context)}: $amount"
+
+	companion object {
+		fun getPrizeSum(prize: Prize, list: List<Item>): Float {
+			return when (prize.type) {
+				Prize.Type.PER_MONTH -> {
+					list.groupBy { MonthGroup(it) }.size * prize.amount
+				}
+				Prize.Type.PER_TASK -> {
+					list.size * prize.amount
+				}
+				Prize.Type.PER_HOUR -> {
+					list.sumByDouble { it.amount.toDouble() }.toFloat()
+				}
+				Prize.Type.PER_DAY -> {
+					list.groupBy { Utils.formatDate.format(it.startDate!!.time) }.size * prize.amount
+				}
+			}
+		}
+	}
 }

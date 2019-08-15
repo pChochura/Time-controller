@@ -6,7 +6,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.gson.Gson
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @Entity(tableName = "items")
 class Item(@ColumnInfo(name = "title") var title: String = "") {
@@ -22,6 +25,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "prize") var prize: Prize? = null
 	@ColumnInfo(name = "tags") var tags: IntArray? = null
 	@ColumnInfo(name = "done") var done: Boolean = false
+	@ColumnInfo(name = "settlements") var settlements: MutableList<Calendar>? = null
 
 	fun getTimeAmount(amt: Float = amount) =
 		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
@@ -53,6 +57,9 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 		tags = item.tags
 		done = item.done
 		item.weekdays.copyInto(weekdays)
+		if (item.settlements != null) {
+			settlements = mutableListOf(*item.settlements!!.toTypedArray())
+		}
 	}
 
 	fun toMap(): Map<String, Any?> {
@@ -67,7 +74,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 			"wholeDay" to wholeDay,
 			"prize" to prize,
 			"tags" to tags,
-			"done" to done
+			"done" to done,
+			"settlements" to settlements
 		)
 	}
 
@@ -84,9 +92,10 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 					color = item["color"].toString().toInt()
 					amount = item["amount"].toString().toFloat()
 					wholeDay = item["wholeDay"].toString().toBoolean()
-					prize = item["prize"] as Prize
-					tags = (item["tags"] as ArrayList<*>).map { it.toString().toInt() }.toIntArray()
+					prize = (item["prize"] as? HashMap<*, *>)?.let { Prize(Prize.Type.valueOf(it["type"].toString()), it["amount"].toString().toFloat()) }
+					tags = (item["tags"] as? ArrayList<*>)?.map { it.toString().toInt() }?.toIntArray()
 					done = item["done"].toString().toBoolean()
+					settlements = (item["settlements"] as? ArrayList<*>)?.map { Gson().fromJson(it.toString(), Calendar::class.java) }?.toMutableList()
 				}
 			}
 		}
