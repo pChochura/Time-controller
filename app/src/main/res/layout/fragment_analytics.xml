@@ -13,6 +13,21 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 style="@style/Label"
+                android:id="@+id/labelPrize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/amount"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listPrize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_prize"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+                style="@style/Label"
                 android:id="@+id/labelMonthProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,10 +86,14 @@
                         android:layout_height="wrap_content"
                         app:tabGravity="center"
                         app:tabMode="scrollable"
-                        app:tabIndicatorFullWidth="false"
+                        app:tabSelectedTextColor="@color/colorText3"
                         app:tabTextColor="@color/colorText2"
-                        app:tabSelectedTextColor="@color/colorText1"
-                        app:tabIndicatorColor="@color/colorPrimaryDark"
+                        app:tabIndicator="@drawable/indicator"
+                        app:tabIndicatorColor="@color/colorPrimary"
+                        app:tabIndicatorGravity="center"
+                        app:tabIndicatorFullWidth="true"
+                        app:tabIndicatorHeight="30dp"
+                        app:tabUnboundedRipple="true"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>

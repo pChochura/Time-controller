@@ -21,6 +21,7 @@ import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ListDayCountAdapter
 import com.pointlessapss.timecontroler.adapters.ListDayCountMonthlyAdapter
 import com.pointlessapss.timecontroler.adapters.ListPercentageAdapter
+import com.pointlessapss.timecontroler.adapters.ListPrizeAdapter
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
@@ -55,6 +56,7 @@ class FragmentAnalytics : FragmentBase() {
 	override fun created() {
 		init()
 		getTasks {
+			setPrizeList()
 			setDayCountList()
 			setPercentageList()
 			setHoursChart()
@@ -93,6 +95,18 @@ class FragmentAnalytics : FragmentBase() {
 		font = ResourcesCompat.getFont(context!!, R.font.josefin_sans)!!
 		textColor = ContextCompat.getColor(context!!, R.color.colorText1)
 		textColor2 = ContextCompat.getColor(context!!, R.color.colorText2)
+	}
+
+	private fun setPrizeList() {
+		rootView!!.find<RecyclerView>(R.id.listPrize).apply {
+			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
+			adapter =
+				ListPrizeAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }!! to entry.value }.filter { it.first.prize != null }).apply {
+					setOnClickListener { pos ->
+
+					}
+				}
+		}
 	}
 
 	private fun setDayCountList() {
@@ -144,12 +158,12 @@ class FragmentAnalytics : FragmentBase() {
 			}
 		}
 
-		tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key } }
-			.filter { it?.wholeDay == null }
+		tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }!! }
+			.filter { !it.wholeDay }
 			.forEach { parent ->
 				rootView!!.find<TabLayout>(R.id.tabsHours)
 					.addTab(rootView!!.find<TabLayout>(R.id.tabsHours).newTab().apply {
-						text = parent?.title
+						text = parent.title
 					})
 			}
 
@@ -193,7 +207,7 @@ class FragmentAnalytics : FragmentBase() {
 			this.data = BarData(BarDataSet(values, tasksCreated.find { it.id == data.first }?.title).apply {
 				valueTypeface = font
 				valueTextSize = 10f
-				color = data.second!!.first().color
+				color = tasksCreated.find { it.id == data.first }!!.color
 				valueFormatter = ValueFormatters.entryFormatter
 			})
 			axisRight.removeAllLimitLines()

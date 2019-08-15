@@ -9,11 +9,18 @@ class Prize(var type: Type, var amount: Float) {
 
 		companion object {
 			fun fromId(id: Int) = values().find { it.id == id } ?: PER_TASK
+
+			fun asText(id: Int, context: Context): String {
+				return context.resources.getString(
+					context.resources.getIdentifier(
+						fromId(id).toString().toLowerCase(),
+						"string",
+						context.packageName
+					)
+				)
+			}
 		}
 	}
 
-	fun describe(context: Context): String {
-		val id = context.resources.getIdentifier(type.toString().toLowerCase(), "string", context.packageName)
-		return "${context.resources.getString(id)}: $amount"
-	}
+	fun describe(context: Context) = "${Type.asText(type.id, context)}: $amount"
 }

@@ -1,41 +1,45 @@
 package com.pointlessapss.timecontroler.adapters
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.annotation.NonNull
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
+import com.pointlessapss.timecontroler.models.Prize
 import com.pointlessapss.timecontroler.utils.Utils
-import com.pointlessapss.timecontroler.views.ProgressWheel
 import org.jetbrains.anko.find
 import java.util.*
 
-class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
-	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
+class ListPrizeAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
+	RecyclerView.Adapter<ListPrizeAdapter.DataObjectHolder>() {
 
 	private lateinit var onClickListener: (Int) -> Unit
 	private lateinit var context: Context
 
-	private val today = Calendar.getInstance()
-
 	private val map = items.map { pair ->
-		var count = 0
-		pair.second!!.groupingBy { MonthGroup(it) }
-			.aggregate { _, acc: MutableList<Item>?, e, first ->
-				if (first) {
-					mutableListOf(e)
-				} else {
-					acc?.apply { add(e) }
-				}
-			}.keys.forEach { key ->
-			count += Utils.getMonthWeekdaysCount(pair.first.weekdays, key.calendar, today)
+		when (pair.first.prize!!.type) {
+			Prize.Type.PER_MONTH -> {
+				pair.second!!.groupBy { MonthGroup(it) }.size * pair.first.prize!!.amount
+			}
+			Prize.Type.PER_TASK -> {
+				pair.second!!.size * pair.first.prize!!.amount
+			}
+			Prize.Type.PER_HOUR -> {
+				pair.second!!.sumByDouble { it.amount.toDouble() }.toFloat()
+			}
+			Prize.Type.PER_DAY -> {
+				pair.second!!.groupBy { Utils.formatDate.format(it.startDate!!.time) }.size * pair.first.prize!!.amount
+			}
 		}
-		count
 	}
 
 	init {
@@ -48,7 +52,7 @@ class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 		val textTaskName: AppCompatTextView = itemView.findViewById(R.id.textTaskName)
-		val progressWheel: ProgressWheel = itemView.findViewById(R.id.progressWheel)
+		val textPrize: AppCompatTextView = itemView.findViewById(R.id.textPrize)
 
 		init {
 			itemView.find<View>(R.id.card).setOnClickListener {
@@ -64,19 +68,24 @@ class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 	@NonNull
 	override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): DataObjectHolder {
 		context = parent.context
-		return DataObjectHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_day_count, parent, false))
+		return DataObjectHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_prize, parent, false))
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
+		setColor(holder, items[pos].first.color)
 		holder.textTaskName.text = items[pos].first.title
-		items[pos].second?.also { list ->
-			holder.progressWheel.apply {
-				setProgress(list.size.toFloat() / map[pos])
-				setValue(list.size.toString())
-				setProgressColor(items[pos].first.color)
-				setLabel(context.resources.getQuantityString(R.plurals.day, list.size))
+		holder.textPrize.text = map[pos].toString()
+	}
+
+	private fun setColor(@NonNull holder: DataObjectHolder, @ColorInt color: Int) {
+		holder.textTaskName.backgroundTintList = ColorStateList.valueOf(color)
+		holder.textTaskName.setTextColor(
+			if (Utils.getLuminance(color) > 0.5f) {
+				ColorUtils.blendARGB(color, Color.BLACK, 0.5f)
+			} else {
+				ColorUtils.blendARGB(color, Color.WHITE, 0.5f)
 			}
-		}
+		)
 	}
 
 	override fun getItemCount() = items.size

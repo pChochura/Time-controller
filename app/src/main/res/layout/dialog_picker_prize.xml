@@ -25,27 +25,28 @@
             android:gravity="center"
             android:text="@string/select_prize"/>
 
-    <com.savvyapps.togglebuttonlayout.ToggleButtonLayout
+    <com.google.android.material.tabs.TabLayout
             android:id="@+id/buttonsType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:layout_constrainedHeight="true"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/colorText3"
+            app:tabTextColor="@color/colorText2"
+            app:tabIndicator="@drawable/indicator"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorGravity="center"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorHeight="30dp"
+            app:tabUnboundedRipple="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textTitle"
-            app:customLayout="@layout/item_toggle"
-            app:allowDeselection="false"
-            app:dividerColor="@color/colorRim"
-            app:selectedColor="@color/colorTaskDefault"
-            app:menu="@menu/prize_type_menu"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="1px"
-            app:cardUseCompatPadding="true"
-            app:cardBackgroundColor="@android:color/white"/>
+            app:layout_constraintTop_toBottomOf="@id/textTitle"/>
 
     <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:theme="@style/InputText"
+            app:hintTextAppearance="@style/Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"

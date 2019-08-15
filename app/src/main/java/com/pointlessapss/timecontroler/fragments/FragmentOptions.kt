@@ -15,6 +15,7 @@ import androidx.core.view.get
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.ColorsAdapter
@@ -22,7 +23,6 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.Prize
 import com.pointlessapss.timecontroler.utils.DialogUtil
 import com.pointlessapss.timecontroler.utils.Utils
-import com.savvyapps.togglebuttonlayout.ToggleButtonLayout
 import org.jetbrains.anko.find
 import java.util.*
 
@@ -274,12 +274,18 @@ class FragmentOptions private constructor(
 	private fun showSelectPrizeDialog(callbackOk: () -> Unit) {
 		DialogUtil.create(activity, R.layout.dialog_picker_prize, { dialog ->
 
-			val buttonsType = dialog.find<ToggleButtonLayout>(R.id.buttonsType)
+			val buttonsType = dialog.find<TabLayout>(R.id.buttonsType)
 			val textPrize = dialog.find<TextInputEditText>(R.id.textPrize)
+
+			Prize.Type.values().forEach { type ->
+				buttonsType.addTab(buttonsType.newTab().apply {
+					text = Prize.Type.asText(type.id, activity)
+				})
+			}
 
 			item.prize?.let { prize ->
 				textPrize.setText(prize.amount.toString())
-				buttonsType.setToggled(prize.type.id, true)
+				buttonsType.getTabAt(prize.type.ordinal)?.select()
 			}
 
 			dialog.find<View>(R.id.buttonRemove).setOnClickListener {
@@ -289,7 +295,7 @@ class FragmentOptions private constructor(
 			}
 
 			dialog.find<View>(R.id.buttonOk).setOnClickListener {
-				item.prize = Prize(Prize.Type.fromId(buttonsType.selectedToggles().firstOrNull()?.id ?: 0), textPrize.text.toString().toFloatOrNull() ?: 0f)
+				item.prize = Prize(Prize.Type.values()[buttonsType.selectedTabPosition], textPrize.text.toString().toFloatOrNull() ?: 0f)
 				dialog.dismiss()
 				callbackOk.invoke()
 			}

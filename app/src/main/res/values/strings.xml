@@ -52,6 +52,8 @@
     <string name="per_day">Per day</string>
     <string name="per_month">Per month</string>
     <string name="per_task">Per task</string>
+    <string name="since_last_settlement">Since last settlement</string>
+    <string name="amount">Amount</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>
