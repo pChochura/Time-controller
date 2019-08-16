@@ -94,6 +94,7 @@ class FragmentHome : FragmentBase() {
 
 			uiThread {
 				calendar.addEvents(tasksDone.map { task -> Event(task) })
+				showDayHistory(calendar.getSelectedDay())
 			}
 		}
 	}

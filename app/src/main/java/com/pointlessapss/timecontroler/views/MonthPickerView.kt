@@ -1,17 +1,19 @@
 package com.pointlessapss.timecontroler.views
 
 import android.content.Context
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.util.AttributeSet
-import android.util.TypedValue
-import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
-import com.pointlessapss.timecontroler.utils.dp
+import com.pointlessapss.timecontroler.adapters.BaseAdapter
 import org.jetbrains.anko.find
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,119 +26,136 @@ class MonthPickerView(
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
 	private val formatMonth = SimpleDateFormat("MMM", Locale.getDefault())
-//	private val formatYear = SimpleDateFormat("yyyy", Locale.getDefault())
+	private val formatYear = SimpleDateFormat("yyyy", Locale.getDefault())
 
 	val selectedDate: Calendar = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
 
-	private var size = 0
-	private var topBarSize = 0
+	private var size = 0f
 
 	constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : this(context, attrs, defStyleAttr, 0)
 
 	constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0, 0)
 
 	init {
-		post {
-			val outValue = TypedValue()
-			getContext().theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+		inflate(context, R.layout.view_month_picker, this).post {
+			size = width / 4f
+			setYearsList()
+			handleClicks()
+			translateIndicator(selectedDate.get(Calendar.MONTH))
+		}
+	}
 
-			addView(LinearLayout(context).apply {
-				layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-				gravity = Gravity.CENTER
-				orientation = LinearLayout.HORIZONTAL
-				id = TOP_BAR_ID
-				setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent))
-//				addView(AppCompatTextView(context).apply {
-//					layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-//					text = formatYear.format(selectedDate.time)
-//					isClickable = true
-//					setBackgroundResource(outValue.resourceId)
-//					setPadding(10.dp, 10.dp, 10.dp, 10.dp)
-//					setTextColor(ContextCompat.getColor(context, R.color.colorText2))
-//					setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f)
-//				})
-				addView(AppCompatTextView(context).apply {
-					id = CURRENT_MONTH_ID
-					layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-					text = formatMonth.format(selectedDate.time)
-					setPadding(10.dp, 10.dp, 10.dp, 10.dp)
-					setTextColor(ContextCompat.getColor(context, R.color.colorText3))
-					setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f)
-				})
-			})
-
-			find<View>(TOP_BAR_ID).post {
-				topBarSize = find<View>(TOP_BAR_ID).height
-				size = width / 4
-
-				layoutParams.height = size * 3 + topBarSize
-
-				val currentMonth = selectedDate.get(Calendar.MONTH)
-
-				addView(AppCompatImageView(context).apply {
-					id = INDICATOR_ID
-					layoutParams = LayoutParams(size, size)
-					setImageResource(R.drawable.ic_circle)
-					setColorFilter(ContextCompat.getColor(context, R.color.colorAccent))
-					x = ((currentMonth - (currentMonth / 4) * 4) * size).toFloat()
-					y = (currentMonth / 4 * size).toFloat() + topBarSize
-				})
-
-				Calendar.getInstance().let { date ->
-					(Calendar.JANUARY..Calendar.DECEMBER).forEach { month ->
-						date.set(Calendar.MONTH, month)
-						addView(AppCompatTextView(context).apply {
-							id = MONTH_IDS[month]
-							layoutParams = LayoutParams(size, size)
-							text = formatMonth.format(date.time)
-							gravity = Gravity.CENTER
-							x = ((month - (month / 4) * 4) * size).toFloat()
-							y = (month / 4 * size).toFloat() + topBarSize
-							isClickable = true
-							setOnClickListener {
-								translateIndicator(month)
-								refreshTitle()
-							}
-							setBackgroundResource(outValue.resourceId)
-							setPadding(10.dp, 10.dp, 10.dp, 10.dp)
-							setTextColor(
-								ContextCompat.getColor(
-									context,
-									if (currentMonth == month)
-										R.color.colorText3
-									else R.color.colorText1
-								)
+	private fun setYearsList() {
+		find<RecyclerView>(R.id.listYears).apply {
+			layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+			adapter = ListYearAdapter(Calendar.getInstance().let { date ->
+				(1950..date.get(Calendar.YEAR)).map { year ->
+					formatYear.format(
+						date.apply {
+							set(
+								Calendar.YEAR,
+								year
 							)
-							setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
-						})
-					}
+						}.time
+					)
 				}
+			}).apply {
+				clickListener = {
+					selectedDate.set(Calendar.YEAR, (1950..Calendar.getInstance().get(Calendar.YEAR)).toList()[it])
+					refreshTitle()
+					showMonthPicker()
+					notifyDataset()
+				}
+				scrollToPosition(years.lastIndex)
 			}
 		}
 	}
 
-	private fun translateIndicator(month: Int) {
-		find<View>(INDICATOR_ID).apply {
-			x = ((month - (month / 4) * 4) * size).toFloat()
-			y = (month / 4 * size).toFloat() + topBarSize
+	private fun handleClicks() {
+		for (i in Calendar.JANUARY..Calendar.DECEMBER) {
+			find<AppCompatTextView>(resources.getIdentifier("month$i", "id", context.packageName))
+				.setOnClickListener {
+					translateIndicator(i)
+					refreshTitle()
+				}
 		}
-		find<AppCompatTextView>(MONTH_IDS[selectedDate.get(Calendar.MONTH)]).apply {
+		find<View>(R.id.currentMonth).setOnClickListener {
+			showMonthPicker()
+		}
+		find<View>(R.id.currentYear).setOnClickListener {
+			showYearPicker()
+		}
+	}
+
+	private fun showYearPicker() {
+		find<View>(R.id.containerMonths).visibility = View.INVISIBLE
+		find<View>(R.id.listYears).visibility = View.VISIBLE
+		find<AppCompatTextView>(R.id.currentMonth).setTextColor(ContextCompat.getColor(context, R.color.colorText2))
+		find<AppCompatTextView>(R.id.currentYear).setTextColor(ContextCompat.getColor(context, R.color.colorText3))
+		TransitionManager.beginDelayedTransition(this, AutoTransition())
+	}
+
+	private fun showMonthPicker() {
+		find<View>(R.id.containerMonths).visibility = View.VISIBLE
+		find<View>(R.id.listYears).visibility = View.GONE
+		find<AppCompatTextView>(R.id.currentMonth).setTextColor(ContextCompat.getColor(context, R.color.colorText3))
+		find<AppCompatTextView>(R.id.currentYear).setTextColor(ContextCompat.getColor(context, R.color.colorText2))
+		TransitionManager.beginDelayedTransition(this, AutoTransition())
+	}
+
+	private fun translateIndicator(month: Int) {
+		find<View>(R.id.indicator).apply {
+			x = (month - (month / 4) * 4) * size
+			y = month / 4 * size
+		}
+		find<AppCompatTextView>(
+			resources.getIdentifier(
+				"month${selectedDate.get(Calendar.MONTH)}",
+				"id",
+				context.packageName
+			)
+		).apply {
 			setTextColor(ContextCompat.getColor(context, R.color.colorText1))
 		}
-		find<AppCompatTextView>(MONTH_IDS[month]).apply {
+		find<AppCompatTextView>(resources.getIdentifier("month$month", "id", context.packageName)).apply {
 			setTextColor(ContextCompat.getColor(context, R.color.colorText3))
 		}
 		selectedDate.set(Calendar.MONTH, month)
 	}
 
 	private fun refreshTitle() {
-		find<AppCompatTextView>(CURRENT_MONTH_ID).text = formatMonth.format(selectedDate.time)
+		find<AppCompatTextView>(R.id.currentMonth).text = formatMonth.format(selectedDate.time)
+		find<AppCompatTextView>(R.id.currentYear).text = formatYear.format(selectedDate.time)
 	}
 
-	companion object {
-		val TOP_BAR_ID = View.generateViewId()
-		val INDICATOR_ID = View.generateViewId()
-		val CURRENT_MONTH_ID = View.generateViewId()
-		val MONTH_IDS = (Calendar.JANUARY..Calendar.DECEMBER).map { View.generateViewId() }.toIntArray()
+	inner class ListYearAdapter(val years: List<String>) :
+		BaseAdapter<ListYearAdapter.DataObjectHolder>() {
+
+		lateinit var clickListener: (Int) -> Unit
+
+		inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+			val text = itemView.find<AppCompatTextView>(R.id.text).apply {
+				setOnClickListener {
+					clickListener.invoke(adapterPosition)
+				}
+			}
+		}
+
+		override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataObjectHolder {
+			return DataObjectHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_year, parent, false))
+		}
+
+		override fun onBindViewHolder(holder: DataObjectHolder, position: Int) {
+			holder.text.text = years[position]
+			holder.text.setTextColor(
+				ContextCompat.getColor(
+					context, if (selectedDate.get(Calendar.YEAR) == position + 1950)
+						R.color.colorText1
+					else R.color.colorText2
+				)
+			)
+		}
+
+		override fun getItemCount() = years.size
 	}
 }

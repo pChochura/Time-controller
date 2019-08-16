@@ -17,7 +17,7 @@ import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.views.ProgressLine
 
 class ListPercentageAdapter(var items: List<Pair<Item?, List<Float>?>>) :
-	RecyclerView.Adapter<ListPercentageAdapter.DataObjectHolder>() {
+	BaseAdapter<ListPercentageAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
 	lateinit var clickListener: (Int) -> Unit

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -24,7 +25,7 @@ import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.models.Prize
-import com.pointlessapss.timecontroler.utils.DialogUtil
+import com.pointlessapss.timecontroler.utils.DialogUtil.Companion.create
 import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.utils.ValueFormatters
 import com.pointlessapss.timecontroler.views.MonthPickerView
@@ -46,6 +47,12 @@ class FragmentAnalytics : FragmentBase() {
 	private lateinit var tasksByDayPercentage: Map<Item?, List<Float>?>
 	private lateinit var tasksDone: MutableList<Item>
 	private lateinit var tasksCreated: List<Item>
+
+	private lateinit var listDayCountAdapter: ListDayCountAdapter
+	private lateinit var listDayCountMonthlyAdapter: ListDayCountMonthlyAdapter
+	private lateinit var listPercentageAdapter: ListPercentageAdapter
+	private lateinit var listPrizeAdapter: ListPrizeAdapter
+	private lateinit var listPrizePeriodicallyAdapter: ListPrizePeriodicallyAdapter
 
 	private lateinit var font: Typeface
 	private var textColor: Int = 0
@@ -100,35 +107,38 @@ class FragmentAnalytics : FragmentBase() {
 	private fun setPrizeList() {
 		rootView!!.find<RecyclerView>(R.id.listPrize).apply {
 			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
-			adapter =
+			listPrizeAdapter =
 				ListPrizeAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }!! to entry.value }.filter { it.first.prize != null }).apply {
 					setOnClickListener { pos ->
 						showPrizeInfo(items[pos])
 					}
 				}
+			adapter = listPrizeAdapter
 		}
 	}
 
 	private fun setDayCountList() {
 		rootView!!.find<RecyclerView>(R.id.listDayCount).apply {
 			layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
-			adapter =
+			listDayCountAdapter =
 				ListDayCountAdapter(tasksByParent.map { entry -> tasksCreated.find { it.id == entry.key }!! to entry.value }).apply {
 					setOnClickListener { pos ->
 						showDayCountInfo(items[pos])
 					}
 				}
+			adapter = listDayCountAdapter
 		}
 	}
 
 	private fun setPercentageList() {
 		rootView!!.find<RecyclerView>(R.id.listPercentage).apply {
 			layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-			adapter = ListPercentageAdapter(tasksByDayPercentage.toList()).apply {
+			listPercentageAdapter = ListPercentageAdapter(tasksByDayPercentage.toList()).apply {
 				setOnClickListener { pos ->
 					showPercentageInfo(items[pos])
 				}
 			}
+			adapter = listPercentageAdapter
 		}
 	}
 
@@ -227,12 +237,12 @@ class FragmentAnalytics : FragmentBase() {
 	}
 
 	private fun showPrizeInfo(pair: Pair<Item, MutableList<Item>?>) {
-		DialogUtil.create(activity!!, R.layout.dialog_prize_info, { dialog ->
+		create(activity!!, R.layout.dialog_prize_info, { dialog ->
 			dialog.find<RecyclerView>(R.id.listPrizePeriodically).apply {
 				layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
-				adapter = ListPrizePeriodicallyAdapter(pair).apply {
+				listPrizePeriodicallyAdapter = ListPrizePeriodicallyAdapter(pair).apply {
 					setOnClickListener {
-						showPeriodPickerDialog {
+						showPeriodPickerDialog(pair.first.prize!!.type) {
 							if (pair.first.settlements == null) {
 								pair.first.settlements = mutableListOf(it)
 							} else {
@@ -241,44 +251,78 @@ class FragmentAnalytics : FragmentBase() {
 							doAsync {
 								db.itemDao().insertAll(pair.first)
 							}
-							notifyDataSetChanged()
+							notifyDataset()
+							listPrizeAdapter.notifyDataset()
+							dialog.find<AppCompatTextView>(R.id.textDescription).text =
+								resources.let { res ->
+									res.getString(
+										R.string.item_description,
+										res.getString(R.string.since_last_settlement),
+										Prize.getPrizeSumSinceLast(pair.first, pair.second).toString()
+									)
+								}
 						}
 					}
 				}
+				adapter = listPrizePeriodicallyAdapter
 			}
-
-			val sinceLastSettlement = Prize.getPrizeSum(pair.first.prize!!,
-				(pair.first.settlements?.let { settlements ->
-					pair.second?.partition { it.startDate!!.before(settlements.last()) }?.first
-				} ?: pair.second)!!
-			)
 
 			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first.title
 			dialog.find<AppCompatTextView>(R.id.textDescription).text =
-				resources.let {
-					it.getString(
+				resources.let { res ->
+					res.getString(
 						R.string.item_description,
-						it.getString(R.string.since_last_settlement),
-						sinceLastSettlement.toString()
+						res.getString(R.string.since_last_settlement),
+						Prize.getPrizeSumSinceLast(pair.first, pair.second).toString()
 					)
 				}
 		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 
-	private fun showPeriodPickerDialog(callbackOk: (Calendar) -> Unit) {
-		DialogUtil.create(activity!!, R.layout.dialog_picker_month, { dialog ->
-			dialog.find<View>(R.id.buttonOk).setOnClickListener {
-				callbackOk.invoke(dialog.find<MonthPickerView>(R.id.monthPicker).selectedDate)
-				dialog.dismiss()
+	private fun showPeriodPickerDialog(prizeType: Prize.Type, callbackOk: (Calendar) -> Unit) {
+		when (prizeType) {
+			Prize.Type.PER_MONTH -> {
+				create(activity!!, R.layout.dialog_picker_month, { dialog ->
+					dialog.find<View>(R.id.buttonOk).setOnClickListener {
+						callbackOk.invoke(dialog.find<MonthPickerView>(R.id.monthPicker).selectedDate)
+						dialog.dismiss()
+					}
+				}, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 			}
-		}, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+			else -> {
+				create(activity!!, R.layout.dialog_picker_date, { dialog ->
+					val picker = dialog.find<DatePicker>(R.id.datePicker)
+
+					val date = Calendar.getInstance().apply {
+						set(Calendar.SECOND, 0)
+						set(Calendar.MINUTE, 0)
+						set(Calendar.HOUR_OF_DAY, 0)
+					}
+					val year = date.get(Calendar.YEAR)
+					val month = date.get(Calendar.MONTH)
+					val day = date.get(Calendar.DAY_OF_MONTH)
+					picker.init(year, month, day) { _, y, m, d ->
+						date.set(Calendar.YEAR, y)
+						date.set(Calendar.MONTH, m)
+						date.set(Calendar.DAY_OF_MONTH, d)
+					}
+					picker.maxDate = date.timeInMillis
+
+					dialog.find<View>(R.id.buttonOk).setOnClickListener {
+						callbackOk.invoke(date)
+						dialog.dismiss()
+					}
+				}, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+			}
+		}
 	}
 
 	private fun showDayCountInfo(pair: Pair<Item, MutableList<Item>?>) {
-		DialogUtil.create(activity!!, R.layout.dialog_day_count_info, { dialog ->
+		create(activity!!, R.layout.dialog_day_count_info, { dialog ->
 			dialog.find<RecyclerView>(R.id.listDayCountMonthly).apply {
 				layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
-				adapter = ListDayCountMonthlyAdapter(pair)
+				listDayCountMonthlyAdapter = ListDayCountMonthlyAdapter(pair)
+				adapter = listDayCountMonthlyAdapter
 			}
 
 			dialog.find<AppCompatTextView>(R.id.textTitle).text = pair.first.title
@@ -294,7 +338,7 @@ class FragmentAnalytics : FragmentBase() {
 	}
 
 	private fun showPercentageInfo(pair: Pair<Item?, List<Float>?>) {
-		DialogUtil.create(activity!!, R.layout.dialog_percentage_info, { dialog ->
+		create(activity!!, R.layout.dialog_percentage_info, { dialog ->
 			val average = pair.second!!.sum() / pair.second!!.size
 			val min = pair.second!!.min()!!
 			val max = pair.second!!.max()!!

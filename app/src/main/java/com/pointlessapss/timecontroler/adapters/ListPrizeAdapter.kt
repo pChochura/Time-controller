@@ -13,23 +13,17 @@ import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
-import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.models.Prize
 import com.pointlessapss.timecontroler.utils.Utils
 import org.jetbrains.anko.find
-import java.util.*
 
 class ListPrizeAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
-	RecyclerView.Adapter<ListPrizeAdapter.DataObjectHolder>() {
+	BaseAdapter<ListPrizeAdapter.DataObjectHolder>() {
 
 	private lateinit var onClickListener: (Int) -> Unit
 	private lateinit var context: Context
 
-	private val map = items.map { pair ->
-		Prize.getPrizeSum(pair.first.prize!!, (pair.first.settlements?.let { settlements ->
-			pair.second?.partition { it.startDate!!.before(settlements.last()) }?.first
-		} ?: pair.second)!!)
-	}
+	private var map = items.map { Prize.getPrizeSumSinceLast(it.first, it.second) }
 
 	init {
 		setHasStableIds(true)
@@ -52,6 +46,11 @@ class ListPrizeAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 
 	fun setOnClickListener(onClickListener: (Int) -> Unit) {
 		this.onClickListener = onClickListener
+	}
+
+	override fun notifyDataset() {
+		map = items.map { Prize.getPrizeSumSinceLast(it.first, it.second) }
+		super.notifyDataset()
 	}
 
 	@NonNull

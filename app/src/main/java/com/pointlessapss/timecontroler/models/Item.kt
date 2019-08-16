@@ -75,7 +75,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 			"prize" to prize,
 			"tags" to tags,
 			"done" to done,
-			"settlements" to settlements
+			"settlements" to settlements?.map { it.timeInMillis }
 		)
 	}
 
@@ -95,7 +95,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 					prize = (item["prize"] as? HashMap<*, *>)?.let { Prize(Prize.Type.valueOf(it["type"].toString()), it["amount"].toString().toFloat()) }
 					tags = (item["tags"] as? ArrayList<*>)?.map { it.toString().toInt() }?.toIntArray()
 					done = item["done"].toString().toBoolean()
-					settlements = (item["settlements"] as? ArrayList<*>)?.map { Gson().fromJson(it.toString(), Calendar::class.java) }?.toMutableList()
+					settlements = (item["settlements"] as? ArrayList<*>)?.map { time -> Calendar.getInstance().apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
 				}
 			}
 		}

@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 
-class ColorsAdapter(private val colors: IntArray) : RecyclerView.Adapter<ColorsAdapter.DataObjectHolder>() {
+class ColorsAdapter(private val colors: IntArray) : BaseAdapter<ColorsAdapter.DataObjectHolder>() {
 
 	private lateinit var clickListener: (Int) -> Unit
 
@@ -21,7 +21,7 @@ class ColorsAdapter(private val colors: IntArray) : RecyclerView.Adapter<ColorsA
 		}
 	}
 
-	fun setOnClickListner(clickListener: (Int) -> Unit) {
+	fun setOnClickListener(clickListener: (Int) -> Unit) {
 		this.clickListener = clickListener
 	}
 

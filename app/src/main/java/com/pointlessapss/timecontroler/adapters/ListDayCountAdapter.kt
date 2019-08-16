@@ -16,7 +16,7 @@ import org.jetbrains.anko.find
 import java.util.*
 
 class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
-	RecyclerView.Adapter<ListDayCountAdapter.DataObjectHolder>() {
+	BaseAdapter<ListDayCountAdapter.DataObjectHolder>() {
 
 	private lateinit var onClickListener: (Int) -> Unit
 	private lateinit var context: Context

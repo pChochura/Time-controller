@@ -18,8 +18,7 @@ import com.pointlessapss.timecontroler.utils.Utils
 class ListHistoryAdapter(
 	private val items: MutableList<Item>,
 	private val withAdder: Boolean = false
-) :
-	RecyclerView.Adapter<ListHistoryAdapter.DataObjectHolder>() {
+) : BaseAdapter<ListHistoryAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
 	lateinit var clickListener: ClickListener

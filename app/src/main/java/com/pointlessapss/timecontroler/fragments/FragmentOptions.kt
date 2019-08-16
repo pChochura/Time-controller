@@ -322,7 +322,7 @@ class FragmentOptions private constructor(
 			list.apply {
 				layoutManager = GridLayoutManager(context!!, 4, RecyclerView.VERTICAL, false)
 				adapter = ColorsAdapter(colors).apply {
-					setOnClickListner {
+					setOnClickListener {
 						item.color = colors[it]
 						dialog.dismiss()
 						callbackOk.invoke()

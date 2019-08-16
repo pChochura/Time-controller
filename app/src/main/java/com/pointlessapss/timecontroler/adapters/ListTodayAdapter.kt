@@ -20,7 +20,7 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
 
 class ListTodayAdapter(private val items: MutableList<Item>) :
-	RecyclerView.Adapter<ListTodayAdapter.DataObjectHolder>() {
+	BaseAdapter<ListTodayAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
 	lateinit var clickListener: ClickListener
