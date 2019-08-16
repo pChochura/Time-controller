@@ -42,6 +42,7 @@ class MonthPickerView(
 			setYearsList()
 			handleClicks()
 			translateIndicator(selectedDate.get(Calendar.MONTH))
+			refreshTitle()
 		}
 	}
 
