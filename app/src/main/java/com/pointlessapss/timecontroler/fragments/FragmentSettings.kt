@@ -111,7 +111,7 @@ class FragmentSettings : FragmentBase() {
 					Item.fromDocument(it)?.let { items ->
 						doAsync {
 							db.itemDao().insertAll(*items.toTypedArray())
-							onForceRefreshListener?.invoke(this@FragmentSettings)
+							onForceRefreshListener?.invoke()
 						}
 					}
 				}

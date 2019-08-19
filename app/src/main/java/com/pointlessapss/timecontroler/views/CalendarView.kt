@@ -39,6 +39,7 @@ class CalendarView(
 
 	private var onMonthChangeListener: ((currentMonth: Calendar) -> Unit)? = null
 	private var onDaySelectedListener: ((selectedDay: Calendar) -> Unit)? = null
+	private var onDayLongClickListener: ((selectedDay: Calendar) -> Unit)? = null
 
 	private lateinit var scroller: OverScroller
 	private lateinit var gestureDetector: GestureDetector
@@ -106,8 +107,16 @@ class CalendarView(
 		post { refresh() }
 	}
 
-	fun removeEventById(id: Int) {
+	fun removeEventsById(id: Int) {
 		eventsAll.removeAll { it.id == id }
+		post { refresh() }
+	}
+
+	fun removeEventsByDay(day: Calendar) {
+		eventsAll.removeAll {
+			it.date.get(Calendar.DAY_OF_YEAR) == day.get(Calendar.DAY_OF_YEAR)
+					&& it.date.get(Calendar.YEAR) == day.get(Calendar.YEAR)
+		}
 		post { refresh() }
 	}
 
@@ -141,6 +150,10 @@ class CalendarView(
 	fun setOnDaySelectedListener(onDaySelectedListener: (selectedDay: Calendar) -> Unit) {
 		this.onDaySelectedListener = onDaySelectedListener
 		post { this.onDaySelectedListener?.invoke(selectedDay) }
+	}
+
+	fun setOnDayLongClickListener(onDayLongClickListener: (selectedDay: Calendar) -> Unit) {
+		this.onDayLongClickListener = onDayLongClickListener
 	}
 
 	fun getSelectedDay(): Calendar {
@@ -344,6 +357,19 @@ class CalendarView(
 
 				invalidate()
 				return true
+			}
+
+			override fun onLongPress(e: MotionEvent) {
+				val posX = (e.x / mDayWidth).toInt()
+				val posY = ((e.y - paddingLabels.vertical - textSizeLabels) / mDayHeight).toInt()
+				val dayOffset = posY * numberOfDays + posX
+
+				onDayLongClickListener?.invoke((selectedDay.clone() as Calendar).apply {
+					timeInMillis = currentMonth.timeInMillis
+					set(Calendar.WEEK_OF_MONTH, 1)
+					set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+					add(Calendar.DAY_OF_MONTH, dayOffset)
+				})
 			}
 		})
 	}

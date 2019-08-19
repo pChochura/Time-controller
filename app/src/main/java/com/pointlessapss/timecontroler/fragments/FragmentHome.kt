@@ -3,7 +3,6 @@ package com.pointlessapss.timecontroler.fragments
 import android.os.Handler
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
@@ -78,7 +77,8 @@ class FragmentHome : FragmentBase() {
 		rootView!!.find<View>(R.id.buttonShowAll).setOnClickListener {
 			onChangeFragmentListener?.invoke(FragmentAllItems().apply {
 				setDb(db)
-				setTasks(tasksCreated)
+				setTasksCreated(tasksCreated)
+				setTasksDone(tasksDone)
 			})
 		}
 	}
@@ -99,24 +99,24 @@ class FragmentHome : FragmentBase() {
 		}
 	}
 
-	private fun insertItemDone(item: Item) {
+	private fun insertItemsDone(vararg item: Item) {
 		doAsync {
-			db.itemDao().insertAllDone(item)
-			onForceRefreshListener?.invoke(this@FragmentHome)
+			db.itemDao().insertAllDone(*item)
+			onForceRefreshListener?.invoke()
 		}
 	}
 
-	private fun insertItemCreated(item: Item) {
+	private fun insertItemsCreated(vararg item: Item) {
 		doAsync {
-			db.itemDao().insertAll(item)
-			onForceRefreshListener?.invoke(this@FragmentHome)
+			db.itemDao().insertAll(*item)
+			onForceRefreshListener?.invoke()
 		}
 	}
 
-	private fun deleteItemDone(item: Item) {
+	private fun deleteItemsDone(vararg item: Item) {
 		doAsync {
-			db.itemDao().delete(item)
-			onForceRefreshListener?.invoke(this@FragmentHome)
+			db.itemDao().deleteAll(*item)
+			onForceRefreshListener?.invoke()
 		}
 	}
 
@@ -154,8 +154,8 @@ class FragmentHome : FragmentBase() {
 				DialogUtil.showMessage(activity!!, resources.getString(R.string.want_to_remove), true) {
 					val item = tasksHistory.removeAt(pos)
 					tasksDone.remove(item)
-					calendar.removeEventById(item.id)
-					deleteItemDone(item)
+					calendar.removeEventsById(item.id)
+					deleteItemsDone(item)
 					Handler().post {
 						refreshListHistory()
 					}
@@ -168,7 +168,7 @@ class FragmentHome : FragmentBase() {
 					calendar.setEventById(Event(item, id = tasksHistory[pos].id))
 					showDayHistory(calendar.getSelectedDay())
 
-					insertItemDone(item)
+					insertItemsDone(item)
 				}
 			}
 		})
@@ -180,8 +180,11 @@ class FragmentHome : FragmentBase() {
 		calendar.setOnMonthChangeListener {
 			onMonthChangeListener?.invoke(it)
 		}
-		calendar.setOnDaySelectedListener { day ->
-			showDayHistory(day)
+		calendar.setOnDaySelectedListener {
+			showDayHistory(it)
+		}
+		calendar.setOnDayLongClickListener {
+			showDayOptions(it)
 		}
 	}
 
@@ -192,6 +195,45 @@ class FragmentHome : FragmentBase() {
 					&& it.startDate?.get(Calendar.YEAR) == day.get(Calendar.YEAR)
 		})
 		refreshListHistory()
+	}
+
+	private fun showDayOptions(day: Calendar) {
+		FragmentDayOptions(day).apply {
+			clickListener = object : FragmentDayOptions.ClickListener {
+				override fun onMarkDsiabled() {
+					tasksCreated.forEach {
+						if (it.disabledDays == null) {
+							it.disabledDays = mutableListOf(day)
+						} else {
+							it.disabledDays!!.add(day)
+						}
+					}
+					insertItemsCreated(*(tasksCreated.toTypedArray()))
+					onForceRefreshListener?.invoke()
+
+					dismiss()
+				}
+
+				override fun onRemoveAll() {
+					DialogUtil.showMessage(activity!!, resources.getString(R.string.want_to_remove), true) {
+						val tasksToRemove = tasksDone.filter {
+							it.startDate?.get(Calendar.DAY_OF_YEAR) == day.get(Calendar.DAY_OF_YEAR)
+									&& it.startDate?.get(Calendar.YEAR) == day.get(Calendar.YEAR)
+						}
+						tasksDone.removeAll(tasksToRemove)
+						if (Utils.formatDate.format(calendar.getSelectedDay().time) == Utils.formatDate.format(day.time)) {
+							showDayHistory(day)
+						}
+
+						calendar.removeEventsByDay(day)
+
+						deleteItemsDone(*(tasksToRemove.toTypedArray()))
+
+						dismiss()
+					}
+				}
+			}
+		}.show(childFragmentManager, "dayOptionsFragment")
 	}
 
 	private fun refreshListHistory() {
@@ -291,7 +333,7 @@ class FragmentHome : FragmentBase() {
 			calendar.addEvent(Event(setItem))
 			showDayHistory(calendar.getSelectedDay())
 
-			insertItemDone(setItem)
+			insertItemsDone(setItem)
 		}, editable)
 	}
 
@@ -302,7 +344,7 @@ class FragmentHome : FragmentBase() {
 				generateTodayTasks()
 				listTodayAdapter.notifyDataSetChanged()
 
-				insertItemCreated(item)
+				insertItemsCreated(item)
 			}
 		}.show(childFragmentManager, "addTaskFragment")
 	}

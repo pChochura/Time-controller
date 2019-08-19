@@ -24,5 +24,5 @@ interface ItemDao {
 	}
 
 	@Delete
-	fun delete(item: Item)
+	fun deleteAll(vararg item: Item)
 }

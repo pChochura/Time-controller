@@ -19,6 +19,9 @@ val Int.dp: Int
 	get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 object Utils {
+	val formatDateWeekday
+		get() = SimpleDateFormat("EEEE, dd.MM.yyyy", Locale.getDefault())
+
 	val formatDate
 		get() = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
@@ -85,12 +88,20 @@ object Utils {
 		return "${formatTime.format(item.startDate!!.time)} - ${formatTime.format(endTime.time)}"
 	}
 
-	fun getMonthWeekdaysCount(weekdays: BooleanArray, month: Calendar, limit: Calendar? = null): Int {
+	fun getMonthWeekdaysCount(
+		weekdays: BooleanArray,
+		month: Calendar,
+		limit: Calendar? = null,
+		disabledDays: List<Calendar>? = null
+	): Int {
 		val currentMonth = month.get(Calendar.MONTH)
 		var count = 0
 		month.set(Calendar.DAY_OF_MONTH, 1)
 		while (month.get(Calendar.MONTH) == currentMonth) {
-			if (weekdays[month.get(Calendar.DAY_OF_WEEK) - 1]) {
+			if (weekdays[month.get(Calendar.DAY_OF_WEEK) - 1] && disabledDays?.firstOrNull {
+					it.get(Calendar.DAY_OF_YEAR) == month.get(Calendar.DAY_OF_YEAR)
+							&& it.get(Calendar.YEAR) == month.get(Calendar.YEAR)
+				} == null) {
 				count++
 			}
 

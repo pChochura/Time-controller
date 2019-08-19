@@ -15,6 +15,7 @@ class FragmentAllItems : FragmentBase() {
 
 	private lateinit var db: AppDatabase
 	private lateinit var items: MutableList<Item>
+	private lateinit var itemsDone: MutableList<Item>
 
 	override fun getLayoutId() = R.layout.fragment_all_items
 
@@ -45,10 +46,13 @@ class FragmentAllItems : FragmentBase() {
 	private fun clickRemove(pos: Int, listHistoryAdapter: ListHistoryAdapter) {
 		DialogUtil.showMessage(activity!!, resources.getString(R.string.want_to_remove), true) {
 			doAsync {
-				db.itemDao().delete(items.removeAt(pos))
+				val parent = items.removeAt(pos)
+				val toRemove = itemsDone.filter { it.parentId == parent.id }
+				db.itemDao().deleteAll(*(toRemove.toTypedArray()))
+				db.itemDao().deleteAll(parent)
 				uiThread {
 					listHistoryAdapter.notifyDataSetChanged()
-					onForceRefreshListener?.invoke(this@FragmentAllItems)
+					onForceRefreshListener?.invoke()
 				}
 			}
 		}
@@ -66,14 +70,18 @@ class FragmentAllItems : FragmentBase() {
 					db.itemDao().insertAll(item)
 					uiThread {
 						adapter.notifyDataSetChanged()
-						onForceRefreshListener?.invoke(this@FragmentAllItems)
+						onForceRefreshListener?.invoke()
 					}
 				}
 			}
 		}.show(childFragmentManager, "editTaskFragment")
 	}
 
-	fun setTasks(items: MutableList<Item>) {
+	fun setTasksCreated(items: MutableList<Item>) {
 		this.items = items
+	}
+
+	fun setTasksDone(itemsDone: MutableList<Item>) {
+		this.itemsDone = itemsDone
 	}
 }

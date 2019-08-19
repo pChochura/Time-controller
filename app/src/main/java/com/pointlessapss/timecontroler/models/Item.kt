@@ -6,10 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.gson.Gson
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @Entity(tableName = "items")
 class Item(@ColumnInfo(name = "title") var title: String = "") {
@@ -26,6 +23,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "tags") var tags: IntArray? = null
 	@ColumnInfo(name = "done") var done: Boolean = false
 	@ColumnInfo(name = "settlements") var settlements: MutableList<Calendar>? = null
+	@ColumnInfo(name = "disabledDays") var disabledDays: MutableList<Calendar>? = null
 
 	fun getTimeAmount(amt: Float = amount) =
 		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
@@ -60,6 +58,9 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 		if (item.settlements != null) {
 			settlements = mutableListOf(*item.settlements!!.toTypedArray())
 		}
+		if (item.disabledDays != null) {
+			disabledDays = mutableListOf(*item.disabledDays!!.toTypedArray())
+		}
 	}
 
 	fun toMap(): Map<String, Any?> {
@@ -75,7 +76,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 			"prize" to prize,
 			"tags" to tags,
 			"done" to done,
-			"settlements" to settlements?.map { it.timeInMillis }
+			"settlements" to settlements?.map { it.timeInMillis },
+			"disabledDays" to disabledDays?.map { it.timeInMillis }
 		)
 	}
 
@@ -96,6 +98,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 					tags = (item["tags"] as? ArrayList<*>)?.map { it.toString().toInt() }?.toIntArray()
 					done = item["done"].toString().toBoolean()
 					settlements = (item["settlements"] as? ArrayList<*>)?.map { time -> Calendar.getInstance().apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
+					disabledDays = (item["disabledDays"] as? ArrayList<*>)?.map { time -> Calendar.getInstance().apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
 				}
 			}
 		}

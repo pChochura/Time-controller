@@ -18,7 +18,7 @@ abstract class FragmentBase : Fragment() {
 
 	var rootView: ViewGroup? = null
 
-	var onForceRefreshListener: ((FragmentBase) -> Unit)? = null
+	var onForceRefreshListener: (() -> Unit)? = null
 	var onChangeFragmentListener: ((FragmentBase) -> Unit)? = null
 	var onLoadedFragmentListener: (() -> Unit)? = null
 	var forceRefresh = false

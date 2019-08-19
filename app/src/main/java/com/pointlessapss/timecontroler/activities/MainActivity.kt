@@ -1,7 +1,6 @@
 package com.pointlessapss.timecontroler.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.pointlessapss.timecontroler.R
@@ -121,8 +120,8 @@ class MainActivity : AppCompatActivity() {
 			fragmentLoaded = false
 			val fragmentTransaction = supportFragmentManager.beginTransaction()
 			fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-			if (currentFragment != null) fragmentTransaction.replace(R.id.fragmentContainer, fragment).commit()
-			else fragmentTransaction.add(R.id.fragmentContainer, fragment).commit()
+			if (currentFragment != null) fragmentTransaction.replace(R.id.containerFragment, fragment).commit()
+			else fragmentTransaction.add(R.id.containerFragment, fragment).commit()
 			currentFragment = fragment
 			if (fragments.containsKey(pos)) {
 				history.remove(pos)

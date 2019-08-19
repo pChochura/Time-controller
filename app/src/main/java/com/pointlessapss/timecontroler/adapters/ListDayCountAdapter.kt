@@ -33,7 +33,7 @@ class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 					acc?.apply { add(e) }
 				}
 			}.keys.forEach { key ->
-			count += Utils.getMonthWeekdaysCount(pair.first.weekdays, key.calendar, today)
+			count += Utils.getMonthWeekdaysCount(pair.first.weekdays, key.calendar, today, pair.first.disabledDays)
 		}
 		count
 	}
