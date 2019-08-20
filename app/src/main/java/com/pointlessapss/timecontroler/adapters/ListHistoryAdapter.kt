@@ -16,7 +16,7 @@ import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
 
 class ListHistoryAdapter(
-	private val items: MutableList<Item>,
+	private val items: List<Pair<Item, Item>>,
 	private val withAdder: Boolean = false
 ) : BaseAdapter<ListHistoryAdapter.DataObjectHolder>() {
 
@@ -68,11 +68,11 @@ class ListHistoryAdapter(
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		if (getItemViewType(pos) == 1) {
-			setColor(holder, items[pos].color)
-			holder.textTaskName?.text = items[pos].title
-			holder.textTaskDescription?.text = Utils.createItemDescription(context, items[pos])
-			holder.textFootnote?.text = items[pos].getTimeAmount()
-			if (items[pos].amount != 0f && !items[pos].wholeDay) {
+			setColor(holder, items[pos].first.color)
+			holder.textTaskName?.text = items[pos].first.title
+			holder.textTaskDescription?.text = Utils.createItemDescription(context, items[pos].second)
+			holder.textFootnote?.text = items[pos].second.getTimeAmount()
+			if (items[pos].second.amount != 0f && !items[pos].second.wholeDay) {
 				holder.textFootnote?.visibility = View.VISIBLE
 			} else {
 				holder.textFootnote?.visibility = View.GONE

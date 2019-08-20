@@ -21,7 +21,7 @@ abstract class FragmentBase : Fragment() {
 	var onForceRefreshListener: (() -> Unit)? = null
 	var onChangeFragmentListener: ((FragmentBase) -> Unit)? = null
 	var onLoadedFragmentListener: (() -> Unit)? = null
-	var forceRefresh = false
+	private var forceRefresh = false
 
 	@LayoutRes abstract fun getLayoutId(): Int
 	abstract fun created()

@@ -67,47 +67,53 @@ class MainActivity : AppCompatActivity() {
 		db = AppDatabase.invoke(this)
 	}
 
-	private fun setFragments() {
-		fragments[ANALYTICS] = FragmentAnalytics().apply {
-			setDb(db)
-			onForceRefreshListener = {
-				setFragments()
-			}
-			onLoadedFragmentListener = {
-				fragmentLoaded = true
-			}
-		}
-		fragments[HOME] = FragmentHome().apply {
-			setDb(db)
-			setOnMonthChangeListener {
-				val text = Utils.formatMonthLong.format(it.time)
-				supportActionBar?.title = text
-			}
-			onForceRefreshListener = {
-				setFragments()
-			}
-			onLoadedFragmentListener = {
-				fragmentLoaded = true
-			}
-			onChangeFragmentListener = {
-				setFragment(fragment = it.apply {
-					onForceRefreshListener = {
-						setFragments()
-					}
-					onLoadedFragmentListener = {
-						fragmentLoaded = true
-					}
-				})
-				supportActionBar?.title = resources.getString(R.string.all_tasks)
+	private fun setFragments(fragment: FragmentBase? = null, all: Boolean = (fragment == null)) {
+		if (all || fragment != fragments[ANALYTICS]) {
+			fragments[ANALYTICS] = FragmentAnalytics().apply {
+				setDb(db)
+				onForceRefreshListener = {
+					setFragments(fragments[ANALYTICS])
+				}
+				onLoadedFragmentListener = {
+					fragmentLoaded = true
+				}
 			}
 		}
-		fragments[SETTINGS] = FragmentSettings().apply {
-			setDb(db)
-			onForceRefreshListener = {
-				setFragments()
+		if (all || fragment != fragments[HOME]) {
+			fragments[HOME] = FragmentHome().apply {
+				setDb(db)
+				setOnMonthChangeListener {
+					val text = Utils.formatMonthLong.format(it.time)
+					supportActionBar?.title = text
+				}
+				onForceRefreshListener = {
+					setFragments(fragments[HOME])
+				}
+				onLoadedFragmentListener = {
+					fragmentLoaded = true
+				}
+				onChangeFragmentListener = {
+					setFragment(fragment = it.apply {
+						onForceRefreshListener = {
+							setFragments(it)
+						}
+						onLoadedFragmentListener = {
+							fragmentLoaded = true
+						}
+					})
+					supportActionBar?.title = resources.getString(R.string.all_tasks)
+				}
 			}
-			onLoadedFragmentListener = {
-				fragmentLoaded = true
+		}
+		if (all || fragment != fragments[SETTINGS]) {
+			fragments[SETTINGS] = FragmentSettings().apply {
+				setDb(db)
+				onForceRefreshListener = {
+					setFragments(fragments[SETTINGS])
+				}
+				onLoadedFragmentListener = {
+					fragmentLoaded = true
+				}
 			}
 		}
 	}

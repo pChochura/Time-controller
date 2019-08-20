@@ -29,7 +29,7 @@ class FragmentHome : FragmentBase() {
 	private var tasksCreated = mutableListOf<Item>()
 	private var tasksDone = mutableListOf<Item>()
 	private var tasksToday = mutableListOf<Item>()
-	private var tasksHistory = mutableListOf<Item>()
+	private var tasksHistory = mutableListOf<Pair<Item, Item>>()
 	private lateinit var listTodayAdapter: ListTodayAdapter
 	private lateinit var listHistoryAdapter: ListHistoryAdapter
 	private lateinit var db: AppDatabase
@@ -93,7 +93,7 @@ class FragmentHome : FragmentBase() {
 			tasksDone.addAll(db.itemDao().getAll(true).toMutableList())
 
 			uiThread {
-				calendar.addEvents(tasksDone.map { task -> Event(task) })
+				calendar.addEvents(tasksDone.map { task -> Event(task, color = tasksCreated.find { it.id == task.parentId }!!.color) })
 				showDayHistory(calendar.getSelectedDay())
 			}
 		}
@@ -153,9 +153,9 @@ class FragmentHome : FragmentBase() {
 			override fun clickRemove(pos: Int) {
 				DialogUtil.showMessage(activity!!, resources.getString(R.string.want_to_remove), true) {
 					val item = tasksHistory.removeAt(pos)
-					tasksDone.remove(item)
-					calendar.removeEventsById(item.id)
-					deleteItemsDone(item)
+					tasksDone.remove(item.second)
+					calendar.removeEventsById(item.second.id)
+					deleteItemsDone(item.second)
 					Handler().post {
 						refreshListHistory()
 					}
@@ -163,9 +163,9 @@ class FragmentHome : FragmentBase() {
 			}
 
 			override fun click(pos: Int) {
-				showTaskPreview(tasksHistory[pos], true) { item ->
-					tasksDone[tasksDone.indexOfFirst { it.id == tasksHistory[pos].id }] = item
-					calendar.setEventById(Event(item, id = tasksHistory[pos].id))
+				showTaskPreview(tasksHistory[pos].second, true) { item ->
+					tasksDone[tasksDone.indexOfFirst { it.id == tasksHistory[pos].second.id }] = item
+					calendar.setEventById(Event(item, id = tasksHistory[pos].second.id))
 					showDayHistory(calendar.getSelectedDay())
 
 					insertItemsDone(item)
@@ -193,7 +193,7 @@ class FragmentHome : FragmentBase() {
 		tasksHistory.addAll(tasksDone.filter {
 			it.startDate?.get(Calendar.DAY_OF_YEAR) == day.get(Calendar.DAY_OF_YEAR)
 					&& it.startDate?.get(Calendar.YEAR) == day.get(Calendar.YEAR)
-		})
+		}.map { item -> tasksCreated.find { it.id == item.parentId }!! to item })
 		refreshListHistory()
 	}
 

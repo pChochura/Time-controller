@@ -30,7 +30,7 @@ class FragmentAllItems : FragmentBase() {
 	private fun init() {
 		rootView!!.find<RecyclerView>(R.id.listAll).apply {
 			layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-			adapter = ListHistoryAdapter(items, true).also { adapter ->
+			adapter = ListHistoryAdapter(items.map { it to it }, true).also { adapter ->
 				adapter.setOnClickListener(object : ListHistoryAdapter.ClickListener {
 					override fun clickRemove(pos: Int) {
 						clickRemove(pos, adapter)
