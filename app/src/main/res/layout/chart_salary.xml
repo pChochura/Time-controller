@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textSalary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:text="$0.00"
+            android:textColor="@color/colorText1"
+            android:textSize="40sp"
+            android:textStyle="normal" />
+
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonPeriod"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minHeight="0dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/since_last_settlement"
+            android:textAppearance="@style/ButtonText"
+            android:textColor="@color/colorText4"
+            android:textSize="12sp"
+            app:cornerRadius="20dp"
+            app:icon="@drawable/ic_arrow_down"
+            app:iconPadding="5dp"
+            app:iconSize="16dp"
+            app:iconTint="@color/colorText4"
+            app:rippleColor="@color/colorPrimaryDark" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/settlements"
+            android:textStyle="normal" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/dialog_background"
+            android:backgroundTint="@android:color/white">
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listSettlements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/buttonAddSettlement"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="4"
+                tools:listitem="@layout/item_prize_periodically" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonAddSettlement"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="@string/add_settlement"
+                android:textAppearance="@style/ButtonText"
+                android:textColor="@color/colorText3"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/listSettlements" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

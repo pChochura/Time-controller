@@ -3,11 +3,15 @@ package com.pointlessapss.timecontroler.models
 import android.content.Context
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.utils.Utils
+import com.pointlessapss.timecontroler.utils.round
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.floor
 
 class Prize(var type: Type, var amount: Float) {
 	enum class Type(val id: Int) {
-		PER_MONTH(R.id.per_month), PER_DAY(R.id.per_day), PER_HOUR(R.id.per_hour), PER_TASK(R.id.per_task);
+		PER_MONTH(R.id.per_month), PER_DAY(R.id.per_day), PER_HOUR(R.id.per_hour),
+		PER_TASK(R.id.per_task);
 
 		companion object {
 			private fun fromId(id: Int) = values().find { it.id == id } ?: PER_TASK
@@ -40,12 +44,21 @@ class Prize(var type: Type, var amount: Float) {
 					list?.size?.times(prize.amount)
 				}
 				Type.PER_HOUR -> {
-					list?.sumByDouble { it.amount.toDouble() }?.toFloat()
+					list?.sumByDouble { it.amount.toDouble() }?.toFloat()?.times(prize.amount)
+						?.toDouble()?.round()?.toFloat()
 				}
 				Type.PER_DAY -> {
-					list?.groupBy { Utils.formatDate.format(it.startDate!!.time) }?.size?.times(prize.amount)
+					list?.groupBy { Utils.formatDate.format(it.startDate!!.time) }?.size?.times(
+						prize.amount
+					)
 				}
 				else -> null
+			}.let {
+				if (abs(it ?: 1f) < 1 && abs(it?.minus(floor(it))?.times(100) ?: 0f) < 1) {
+					0f
+				} else {
+					it
+				}
 			}
 		}
 

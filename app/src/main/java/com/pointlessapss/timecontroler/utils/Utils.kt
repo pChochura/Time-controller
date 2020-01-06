@@ -1,12 +1,10 @@
 package com.pointlessapss.timecontroler.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Point
 import android.text.method.KeyListener
-import android.util.DisplayMetrics
 import android.widget.EditText
 import androidx.annotation.FloatRange
 import androidx.core.content.ContextCompat
@@ -14,9 +12,16 @@ import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
 
 val Int.dp: Int
 	get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+fun Double.round(decimals: Int = 2): Double {
+	var multiplier = 1.0
+	repeat(decimals) { multiplier *= 10 }
+	return round(this * multiplier) / multiplier
+}
 
 object Utils {
 	val formatDateWeekday
@@ -41,11 +46,11 @@ object Utils {
 		return (0.299f * Color.red(color) + 0.587f * Color.green(color) + 0.114f * Color.blue(color)) / 255f
 	}
 
-	fun getScreenSize(activity: Activity): Point {
-		val displayMetrics = DisplayMetrics()
-		activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-		return Point(displayMetrics.widthPixels, displayMetrics.heightPixels)
-	}
+	fun getScreenSize() =
+		Point(
+			Resources.getSystem().displayMetrics.widthPixels,
+			Resources.getSystem().displayMetrics.heightPixels
+		)
 
 	fun toggleEditText(editText: EditText, enabled: Boolean = false) {
 		if (enabled) {
@@ -88,27 +93,27 @@ object Utils {
 		return "${formatTime.format(item.startDate!!.time)} - ${formatTime.format(endTime.time)}"
 	}
 
-	fun getMonthWeekdaysCount(
+	fun getFieldWeekdaysCount(
 		weekdays: BooleanArray,
-		month: Calendar,
+		start: Calendar,
 		limit: Calendar? = null,
-		disabledDays: List<Calendar>? = null
+		disabledDays: List<Calendar>? = null,
+		field: Int = Calendar.MONTH
 	): Int {
-		val currentMonth = month.get(Calendar.MONTH)
+		val current = start.get(field)
 		var count = 0
-		month.set(Calendar.DAY_OF_MONTH, 1)
-		while (month.get(Calendar.MONTH) == currentMonth) {
-			if (weekdays[month.get(Calendar.DAY_OF_WEEK) - 1] && disabledDays?.firstOrNull {
-					it.get(Calendar.DAY_OF_YEAR) == month.get(Calendar.DAY_OF_YEAR)
-							&& it.get(Calendar.YEAR) == month.get(Calendar.YEAR)
+		while (start.get(field) == current) {
+			if (weekdays[start.get(Calendar.DAY_OF_WEEK) - 1] && disabledDays?.firstOrNull {
+					it.get(Calendar.DAY_OF_YEAR) == start.get(Calendar.DAY_OF_YEAR)
+							&& it.get(Calendar.YEAR) == start.get(Calendar.YEAR)
 				} == null) {
 				count++
 			}
 
-			if (limit?.before(month) == true) {
+			if (limit?.before(start) == true) {
 				break
 			}
-			month.add(Calendar.DAY_OF_MONTH, 1)
+			start.add(Calendar.DAY_OF_MONTH, 1)
 		}
 		return count
 	}

@@ -1,115 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.coordinatorlayout.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:elevation="1dp"
+            app:liftOnScroll="true">
+
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:tabGravity="center"
+                app:tabIndicator="@drawable/indicator"
+                app:tabIndicatorColor="@color/colorAccent"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorGravity="center"
+                app:tabIndicatorHeight="30dp"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/colorText3"
+                app:tabTextColor="@color/colorText4"
+                app:tabUnboundedRipple="true" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Label"
-                android:id="@+id/labelPrize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/amount"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listPrize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="horizontal"
-                tools:listitem="@layout/item_prize"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Label"
-                android:id="@+id/labelMonthProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/day_count"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listDayCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="horizontal"
-                tools:listitem="@layout/item_day_count"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Label"
-                android:id="@+id/labelPercentage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/average_time_spent"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listPercentage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="vertical"
-                tools:itemCount="2"
-                tools:listitem="@layout/item_percentage"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Label"
-                android:id="@+id/labelHours"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/hours"/>
-
-        <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="1px"
-                app:cardUseCompatPadding="true"
-                app:cardBackgroundColor="@android:color/white">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tabsHours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:tabGravity="center"
-                        app:tabMode="scrollable"
-                        app:tabSelectedTextColor="@color/colorText3"
-                        app:tabTextColor="@color/colorText2"
-                        app:tabIndicator="@drawable/indicator"
-                        app:tabIndicatorColor="@color/colorPrimary"
-                        app:tabIndicatorGravity="center"
-                        app:tabIndicatorFullWidth="true"
-                        app:tabIndicatorHeight="30dp"
-                        app:tabUnboundedRipple="true"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/chartHours"
-                        android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tabsHours"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
-
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

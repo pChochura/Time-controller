@@ -33,7 +33,12 @@ class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 					acc?.apply { add(e) }
 				}
 			}.keys.forEach { key ->
-			count += Utils.getMonthWeekdaysCount(pair.first.weekdays, key.calendar, today, pair.first.disabledDays)
+			count += Utils.getFieldWeekdaysCount(
+				pair.first.weekdays,
+				key.calendar,
+				today,
+				pair.first.disabledDays
+			)
 		}
 		count
 	}
@@ -64,7 +69,13 @@ class ListDayCountAdapter(val items: List<Pair<Item, MutableList<Item>?>>) :
 	@NonNull
 	override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): DataObjectHolder {
 		context = parent.context
-		return DataObjectHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_day_count, parent, false))
+		return DataObjectHolder(
+			LayoutInflater.from(parent.context).inflate(
+				R.layout.item_day_count,
+				parent,
+				false
+			)
+		)
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {

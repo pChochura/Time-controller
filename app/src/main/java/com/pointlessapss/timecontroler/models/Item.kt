@@ -26,7 +26,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 	@ColumnInfo(name = "disabledDays") var disabledDays: MutableList<Calendar>? = null
 
 	fun getTimeAmount(amt: Float = amount) =
-		"${amt.toInt()}:${String.format("%02d", ((amt - amt.toInt()) * 60).toInt())}"
+		"${amt.toInt()}h ${String.format("%02dm", ((amt - amt.toInt()) * 60).toInt())}"
 
 	fun setParent(item: Item, date: Calendar) {
 		set(item)

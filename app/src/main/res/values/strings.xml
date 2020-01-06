@@ -24,7 +24,7 @@
     <string name="home">Home</string>
     <string name="day_count">Day count</string>
     <string name="hours">Hours</string>
-    <string name="month_average">Month average</string>
+    <string name="month_average">Month average (%dh)</string>
     <string name="settings">Settings</string>
     <string name="account">Account</string>
     <string name="synchronization">Synchronization</string>
@@ -56,6 +56,17 @@
     <string name="amount">Amount</string>
     <string name="period">Period</string>
     <string name="select_month">Select month</string>
+    <string name="salary">﹩%.2f</string>
+    <string name="settlements">Settlements</string>
+    <string name="this_week">This week</string>
+    <string name="days">Days</string>
+    <string name="time_spent">Time spent</string>
+    <string name="average_time">Average time spent (%d%%)</string>
+    <string name="assumed_time">Assumed time (%dh %02dm)</string>
+    <string name="weekly">Weekly</string>
+    <string name="available_day_count">Available day count</string>
+    <string name="actual_day_count">Actual day count</string>
+    <string name="add_settlement">Add settlement</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>

@@ -3,6 +3,7 @@ package com.pointlessapss.timecontroler.activities
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.database.AppDatabase
 import com.pointlessapss.timecontroler.fragments.FragmentAnalytics
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun init() {
-		supportActionBar?.elevation = 0f
+		AndroidThreeTen.init(this)
 		bottomNavigation.selectedItemId = HOME
 
 		bottomNavigation.setOnNavigationItemSelectedListener {
@@ -48,17 +49,12 @@ class MainActivity : AppCompatActivity() {
 			when (it.itemId) {
 				R.id.analytics -> {
 					setFragment(ANALYTICS)
-					supportActionBar?.title = resources.getString(R.string.analytics)
 				}
 				R.id.home -> {
 					setFragment(HOME)
-					(fragments[HOME] as? FragmentHome)?.getCurrentMonth()?.time?.let { time ->
-						supportActionBar?.title = Utils.formatMonthLong.format(time)
-					}
 				}
 				R.id.settings -> {
 					setFragment(SETTINGS)
-					supportActionBar?.title = resources.getString(R.string.settings)
 				}
 			}
 			true
@@ -82,10 +78,6 @@ class MainActivity : AppCompatActivity() {
 		if (all || fragment != fragments[HOME]) {
 			fragments[HOME] = FragmentHome().apply {
 				setDb(db)
-				setOnMonthChangeListener {
-					val text = Utils.formatMonthLong.format(it.time)
-					supportActionBar?.title = text
-				}
 				onForceRefreshListener = {
 					setFragments(fragments[HOME])
 				}

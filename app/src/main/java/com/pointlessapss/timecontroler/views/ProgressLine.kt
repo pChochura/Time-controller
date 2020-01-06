@@ -18,6 +18,14 @@ import com.pointlessapss.timecontroler.utils.dp
 import kotlin.math.max
 import kotlin.math.min
 
+internal enum class Orientation(internal val value: Int) {
+	HORIZONTAL(0), VERTICAL(1);
+
+	companion object {
+		internal fun fromValue(value: Int) = values().find { it.value == value }
+	}
+}
+
 class ProgressLine(
 	context: Context,
 	attrs: AttributeSet,
@@ -51,7 +59,14 @@ class ProgressLine(
 
 	private var textTypeface: Typeface? = null
 
-	constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : this(context, attrs, defStyleAttr, 0)
+	private var orientation: Orientation = Orientation.HORIZONTAL
+
+	constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : this(
+		context,
+		attrs,
+		defStyleAttr,
+		0
+	)
 
 	constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0, 0)
 
@@ -108,6 +123,12 @@ class ProgressLine(
 				)
 				label = a.getString(R.styleable.ProgressLine_pl_label)
 				value = a.getString(R.styleable.ProgressLine_pl_value)
+				orientation = Orientation.fromValue(
+					a.getInt(
+						R.styleable.ProgressLine_pl_orientation,
+						orientation.value
+					)
+				) ?: orientation
 
 			} catch (ex: Exception) {
 				Log.d(javaClass.name, ex.message!!)
@@ -151,7 +172,7 @@ class ProgressLine(
 	}
 
 	fun setProgress(progress: Float) {
-		this.progress = progress
+		this.progress = min(1f, max(0f, progress))
 	}
 
 	fun setValue(value: String) {
@@ -168,11 +189,27 @@ class ProgressLine(
 	}
 
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-		val desiredWidth = suggestedMinimumWidth + paddingLeft + paddingRight
-		val desiredHeight = widthProgress + max(textSizeValue, textSizeLabel) + paddingTop + paddingBottom
+		val desiredWidth: Int
+		val desiredHeight: Int
+		when (orientation) {
+			Orientation.HORIZONTAL -> {
+				desiredWidth = suggestedMinimumWidth + paddingLeft + paddingRight
+				desiredHeight = (widthProgress + max(
+					textSizeValue,
+					textSizeLabel
+				) + suggestedMinimumHeight + paddingTop + paddingBottom).toInt()
+			}
+			Orientation.VERTICAL -> {
+				desiredWidth = (widthProgress + max(
+					textSizeValue,
+					textSizeLabel
+				) + suggestedMinimumWidth + paddingLeft + paddingRight).toInt()
+				desiredHeight = suggestedMinimumHeight + paddingTop + paddingBottom
+			}
+		}
 
 		mWidth = measureDimension(desiredWidth, widthMeasureSpec)
-		mHeight = measureDimension(desiredHeight.toInt(), heightMeasureSpec)
+		mHeight = measureDimension(desiredHeight, heightMeasureSpec)
 		setMeasuredDimension(mWidth, mHeight)
 	}
 
@@ -202,45 +239,95 @@ class ProgressLine(
 	}
 
 	private fun drawRim(canvas: Canvas) {
-		canvas.drawLine(
-			widthProgress,
-			mHeight - widthProgress / 2,
-			mWidth - widthProgress,
-			mHeight - widthProgress / 2,
-			paintRim
-		)
+		when (orientation) {
+			Orientation.HORIZONTAL -> {
+				canvas.drawLine(
+					widthProgress,
+					mHeight - widthProgress / 2,
+					mWidth - widthProgress,
+					mHeight - widthProgress / 2,
+					paintRim
+				)
+			}
+			Orientation.VERTICAL -> {
+				canvas.drawLine(
+					widthProgress / 2,
+					mHeight - widthProgress / 2,
+					widthProgress / 2,
+					widthProgress / 2,
+					paintRim
+				)
+			}
+		}
 	}
 
 	private fun drawProgress(canvas: Canvas) {
-		canvas.drawLine(
-			widthProgress,
-			mHeight - widthProgress / 2,
-			widthProgress + progress * (mWidth - 2 * widthProgress),
-			mHeight - widthProgress / 2,
-			paintProgress
-		)
+		when (orientation) {
+			Orientation.HORIZONTAL -> {
+				canvas.drawLine(
+					widthProgress,
+					mHeight - widthProgress / 2,
+					widthProgress + progress * (mWidth - 2 * widthProgress),
+					mHeight - widthProgress / 2,
+					paintProgress
+				)
+			}
+			Orientation.VERTICAL -> {
+				canvas.drawLine(
+					widthProgress / 2,
+					mHeight - widthProgress / 2,
+					widthProgress / 2,
+					mHeight - widthProgress / 2 - progress * (mHeight - widthProgress),
+					paintProgress
+				)
+			}
+		}
 	}
 
 	private fun drawLabel(canvas: Canvas) {
 		label?.also {
-			canvas.drawText(
-				it,
-				padding.left.toFloat(),
-				mHeight - widthProgress - paddingBottom - padding.bottom,
-				paintLabel
-			)
+			when (orientation) {
+				Orientation.HORIZONTAL -> {
+					canvas.drawText(
+						it,
+						padding.left.toFloat(),
+						mHeight - widthProgress - paddingBottom - padding.bottom,
+						paintLabel
+					)
+				}
+				Orientation.VERTICAL -> {
+					canvas.drawText(
+						it,
+						padding.left.toFloat() + widthProgress,
+						(mHeight - paddingBottom - padding.bottom).toFloat(),
+						paintLabel
+					)
+				}
+			}
 		}
 	}
 
 	private fun drawValue(canvas: Canvas) {
 		value?.also { v ->
-			val textWidthValue = paintValue.measureText(v)
-			canvas.drawText(
-				v,
-				mWidth - textWidthValue - padding.right,
-				mHeight.toFloat() - widthProgress - paddingBottom - padding.bottom,
-				paintValue
-			)
+			when (orientation) {
+				Orientation.HORIZONTAL -> {
+					val textWidthValue = paintValue.measureText(v)
+					canvas.drawText(
+						v,
+						mWidth - textWidthValue - padding.right,
+						mHeight.toFloat() - widthProgress - paddingBottom - padding.bottom,
+						paintValue
+					)
+				}
+				Orientation.VERTICAL -> {
+					canvas.drawText(
+						v,
+						padding.left.toFloat() + widthProgress,
+						(paddingTop + padding.top).toFloat(),
+						paintValue
+					)
+				}
+			}
 		}
 	}
 }

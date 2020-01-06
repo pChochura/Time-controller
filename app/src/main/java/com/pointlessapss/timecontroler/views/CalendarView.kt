@@ -260,46 +260,46 @@ class CalendarView(
 	private fun obtainStyles(a: TypedArray?, context: Context) {
 		a?.also {
 			try {
-				colorBg = a.getColor(
-					R.styleable.CalendarView_cv_color_bg,
-					ContextCompat.getColor(context, android.R.color.white)
-				)
-				colorSelectedDay = a.getColor(
-					R.styleable.CalendarView_cv_color_selected_day,
-					ContextCompat.getColor(context, R.color.colorAccentLight)
-				)
-				colorToday = a.getColor(
-					R.styleable.CalendarView_cv_color_today,
-					ContextCompat.getColor(context, R.color.colorAccent)
-				)
-				colorTextToday = a.getColor(
-					R.styleable.CalendarView_cv_color_text_today,
-					ContextCompat.getColor(context, R.color.colorText3)
-				)
-				colorLabels = a.getColor(
-					R.styleable.CalendarView_cv_color_text_labels,
-					ContextCompat.getColor(context, R.color.colorText1)
-				)
-				colorCurrentMonth = a.getColor(
-					R.styleable.CalendarView_cv_color_text_current_month,
-					ContextCompat.getColor(context, R.color.colorText1)
-				)
-				colorOtherMonth = a.getColor(
-					R.styleable.CalendarView_cv_color_text_other_month,
-					ContextCompat.getColor(context, R.color.colorText2)
-				)
-				textSizeLabels = a.getDimension(
-					R.styleable.CalendarView_cv_font_size_labels,
-					textSizeLabels
-				)
-				textSizeDays = a.getDimension(
-					R.styleable.CalendarView_cv_font_size_days,
-					textSizeDays
-				)
-				textTypeface = ResourcesCompat.getFont(
-					context,
-					a.getResourceId(R.styleable.CalendarView_cv_font_typeface, R.font.lato)
-				)!!
+//				colorBg = a.getColor(
+//					R.styleable.CalendarView_cv_color_bg,
+//					ContextCompat.getColor(context, android.R.color.white)
+//				)
+//				colorSelectedDay = a.getColor(
+//					R.styleable.CalendarView_cv_color_selected_day,
+//					ContextCompat.getColor(context, R.color.colorAccentLight)
+//				)
+//				colorToday = a.getColor(
+//					R.styleable.CalendarView_cv_color_today,
+//					ContextCompat.getColor(context, R.color.colorAccent)
+//				)
+//				colorTextToday = a.getColor(
+//					R.styleable.CalendarView_cv_color_text_today,
+//					ContextCompat.getColor(context, R.color.colorText3)
+//				)
+//				colorLabels = a.getColor(
+//					R.styleable.CalendarView_cv_color_text_labels,
+//					ContextCompat.getColor(context, R.color.colorText1)
+//				)
+//				colorCurrentMonth = a.getColor(
+//					R.styleable.CalendarView_cv_color_text_current_month,
+//					ContextCompat.getColor(context, R.color.colorText1)
+//				)
+//				colorOtherMonth = a.getColor(
+//					R.styleable.CalendarView_cv_color_text_other_month,
+//					ContextCompat.getColor(context, R.color.colorText2)
+//				)
+//				textSizeLabels = a.getDimension(
+//					R.styleable.CalendarView_cv_font_size_labels,
+//					textSizeLabels
+//				)
+//				textSizeDays = a.getDimension(
+//					R.styleable.CalendarView_cv_font_size_days,
+//					textSizeDays
+//				)
+//				textTypeface = ResourcesCompat.getFont(
+//					context,
+//					a.getResourceId(R.styleable.CalendarView_cv_font_typeface, R.font.lato)
+//				)!!
 				colorDefaultEvent = ContextCompat.getColor(getContext(), R.color.colorTaskDefault)
 			} catch (ex: Exception) {
 				Log.d(javaClass.name, ex.message!!)
@@ -521,9 +521,10 @@ class CalendarView(
 		month.set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
 		val eventOffset =
 			if ((month.clone() as Calendar).apply {
+					firstDayOfWeek = this@CalendarView.firstDayOfWeek
 					set(Calendar.MONTH, currentMonth + 1)
-					set(Calendar.WEEK_OF_MONTH, 1)
 					set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+					set(Calendar.WEEK_OF_MONTH, 1)
 				}.get(Calendar.DAY_OF_MONTH) == 1) 1
 			else 2
 
@@ -532,6 +533,7 @@ class CalendarView(
 				it.date,
 				month,
 				(month.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, numberOfDays * numberOfRows) })
+					&& it.rect?.left!! >= 0 && it.rect?.right!! <= width
 		}.forEach { event ->
 			event.rect?.also {
 				val x = it.left

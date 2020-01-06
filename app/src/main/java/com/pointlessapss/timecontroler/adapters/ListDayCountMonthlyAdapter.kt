@@ -57,7 +57,7 @@ class ListDayCountMonthlyAdapter(private val items: Pair<Item, MutableList<Item>
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		holder.progressLine.setProgressColor(items.first.color)
 
-		val max = Utils.getMonthWeekdaysCount(items.first.weekdays, map[pos].first.calendar, today, items.first.disabledDays)
+		val max = Utils.getFieldWeekdaysCount(items.first.weekdays, map[pos].first.calendar, today, items.first.disabledDays)
 		val value = map[pos].second!!.size
 		holder.progressLine.setValue(String.format(Locale.getDefault(), "%d / %d", value, max))
 		holder.progressLine.setLabel(Utils.formatMonthLong.format(map[pos].first.calendar.time))

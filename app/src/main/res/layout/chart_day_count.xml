@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        tools:ignore="MissingConstraints">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/day_count"
+            android:textStyle="normal" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/dialog_background"
+            android:backgroundTint="@android:color/white">
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonPeriod"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="0dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/weekly"
+                android:textAppearance="@style/ButtonText"
+                android:textColor="@color/colorText4"
+                android:textSize="12sp"
+                app:cornerRadius="20dp"
+                app:icon="@drawable/ic_arrow_down"
+                app:iconPadding="5dp"
+                app:iconSize="16dp"
+                app:iconTint="@color/colorText4"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/colorPrimaryDark" />
+
+        <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/flow"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="50dp"
+                android:paddingBottom="30dp"
+                app:constraint_referenced_ids="bar1,bar2,bar3,bar4,bar5"
+                app:flow_horizontalStyle="spread"
+                app:flow_verticalAlign="center"
+                app:flow_wrapMode="none"
+                app:layout_constraintBottom_toTopOf="@id/containerLegend"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.pointlessapss.timecontroler.views.ProgressLine
+                android:id="@+id/bar1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:pl_color_progress="@color/colorPrimary"
+                app:pl_color_rim="@color/colorRim"
+                app:pl_font_size_label="0sp"
+                app:pl_font_size_value="0sp"
+                app:pl_orientation="vertical"
+                app:pl_progress="0.7"
+                app:pl_width_progress="15dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/summary1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorText1"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="@id/bar1"
+                app:layout_constraintRight_toRightOf="@id/bar1"
+                app:layout_constraintTop_toBottomOf="@id/bar1" />
+
+        <com.pointlessapss.timecontroler.views.ProgressLine
+                android:id="@+id/bar2"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:pl_color_progress="@color/colorPrimary"
+                app:pl_color_rim="@color/colorRim"
+                app:pl_font_size_label="0sp"
+                app:pl_font_size_value="0sp"
+                app:pl_orientation="vertical"
+                app:pl_progress="0.89"
+                app:pl_width_progress="15dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/summary2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorText1"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="@id/bar2"
+                app:layout_constraintRight_toRightOf="@id/bar2"
+                app:layout_constraintTop_toBottomOf="@id/bar2" />
+
+        <com.pointlessapss.timecontroler.views.ProgressLine
+                android:id="@+id/bar3"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:pl_color_progress="@color/colorPrimary"
+                app:pl_color_rim="@color/colorRim"
+                app:pl_font_size_label="0sp"
+                app:pl_font_size_value="0sp"
+                app:pl_orientation="vertical"
+                app:pl_progress="0.65"
+                app:pl_width_progress="15dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/summary3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorText1"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="@id/bar3"
+                app:layout_constraintRight_toRightOf="@id/bar3"
+                app:layout_constraintTop_toBottomOf="@id/bar3" />
+
+        <com.pointlessapss.timecontroler.views.ProgressLine
+                android:id="@+id/bar4"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:pl_color_progress="@color/colorPrimary"
+                app:pl_color_rim="@color/colorRim"
+                app:pl_font_size_label="0sp"
+                app:pl_font_size_value="0sp"
+                app:pl_orientation="vertical"
+                app:pl_progress="0.4"
+                app:pl_width_progress="15dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/summary4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorText1"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="@id/bar4"
+                app:layout_constraintRight_toRightOf="@id/bar4"
+                app:layout_constraintTop_toBottomOf="@id/bar4" />
+
+        <com.pointlessapss.timecontroler.views.ProgressLine
+                android:id="@+id/bar5"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:pl_color_progress="@color/colorPrimary"
+                app:pl_color_rim="@color/colorRim"
+                app:pl_font_size_label="0sp"
+                app:pl_font_size_value="0sp"
+                app:pl_orientation="vertical"
+                app:pl_progress="0.3"
+                app:pl_width_progress="15dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/summary5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorText1"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="@id/bar5"
+                app:layout_constraintRight_toRightOf="@id/bar5"
+                app:layout_constraintTop_toBottomOf="@id/bar5" />
+
+
+        <LinearLayout
+                android:id="@+id/containerLegend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/flow">
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <View
+                        android:id="@+id/indicatorActualDayCount"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/ic_circle"
+                        android:backgroundTint="@color/colorAccentLight" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="@string/actual_day_count"
+                        android:textColor="@color/colorText4"
+                        android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <View
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/ic_circle"
+                        android:backgroundTint="@color/colorRim" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="@string/available_day_count"
+                        android:textColor="@color/colorText4"
+                        android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

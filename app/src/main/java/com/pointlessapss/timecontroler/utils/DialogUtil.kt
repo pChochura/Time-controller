@@ -1,7 +1,7 @@
 package com.pointlessapss.timecontroler.utils
 
-import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.*
@@ -11,13 +11,13 @@ import org.jetbrains.anko.find
 import kotlin.math.min
 
 class DialogUtil private constructor(
-	private val activity: Activity,
+	private val activity: Context,
 	private val id: Int,
 	private val windowSize: IntArray
 ) {
 
 	companion object {
-		fun create(activity: Activity, id: Int, callback: (Dialog) -> Unit, vararg windowSize: Int) {
+		fun create(activity: Context, id: Int, callback: (Dialog) -> Unit, vararg windowSize: Int) {
 			val dialog = DialogUtil(activity, id, windowSize)
 			dialog.makeDialog {
 				callback.invoke(it)
@@ -26,7 +26,7 @@ class DialogUtil private constructor(
 
 		fun create(
 			statefulDialog: StatefulDialog,
-			activity: Activity,
+			activity: Context,
 			id: Int,
 			callback: (StatefulDialog) -> Unit,
 			vararg windowSize: Int
@@ -40,7 +40,12 @@ class DialogUtil private constructor(
 			}
 		}
 
-		fun showMessage(activity: Activity, content: String, clickable: Boolean = false, callback: (() -> Unit)? = null) {
+		fun showMessage(
+			activity: Context,
+			content: String,
+			clickable: Boolean = false,
+			callback: (() -> Unit)? = null
+		) {
 			create(activity, R.layout.dialog_message, { dialog ->
 				if (clickable) {
 					dialog.find<View>(R.id.buttonOk).apply {
@@ -67,7 +72,7 @@ class DialogUtil private constructor(
 			layoutParams.dimAmount = 0.5f
 			dialog.window!!.attributes = layoutParams
 		}
-		val size = Utils.getScreenSize(activity)
+		val size = Utils.getScreenSize()
 		val width =
 			if (windowSize.isNotEmpty() && windowSize.first() != Utils.UNDEFINED_WINDOW_SIZE) windowSize[0]
 			else min(350.dp, size.x - 150)

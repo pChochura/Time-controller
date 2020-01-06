@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintTop_toTopOf="parent">
 
     <LinearLayout
             android:id="@+id/layout"
@@ -14,59 +14,44 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <com.pointlessapss.timecontroler.views.CalendarView
+        <com.kizitonwose.calendarview.CalendarView
                 android:id="@+id/calendar"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:nestedScrollingEnabled="true"
-                app:cv_font_size_days="15sp"
-                app:cv_font_size_labels="10sp"
-                app:cv_color_selected_day="@color/colorPrimaryLight"
-                app:cv_color_text_current_month="@color/colorText1"
-                app:cv_color_text_other_month="@color/colorText2"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Label"
-                android:visibility="gone"
-                android:id="@+id/labelHistory"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/day_history"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listHistory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:visibility="gone"
-                tools:listitem="@layout/item_history"/>
+                app:cv_orientation="horizontal"
+                app:cv_scrollMode="paged"
+                app:cv_maxRowCount="6"
+                app:cv_outDateStyle="endOfGrid"
+                app:cv_inDateStyle="allMonths"
+                app:cv_monthHeaderResource="@layout/calendar_month_header"
+                app:cv_dayViewResource="@layout/calendar_day"/>
 
         <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Label"
                     android:id="@+id/labelToday"
+                    style="@style/Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tasks_today"/>
+                    android:text="@string/tasks_today" />
 
             <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:id="@+id/buttonShowAll"
-                    android:visibility="visible"
-                    android:textAppearance="@style/ButtonText"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorText2"
-                    android:insetBottom="0dp"
-                    android:insetTop="0dp"
+                    android:layout_gravity="center_vertical|right"
                     android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="Show all"
+                    android:textAppearance="@style/ButtonText"
+                    android:textColor="@color/colorText2"
+                    android:visibility="visible"
                     app:cornerRadius="5dp"
-                    app:rippleColor="@color/colorTaskDefault"
-                    android:layout_gravity="center_vertical|right"/>
+                    app:rippleColor="@color/colorTaskDefault" />
 
         </FrameLayout>
 
@@ -74,10 +59,26 @@
                 android:id="@+id/listToday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="10dp"
+                android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_today"/>
+                tools:listitem="@layout/item_today" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/labelHistory"
+                style="@style/Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/day_history"
+                android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                tools:listitem="@layout/item_history" />
 
     </LinearLayout>
 

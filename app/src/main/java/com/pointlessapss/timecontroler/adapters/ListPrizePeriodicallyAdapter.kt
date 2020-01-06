@@ -13,10 +13,9 @@ import com.pointlessapss.timecontroler.models.Prize
 import com.pointlessapss.timecontroler.utils.Utils
 import org.jetbrains.anko.findOptional
 
-class ListPrizePeriodicallyAdapter(private val pair: Pair<Item, MutableList<Item>?>) :
+class ListPrizePeriodicallyAdapter(private val pair: Pair<Item, List<Item>?>) :
 	BaseAdapter<ListPrizePeriodicallyAdapter.DataObjectHolder>() {
 
-	private lateinit var onClickListener: (Int) -> Unit
 	private lateinit var context: Context
 
 	val map = mutableListOf<Float?>()
@@ -44,22 +43,6 @@ class ListPrizePeriodicallyAdapter(private val pair: Pair<Item, MutableList<Item
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 		val textPeriod: AppCompatTextView? = itemView.findViewById(R.id.textPeriod)
 		val textPrize: AppCompatTextView? = itemView.findViewById(R.id.textPrize)
-
-		init {
-			itemView.findOptional<View>(R.id.card)?.also {
-				it.setOnClickListener {
-					onClickListener.invoke(adapterPosition)
-				}
-			}
-		}
-	}
-
-	fun setOnClickListener(onClickListener: (Int) -> Unit) {
-		this.onClickListener = onClickListener
-	}
-
-	override fun getItemViewType(position: Int): Int {
-		return if (position == itemCount - 1) 0 else 1
 	}
 
 	override fun notifyDataset() {
@@ -73,8 +56,7 @@ class ListPrizePeriodicallyAdapter(private val pair: Pair<Item, MutableList<Item
 		context = parent.context
 		return DataObjectHolder(
 			LayoutInflater.from(parent.context).inflate(
-				if (viewType == 0) R.layout.item_add
-				else R.layout.item_prize_periodically,
+				R.layout.item_prize_periodically,
 				parent,
 				false
 			)
@@ -83,8 +65,8 @@ class ListPrizePeriodicallyAdapter(private val pair: Pair<Item, MutableList<Item
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		holder.textPeriod?.text = Utils.formatDate.format(pair.first.settlements!![pos].time)
-		holder.textPrize?.text = map[pos].toString()
+		holder.textPrize?.text = context.getString(R.string.salary, map[pos])
 	}
 
-	override fun getItemCount() = (pair.first.settlements?.size ?: 0) + 1
+	override fun getItemCount() = pair.first.settlements?.size ?: 0
 }

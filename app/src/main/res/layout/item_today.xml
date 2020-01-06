@@ -16,10 +16,9 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            app:cardBackgroundColor="#ffffff"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="1dp"
-            app:cardUseCompatPadding="true">
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="1px">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

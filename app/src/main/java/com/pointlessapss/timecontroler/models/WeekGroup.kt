@@ -2,34 +2,34 @@ package com.pointlessapss.timecontroler.models
 
 import java.util.*
 
-class MonthGroup(item: Item) : Comparable<MonthGroup> {
+class WeekGroup(item: Item) : Comparable<WeekGroup> {
 
-	internal val month = item.startDate!!.get(Calendar.MONTH)
+	internal val week = item.startDate!!.get(Calendar.WEEK_OF_YEAR)
 	internal val year = item.startDate!!.get(Calendar.YEAR)
 
 	val calendar: Calendar
 		get() = Calendar.getInstance().apply {
-			set(Calendar.MONTH, month)
+			set(Calendar.WEEK_OF_YEAR, week)
 			set(Calendar.YEAR, year)
 		}
 
-	override fun compareTo(other: MonthGroup) = compareValuesBy(this, other, { year }, { month })
+	override fun compareTo(other: WeekGroup) = compareValuesBy(this, other, { year }, { week })
 
 	override fun equals(other: Any?): Boolean {
-		if (other !is MonthGroup) {
+		if (other !is WeekGroup) {
 			return false
 		}
 		if (other.hashCode() != hashCode()) {
 			return false
 		}
-		if (other.year != year || other.month != month) {
+		if (other.year != year || other.week != week) {
 			return false
 		}
 		return true
 	}
 
 	override fun hashCode(): Int {
-		var result = month
+		var result = week
 		result = 31 * result + year
 		return result
 	}
