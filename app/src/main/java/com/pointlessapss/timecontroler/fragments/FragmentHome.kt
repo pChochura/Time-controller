@@ -156,7 +156,7 @@ class FragmentHome : FragmentBase() {
 				onTaskClick(tasksToday[pos])
 			}
 		})
-		listToday.layoutManager = LinearLayoutManager(context!!, RecyclerView.HORIZONTAL, false)
+		listToday.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
 		listToday.adapter = listTodayAdapter
 	}
 
@@ -195,7 +195,7 @@ class FragmentHome : FragmentBase() {
 				}
 			}
 		})
-		listHistory.layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
+		listHistory.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
 		listHistory.adapter = listHistoryAdapter
 	}
 
@@ -229,9 +229,9 @@ class FragmentHome : FragmentBase() {
 			}
 		}
 		val currentMonth = YearMonth.now()
-		val firstMonth = tasksDone.minBy { it.startDate!! }?.startDate!!.let {
+		val firstMonth = tasksDone.minBy { it.startDate!! }?.startDate?.let {
 			YearMonth.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH))
-		}
+		} ?: YearMonth.now()
 		val lastMonth = currentMonth.plusMonths(6)
 		calendar.setup(firstMonth, lastMonth, DayOfWeek.MONDAY)
 		calendar.scrollToMonth(currentMonth)
@@ -301,7 +301,7 @@ class FragmentHome : FragmentBase() {
 
 				dialog.find<AppCompatTextView>(R.id.textTitle).text = item.title
 				dialog.find<AppCompatTextView>(R.id.textContent).text =
-					Utils.createItemDescription(context!!, item)
+					Utils.createItemDescription(requireContext(), item)
 
 				dialog.find<View>(R.id.buttonOk).setOnClickListener {
 					dialog.dismiss()

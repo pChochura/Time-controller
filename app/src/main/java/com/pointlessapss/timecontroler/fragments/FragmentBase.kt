@@ -38,7 +38,7 @@ abstract class FragmentBase : Fragment() {
 
 	@SuppressLint("ResourceType")
 	override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
-		return AnimatorInflater.loadAnimator(context!!, if (enter) R.anim.fade_in else R.anim.fade_out).apply {
+		return AnimatorInflater.loadAnimator(requireContext(), if (enter) R.anim.fade_in else R.anim.fade_out).apply {
 			doOnEnd {
 				onLoadedFragmentListener?.invoke()
 			}
@@ -48,10 +48,10 @@ abstract class FragmentBase : Fragment() {
 	override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
 		var anim: Animation? = null
 		try {
-			anim = AnimationUtils.loadAnimation(context!!, transit).apply { setListener() }
+			anim = AnimationUtils.loadAnimation(requireContext(), transit).apply { setListener() }
 		} catch (e: Exception) {
 			try {
-				anim = AnimationUtils.loadAnimation(context!!, nextAnim).apply { setListener() }
+				anim = AnimationUtils.loadAnimation(requireContext(), nextAnim).apply { setListener() }
 			} catch (e: Exception) {
 			}
 		}

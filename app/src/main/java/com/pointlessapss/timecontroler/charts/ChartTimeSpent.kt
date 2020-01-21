@@ -19,26 +19,23 @@ class ChartTimeSpent(context: Context, private val parent: Item?, private val ta
 
 	init {
 		View.inflate(context, R.layout.chart_time_spent, this).post {
-			val average = tasks.filter { Period.THIS_WEEK.meetsCondition(it.startDate!!) }.let { list ->
-				list.sumByDouble { it.amount.toDouble() }.toFloat() / list.count()
-			}
+			val list = tasks.filter { Period.THIS_WEEK.meetsCondition(it.startDate!!) }
+			val sum = list.sumByDouble { it.amount.toDouble() }.toFloat()
+			val avg = sum / list.count()
 
-			find<ProgressWheel>(R.id.progress).apply {
+			find<ProgressWheel>(R.id.progressAverage).apply {
 				setProgressColor(this@ChartTimeSpent.parent?.color!!)
-				setProgress(average / this@ChartTimeSpent.parent.amount)
-				setValue(this@ChartTimeSpent.parent.getTimeAmount(average))
+				setProgress(avg / this@ChartTimeSpent.parent.amount)
+				setValue(this@ChartTimeSpent.parent.getTimeAmount(avg))
 				invalidate()
 			}
-			find<View>(R.id.indicatorAverageTime).backgroundTintList = ColorStateList.valueOf(parent?.color!!)
-			find<AppCompatTextView>(R.id.textAverageTime).text = context.getString(
-				R.string.average_time,
-				(average / this@ChartTimeSpent.parent.amount * 100).toInt()
-			)
-			find<AppCompatTextView>(R.id.textAssumedTime).text = context.getString(
-				R.string.assumed_time,
-				floor(parent.amount).toInt(),
-				(parent.amount - floor(parent.amount)).toInt()
-			)
+
+			find<ProgressWheel>(R.id.progressTotal).apply {
+				setProgressColor(this@ChartTimeSpent.parent?.color!!)
+				setProgress(sum / (this@ChartTimeSpent.parent.amount * list.count()))
+				setValue(this@ChartTimeSpent.parent.getTimeAmount(sum))
+				invalidate()
+			}
 		}
 	}
 }

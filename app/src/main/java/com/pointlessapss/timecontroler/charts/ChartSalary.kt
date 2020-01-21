@@ -41,7 +41,7 @@ class ChartSalary(
 
 	private fun showSettlements() {
 		find<RecyclerView>(R.id.listSettlements).apply {
-			layoutManager = object : LinearLayoutManager(context!!, RecyclerView.VERTICAL, false) {
+			layoutManager = object : LinearLayoutManager(context, RecyclerView.VERTICAL, false) {
 				override fun canScrollVertically() = false
 			}
 			listPrizeAdapter = ListPrizePeriodicallyAdapter(this@ChartSalary.parent!! to tasks)

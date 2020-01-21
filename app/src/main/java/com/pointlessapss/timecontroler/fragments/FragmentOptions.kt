@@ -320,7 +320,7 @@ class FragmentOptions private constructor(
 
 			val list = dialog.find<RecyclerView>(R.id.numberPicker)
 			list.apply {
-				layoutManager = GridLayoutManager(context!!, 4, RecyclerView.VERTICAL, false)
+				layoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
 				adapter = ColorsAdapter(colors).apply {
 					setOnClickListener {
 						item.color = colors[it]
