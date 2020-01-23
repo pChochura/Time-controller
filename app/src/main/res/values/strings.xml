@@ -68,6 +68,7 @@
     <string name="actual_day_count">Actual day count</string>
     <string name="add_settlement">Add settlement</string>
     <string name="total_time_spent">Total time spent</string>
+    <string name="monthly">Monthly</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>

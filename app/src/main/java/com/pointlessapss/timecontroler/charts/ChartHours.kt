@@ -2,6 +2,7 @@ package com.pointlessapss.timecontroler.charts
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
@@ -16,7 +17,9 @@ import com.github.mikephil.charting.data.BarEntry
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
+import com.pointlessapss.timecontroler.utils.RoundedBarChartRenderer
 import com.pointlessapss.timecontroler.utils.ValueFormatters
+import com.pointlessapss.timecontroler.utils.dp
 import org.jetbrains.anko.find
 
 class ChartHours(context: Context, private val parent: Item?, private val tasks: List<Item>) :
@@ -43,16 +46,21 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 			xAxis.apply {
 				formatAxis()
 				setDrawGridLines(false)
+				setDrawAxisLine(false)
 				position = XAxis.XAxisPosition.BOTTOM
 				valueFormatter = ValueFormatters.formatterMonth
 			}
 			axisRight.apply {
 				formatAxis()
+				setDrawAxisLine(false)
+				enableGridDashedLine(10f, 10f, 0f)
 				axisMinimum = 0f
 				valueFormatter = ValueFormatters.formatterHour
 			}
 			axisLeft.apply {
 				formatAxis()
+				setDrawAxisLine(false)
+				enableGridDashedLine(10f, 10f, 0f)
 				axisMinimum = 0f
 				valueFormatter = ValueFormatters.formatterHour
 				setDrawLabels(false)
@@ -93,16 +101,21 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 				color = this@ChartHours.parent?.color!!
 				valueFormatter = ValueFormatters.formatterEntryHour
 			})
+			renderer = RoundedBarChartRenderer(this@apply, animator, viewPortHandler, 2.dp.toFloat())
 			setVisibleXRange(1f, 6f)
+			moveViewToX(values.size.toFloat() - 6f)
 			axisRight.removeAllLimitLines()
 			axisRight.addLimitLine(
 				LimitLine(
 					average,
 					context.getString(R.string.month_average, average.toInt())
 				).apply {
+					lineWidth = 1f
+					enableDashedLine(10f, 10f, 0f)
 					textSize = 10f
 					typeface = ResourcesCompat.getFont(context, R.font.lato)
-					lineColor = Color.BLACK
+					lineColor = Color.GRAY
+					textColor = Color.GRAY
 				}
 			)
 		}.invalidate()

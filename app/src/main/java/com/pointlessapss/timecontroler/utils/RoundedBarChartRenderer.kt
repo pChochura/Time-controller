@@ -1,6 +1,6 @@
 package com.pointlessapss.timecontroler.utils
 
-import android.graphics.*
+import android.graphics.Canvas
 import com.github.mikephil.charting.animation.ChartAnimator
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
@@ -15,13 +15,15 @@ open class RoundedBarChartRenderer(
 	private val cornerDimens: Float
 ) : BarChartRenderer(chart, animator, vpHandler) {
 
+	init {
+		initBuffers()
+	}
+
 	override fun drawDataSet(c: Canvas, dataSet: IBarDataSet, index: Int) {
 		val trans = mChart.getTransformer(dataSet.axisDependency)
 
 		mBarBorderPaint.color = dataSet.barBorderColor
 		mBarBorderPaint.strokeWidth = Utils.convertDpToPixel(dataSet.barBorderWidth)
-
-		val drawBorder = dataSet.barBorderWidth > 0f
 
 		val phaseX = mAnimator.phaseX
 		val phaseY = mAnimator.phaseY
@@ -37,11 +39,7 @@ open class RoundedBarChartRenderer(
 
 		trans.pointValuesToPixel(buffer.buffer)
 
-		val isSingleColor = dataSet.colors.size == 1
-
-		if (isSingleColor) {
-			mRenderPaint.color = dataSet.color
-		}
+		mRenderPaint.color = dataSet.color
 
 		var j = 0
 		while (j < buffer.size()) {
@@ -54,50 +52,59 @@ open class RoundedBarChartRenderer(
 			if (!mViewPortHandler.isInBoundsRight(buffer.buffer[j]))
 				break
 
-			if (!isSingleColor) {
-				// Set the color for the currently drawn value. If the index
-				// is out of bounds, reuse colors.
-				mRenderPaint.color = dataSet.getColor(j / 4)
-			}
-
-			if (dataSet.gradientColor != null) {
-				val gradientColor = dataSet.gradientColor
-				mRenderPaint.shader = LinearGradient(
-					buffer.buffer[j],
-					buffer.buffer[j + 3],
-					buffer.buffer[j],
-					buffer.buffer[j + 1],
-					gradientColor.startColor,
-					gradientColor.endColor,
-					Shader.TileMode.MIRROR
-				)
-			}
-
-			if (dataSet.gradientColors != null) {
-				mRenderPaint.shader = LinearGradient(
-					buffer.buffer[j],
-					buffer.buffer[j + 3],
-					buffer.buffer[j],
-					buffer.buffer[j + 1],
-					dataSet.getGradientColor(j / 4).startColor,
-					dataSet.getGradientColor(j / 4).endColor,
-					Shader.TileMode.MIRROR
-				)
-			}
-
+			val left = buffer.buffer[j] + (buffer.buffer[j + 2] - buffer.buffer[j]) * 0.3f
+			val right = buffer.buffer[j + 2] - (buffer.buffer[j + 2] - buffer.buffer[j]) * 0.3f
 
 			c.drawRoundRect(
-				buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
+				left, buffer.buffer[j + 1], right,
 				buffer.buffer[j + 3], cornerDimens, cornerDimens, mRenderPaint
 			)
-
-			if (drawBorder) {
-				c.drawRoundRect(
-					buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
-					buffer.buffer[j + 3], cornerDimens, cornerDimens, mBarBorderPaint
-				)
-			}
+			c.drawRect(
+				left, buffer.buffer[j + 3] - cornerDimens, right,
+				buffer.buffer[j + 3], mRenderPaint
+			)
 			j += 4
+		}
+	}
+
+	override fun drawValue(c: Canvas, valueText: String, x: Float, y: Float, color: Int) {
+		c.save()
+		c.clipRect(mViewPortHandler.contentRect)
+		super.drawValue(c, valueText, x, y, color)
+		c.restore()
+	}
+
+	override fun drawValues(c: Canvas) {
+		val valueTextHeight = Utils.calcTextHeight(mValuePaint, "8").toFloat()
+		val valueOffsetPlus = Utils.convertDpToPixel(4.5f)
+
+		for (i in 0 until mChart.barData.dataSetCount) {
+			val dataSet = mChart.barData.getDataSetByIndex(i)
+			val formatter = dataSet.valueFormatter
+			val buffer = mBarBuffers[i]
+
+			var posOffset =
+				if (mChart.isDrawValueAboveBarEnabled) -valueOffsetPlus else valueTextHeight + valueOffsetPlus
+			var negOffset =
+				if (mChart.isDrawValueAboveBarEnabled) valueTextHeight + valueOffsetPlus else -valueOffsetPlus
+			if (mChart.isInverted(dataSet.axisDependency)) {
+				posOffset = -posOffset - valueTextHeight
+				negOffset = -negOffset - valueTextHeight
+			}
+			var j = 0
+			while (j < buffer.buffer.size * mAnimator.phaseX) {
+				val entry = dataSet.getEntryForIndex(j / 4)
+				val x = (buffer.buffer[j] + buffer.buffer[j + 2]) / 2f
+				drawValue(
+					c, formatter.getBarLabel(entry), x,
+					if (entry.y >= 0)
+						buffer.buffer[j + 1] + posOffset
+					else
+						buffer.buffer[j + 3] + negOffset,
+					dataSet.getValueTextColor(j / 4)
+				)
+				j += 4
+			}
 		}
 	}
 }
