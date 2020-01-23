@@ -93,7 +93,6 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 				)
 			}
 
-		val average = tasks.fold(0f) { acc, item -> acc + item.amount } / values.size
 		rootView!!.find<BarChart>(R.id.chartHours).apply {
 			this.data = BarData(BarDataSet(values, this@ChartHours.parent?.title).apply {
 				valueTypeface = ResourcesCompat.getFont(context, R.font.lato)
@@ -104,20 +103,6 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 			renderer = RoundedBarChartRenderer(this@apply, animator, viewPortHandler, 2.dp.toFloat())
 			setVisibleXRange(1f, 6f)
 			moveViewToX(values.size.toFloat() - 6f)
-			axisRight.removeAllLimitLines()
-			axisRight.addLimitLine(
-				LimitLine(
-					average,
-					context.getString(R.string.month_average, average.toInt())
-				).apply {
-					lineWidth = 1f
-					enableDashedLine(10f, 10f, 0f)
-					textSize = 10f
-					typeface = ResourcesCompat.getFont(context, R.font.lato)
-					lineColor = Color.GRAY
-					textColor = Color.GRAY
-				}
-			)
 		}.invalidate()
 	}
 }
