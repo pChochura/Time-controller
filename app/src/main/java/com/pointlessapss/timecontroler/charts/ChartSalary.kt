@@ -6,15 +6,20 @@ import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.pointlessapss.timecontroler.R
-import com.pointlessapss.timecontroler.adapters.ListPrizePeriodicallyAdapter
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.Prize
 import com.pointlessapss.timecontroler.utils.DialogUtil
+import com.pointlessapss.timecontroler.utils.ValueFormatters
 import com.pointlessapss.timecontroler.views.MonthPickerView
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import java.util.*
 
@@ -23,8 +28,6 @@ class ChartSalary(
 	private val parent: Item?,
 	private val tasks: List<Item>
 ) : FrameLayout(context) {
-
-	private lateinit var listPrizeAdapter: ListPrizePeriodicallyAdapter
 
 	var onParentChangeListener: ((Item?) -> Unit)? = null
 
@@ -35,32 +38,94 @@ class ChartSalary(
 			find<AppCompatTextView>(R.id.textSalary).text =
 				context.getString(R.string.salary, Prize.getPrizeSumSinceLast(parent!!, tasks))
 
-			showSettlements()
+			initChart()
+			showChart()
 		}
 	}
 
-	private fun showSettlements() {
-		find<RecyclerView>(R.id.listSettlements).apply {
-			layoutManager = object : LinearLayoutManager(context, RecyclerView.VERTICAL, false) {
-				override fun canScrollVertically() = false
+	private fun initChart() {
+		rootView!!.find<LineChart>(R.id.chartSalary).apply {
+			legend.isEnabled = false
+			description.isEnabled = false
+			isHighlightPerDragEnabled = false
+			isHighlightPerTapEnabled = false
+			setNoDataTextColor(ContextCompat.getColor(context, R.color.colorText3))
+			setNoDataTextTypeface(ResourcesCompat.getFont(context, R.font.lato))
+			setScaleEnabled(false)
+			xAxis.apply {
+				formatAxis()
+				setDrawGridLines(false)
+				setDrawAxisLine(false)
+				position = XAxis.XAxisPosition.BOTTOM
+				valueFormatter = ValueFormatters.formatterMonth
 			}
-			listPrizeAdapter = ListPrizePeriodicallyAdapter(this@ChartSalary.parent!! to tasks)
-			adapter = listPrizeAdapter
+			axisRight.apply {
+				formatAxis()
+				setDrawAxisLine(false)
+				enableGridDashedLine(10f, 10f, 0f)
+				axisMinimum = 0f
+				valueFormatter = ValueFormatters.formatterNumber
+			}
+			axisLeft.apply {
+				formatAxis()
+				setDrawAxisLine(false)
+				enableGridDashedLine(10f, 10f, 0f)
+				axisMinimum = 0f
+				valueFormatter = ValueFormatters.formatterNumber
+				setDrawLabels(false)
+			}
 		}
+	}
 
-		find<View>(R.id.buttonAddSettlement).setOnClickListener {
-			showPeriodPickerDialog(parent?.prize!!.type) {
-				if (parent.settlements == null) {
-					parent.settlements = mutableListOf(it)
-				} else {
-					parent.settlements?.add(it)
-				}
-				doAsync {
-					onParentChangeListener?.invoke(parent)
-				}
-				listPrizeAdapter.notifyDataset()
-			}
+	private fun AxisBase.formatAxis() {
+		typeface = ResourcesCompat.getFont(context, R.font.lato)
+		textSize = 8f
+		granularity = 1f
+		isGranularityEnabled = true
+		setCenterAxisLabels(false)
+		textColor = ContextCompat.getColor(context, R.color.colorText3)
+	}
+
+	private fun showChart() {
+		val values = mutableListOf<Entry?>()
+
+		val now = Calendar.getInstance()
+		val first = tasks.minBy { it.startDate ?: now }?.startDate!!
+		for (i in 0 until (parent!!.settlements?.size ?: 0)) {
+			val end = if (i == 0) first else parent.settlements!![i - 1]
+			values.add(
+				Entry(
+					end.get(Calendar.MONTH) + end.get(Calendar.YEAR) * 12f,
+					Prize.getPrizeSum(parent.prize, tasks.filter {
+						(it.startDate?.before(parent.settlements!![i]) ?: true) &&
+								(i == 0 || it.startDate?.after(parent.settlements!![i - 1]) ?: true)
+					})!!.toFloat()
+				)
+			)
 		}
+		values.add(
+			Entry(
+				now.get(Calendar.MONTH) + now.get(Calendar.YEAR) * 12f,
+				Prize.getPrizeSumSinceLast(parent, tasks)!!.toFloat()
+			)
+		)
+
+		val last = parent.settlements?.max()!!
+		rootView!!.find<LineChart>(R.id.chartSalary).apply {
+			this.data = LineData(LineDataSet(values, this@ChartSalary.parent.title).apply {
+				valueTypeface = ResourcesCompat.getFont(context, R.font.lato)
+				valueTextSize = 10f
+				valueFormatter = ValueFormatters.formatterNumber
+				valueTextColor = ContextCompat.getColor(context, R.color.colorText3)
+				color = this@ChartSalary.parent.color
+				fillColor = this@ChartSalary.parent.color
+				setCircleColor(this@ChartSalary.parent.color)
+				setDrawCircleHole(false)
+				setDrawFilled(true)
+			})
+			setVisibleXRange(1f, 6f)
+			moveViewToX(last.get(Calendar.MONTH) + last.get(Calendar.YEAR) * 12f)
+		}.invalidate()
 	}
 
 	private fun showPeriodPickerDialog(prizeType: Prize.Type, callbackOk: (Calendar) -> Unit) {

@@ -12,24 +12,30 @@
             app:elevation="1dp"
             app:liftOnScroll="true">
 
-        <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:clipToPadding="false"
-                app:tabGravity="center"
-                app:tabIndicator="@drawable/indicator"
-                app:tabIndicatorColor="@color/colorAccent"
-                app:tabIndicatorFullWidth="true"
-                app:tabIndicatorGravity="center"
-                app:tabIndicatorHeight="30dp"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/colorText3"
-                app:tabTextColor="@color/colorText4"
-                app:tabUnboundedRipple="true" />
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:clipToPadding="false"
+                    app:tabGravity="center"
+                    app:tabIndicator="@drawable/indicator"
+                    app:tabIndicatorColor="@color/colorAccent"
+                    app:tabIndicatorFullWidth="true"
+                    app:tabIndicatorGravity="center"
+                    app:tabIndicatorHeight="30dp"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="@color/colorText3"
+                    app:tabTextColor="@color/colorText4"
+                    app:tabUnboundedRipple="true" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 

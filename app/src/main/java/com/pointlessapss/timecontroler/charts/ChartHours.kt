@@ -1,15 +1,12 @@
 package com.pointlessapss.timecontroler.charts
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.DashPathEffect
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -21,6 +18,7 @@ import com.pointlessapss.timecontroler.utils.RoundedBarChartRenderer
 import com.pointlessapss.timecontroler.utils.ValueFormatters
 import com.pointlessapss.timecontroler.utils.dp
 import org.jetbrains.anko.find
+import java.util.*
 
 class ChartHours(context: Context, private val parent: Item?, private val tasks: List<Item>) :
 	FrameLayout(context) {
@@ -40,7 +38,7 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 			description.isEnabled = false
 			isHighlightPerDragEnabled = false
 			isHighlightPerTapEnabled = false
-			setNoDataTextColor(ContextCompat.getColor(context, R.color.colorText1))
+			setNoDataTextColor(ContextCompat.getColor(context, R.color.colorText3))
 			setNoDataTextTypeface(ResourcesCompat.getFont(context, R.font.lato))
 			setScaleEnabled(false)
 			xAxis.apply {
@@ -74,7 +72,7 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 		granularity = 1f
 		isGranularityEnabled = true
 		setCenterAxisLabels(false)
-		textColor = ContextCompat.getColor(context, R.color.colorText1)
+		textColor = ContextCompat.getColor(context, R.color.colorText3)
 	}
 
 	private fun showChart() {
@@ -93,16 +91,19 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 				)
 			}
 
+		val now = Calendar.getInstance()
 		rootView!!.find<BarChart>(R.id.chartHours).apply {
 			this.data = BarData(BarDataSet(values, this@ChartHours.parent?.title).apply {
 				valueTypeface = ResourcesCompat.getFont(context, R.font.lato)
 				valueTextSize = 10f
+				valueFormatter = ValueFormatters.formatterHour
 				color = this@ChartHours.parent?.color!!
-				valueFormatter = ValueFormatters.formatterEntryHour
+				valueTextColor = ContextCompat.getColor(context, R.color.colorText3)
 			})
-			renderer = RoundedBarChartRenderer(this@apply, animator, viewPortHandler, 2.dp.toFloat())
+			renderer =
+				RoundedBarChartRenderer(this@apply, animator, viewPortHandler, 2.dp.toFloat())
 			setVisibleXRange(1f, 6f)
-			moveViewToX(values.size.toFloat() - 6f)
+			moveViewToX(now.get(Calendar.MONTH) + now.get(Calendar.YEAR) * 12f)
 		}.invalidate()
 	}
 }

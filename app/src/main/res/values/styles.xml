@@ -17,11 +17,14 @@
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
-    <style name="ChartCard">
-        <item name="cardBackgroundColor">@android:color/white</item>
+    <style name="Card">
+        <item name="cardBackgroundColor">@color/colorPrimary</item>
         <item name="cardCornerRadius">1dp</item>
         <item name="cardElevation">1dp</item>
-        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
     </style>
     
     <style name="ButtonText">
@@ -32,7 +35,7 @@
         <item name="android:layout_margin">10dp</item>
         <item name="android:textSize">25sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/colorText1</item>
+        <item name="android:textColor">@color/colorText3</item>
     </style>
 
     <style name="Title" parent="AppTheme">

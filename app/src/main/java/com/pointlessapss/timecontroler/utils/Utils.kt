@@ -128,4 +128,7 @@ object Utils {
 			}
 		}
 	}
+
+	fun getInitials(text: String) =
+		text.replace(Regex("(\\b\\w)\\w* ?"), "\$1").toUpperCase(Locale.getDefault())
 }

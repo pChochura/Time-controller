@@ -6,7 +6,7 @@
         android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-            style="@style/ChartCard"
+            style="@style/Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
@@ -37,7 +37,8 @@
                     app:iconTint="@color/colorText4"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:rippleColor="@color/colorPrimaryDark" />
+                    app:rippleColor="@color/colorPrimaryDark"
+                    app:strokeColor="@color/colorPrimaryLight" />
 
             <com.pointlessapss.timecontroler.views.ProgressWheel
                     android:id="@+id/progressAverage"
@@ -55,7 +56,7 @@
                     app:pw_color_progress="@color/colorAccentLight"
                     app:pw_color_rim="@color/colorRim"
                     app:pw_color_text_label="@color/colorText2"
-                    app:pw_color_text_value="@color/colorText1"
+                    app:pw_color_text_value="@color/colorText3"
                     app:pw_font_size_label="12sp"
                     app:pw_font_size_value="20sp"
                     app:pw_font_typeface="@font/lato"
@@ -69,7 +70,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-            style="@style/ChartCard"
+            style="@style/Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
@@ -100,7 +101,8 @@
                     app:iconTint="@color/colorText4"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:rippleColor="@color/colorPrimaryDark" />
+                    app:rippleColor="@color/colorPrimaryDark"
+                    app:strokeColor="@color/colorPrimaryLight" />
 
             <com.pointlessapss.timecontroler.views.ProgressWheel
                     android:id="@+id/progressTotal"
@@ -118,7 +120,7 @@
                     app:pw_color_progress="@color/colorAccentLight"
                     app:pw_color_rim="@color/colorRim"
                     app:pw_color_text_label="@color/colorText2"
-                    app:pw_color_text_value="@color/colorText1"
+                    app:pw_color_text_value="@color/colorText3"
                     app:pw_font_size_label="12sp"
                     app:pw_font_size_value="20sp"
                     app:pw_font_typeface="@font/lato"

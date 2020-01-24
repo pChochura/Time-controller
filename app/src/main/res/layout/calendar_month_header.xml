@@ -17,7 +17,7 @@
             android:orientation="vertical"
             android:padding="5dp"
             android:text="January"
-            android:textColor="@color/colorText1"
+            android:textColor="@color/colorText3"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

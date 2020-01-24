@@ -1,7 +1,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
             android:state_checked="true"
-            android:color="@color/colorText1" />
+            android:color="@color/colorAccentLight" />
     <item
             android:state_checked="false"
             android:color="@color/colorText2" />

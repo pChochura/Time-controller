@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
+import java.util.*
 
 class ListTodayAdapter(private val items: MutableList<Item>) :
 	BaseAdapter<ListTodayAdapter.DataObjectHolder>() {
@@ -65,7 +66,7 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 			holder.buttonConfigure.visibility = View.VISIBLE
 
 			setColor(holder, items[pos].color)
-			holder.iconText.text = items[pos].title.toUpperCase()
+			holder.iconText.text = Utils.getInitials(items[pos].title)
 		} else {
 			holder.card.cardElevation = 0f
 			holder.buttonConfigure.visibility = View.GONE

@@ -7,8 +7,20 @@ import kotlin.math.floor
 
 object ValueFormatters {
 
-	val formatterEntryHour
+	val formatterNumber
 		get() = object : ValueFormatter() {
+			override fun getAxisLabel(value: Float, axis: AxisBase?) =
+				String.format(Locale.getDefault(), "%d", value.toInt())
+
+			override fun getFormattedValue(value: Float) =
+				String.format(Locale.getDefault(), "%d", value.toInt())
+		}
+
+	val formatterHour
+		get() = object : ValueFormatter() {
+			override fun getAxisLabel(value: Float, axis: AxisBase?) =
+				String.format(Locale.getDefault(), "%dh", value.toInt())
+
 			override fun getFormattedValue(value: Float): String {
 				return String.format(
 					Locale.getDefault(),
@@ -17,12 +29,6 @@ object ValueFormatters {
 					((value - value.toInt()) * 60).toInt()
 				)
 			}
-		}
-
-	val formatterHour
-		get() = object : ValueFormatter() {
-			override fun getAxisLabel(value: Float, axis: AxisBase?) =
-				String.format(Locale.getDefault(), "%dh", value.toInt())
 		}
 
 	val formatterMonth

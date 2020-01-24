@@ -51,7 +51,7 @@
                     android:textColor="@color/colorText2"
                     android:visibility="visible"
                     app:cornerRadius="5dp"
-                    app:rippleColor="@color/colorTaskDefault" />
+                    app:rippleColor="@color/colorRipple" />
 
         </FrameLayout>
 
