@@ -39,6 +39,11 @@ object Utils {
 	val formatMonthLong
 		get() = SimpleDateFormat("MMMM", Locale.getDefault())
 
+	val date: Calendar
+		get() = Calendar.getInstance().apply {
+			firstDayOfWeek = Calendar.MONDAY
+		}
+
 	const val UNDEFINED_WINDOW_SIZE = Integer.MAX_VALUE
 
 	@FloatRange(from = 0.0, to = 1.0)
@@ -66,7 +71,7 @@ object Utils {
 			return context.resources.getString(R.string.weekdays)
 		}
 
-		val date = Calendar.getInstance()
+		val date = date
 
 		return (Calendar.SUNDAY..Calendar.SATURDAY)
 			.filter { weekdays[it - 1] }
@@ -86,7 +91,7 @@ object Utils {
 			return formatTime.format(item.startDate!!.time)
 		}
 
-		val endTime = Calendar.getInstance()
+		val endTime = date
 		endTime.timeInMillis = item.startDate!!.timeInMillis
 		endTime.add(Calendar.HOUR_OF_DAY, item.amount.toInt())
 		endTime.add(Calendar.MINUTE, ((item.amount - item.amount.toInt()) * 60).toInt())
@@ -103,15 +108,15 @@ object Utils {
 		val current = start.get(field)
 		var count = 0
 		while (start.get(field) == current) {
+			if (limit?.before(start) == true) {
+				break
+			}
+
 			if (weekdays[start.get(Calendar.DAY_OF_WEEK) - 1] && disabledDays?.firstOrNull {
 					it.get(Calendar.DAY_OF_YEAR) == start.get(Calendar.DAY_OF_YEAR)
 							&& it.get(Calendar.YEAR) == start.get(Calendar.YEAR)
 				} == null) {
 				count++
-			}
-
-			if (limit?.before(start) == true) {
-				break
 			}
 			start.add(Calendar.DAY_OF_MONTH, 1)
 		}

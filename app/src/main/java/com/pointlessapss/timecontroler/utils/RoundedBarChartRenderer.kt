@@ -39,7 +39,11 @@ open class RoundedBarChartRenderer(
 
 		trans.pointValuesToPixel(buffer.buffer)
 
-		mRenderPaint.color = dataSet.color
+		val isSingleColor = dataSet.colors.size == 1
+
+		if (isSingleColor) {
+			mRenderPaint.color = dataSet.color
+		}
 
 		var j = 0
 		while (j < buffer.size()) {
@@ -51,6 +55,10 @@ open class RoundedBarChartRenderer(
 
 			if (!mViewPortHandler.isInBoundsRight(buffer.buffer[j]))
 				break
+
+			if (!isSingleColor) {
+				mRenderPaint.color = dataSet.getColor(j / 4)
+			}
 
 			val left = buffer.buffer[j] + (buffer.buffer[j + 2] - buffer.buffer[j]) * 0.3f
 			val right = buffer.buffer[j + 2] - (buffer.buffer[j + 2] - buffer.buffer[j]) * 0.3f
@@ -94,15 +102,17 @@ open class RoundedBarChartRenderer(
 			var j = 0
 			while (j < buffer.buffer.size * mAnimator.phaseX) {
 				val entry = dataSet.getEntryForIndex(j / 4)
-				val x = (buffer.buffer[j] + buffer.buffer[j + 2]) / 2f
-				drawValue(
-					c, formatter.getBarLabel(entry), x,
-					if (entry.y >= 0)
-						buffer.buffer[j + 1] + posOffset
-					else
-						buffer.buffer[j + 3] + negOffset,
-					dataSet.getValueTextColor(j / 4)
-				)
+				if (entry.data as Boolean? != true) {
+					val x = (buffer.buffer[j] + buffer.buffer[j + 2]) / 2f
+					drawValue(
+						c, formatter.getBarLabel(entry), x,
+						if (entry.y >= 0)
+							buffer.buffer[j + 1] + posOffset
+						else
+							buffer.buffer[j + 3] + negOffset,
+						dataSet.getValueTextColor(j / 4)
+					)
+				}
 				j += 4
 			}
 		}

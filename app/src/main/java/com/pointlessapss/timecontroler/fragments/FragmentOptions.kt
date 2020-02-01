@@ -76,10 +76,6 @@ class FragmentOptions private constructor(
 					fragment.refreshOptionPrize()
 				}
 			}
-			rootView.find<View>(R.id.optionTags).setOnClickListener {
-				fragment.showSelectTagsDialog {
-				}
-			}
 			rootView.find<View>(R.id.optionDate).setOnClickListener {
 				fragment.showSelectDateDialog {
 					fragment.refreshOptionDate()
@@ -92,7 +88,6 @@ class FragmentOptions private constructor(
 		optionsToDisable.forEach {
 			rootView.find<View>(it).visibility = View.GONE
 		}
-		rootView.find<View>(R.id.optionTags).visibility = View.GONE
 	}
 
 	private fun refreshOptionWeekdays() {
@@ -131,7 +126,7 @@ class FragmentOptions private constructor(
 
 	private fun refreshOptionDate() {
 		val layout = rootView.find<FrameLayout>(R.id.optionDate)
-		val today = Calendar.getInstance()
+		val today = Utils.date
 		if (item.startDate == null ||
 			(item.startDate?.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
 					item.startDate?.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR))
@@ -144,7 +139,7 @@ class FragmentOptions private constructor(
 
 	private fun showSelectWeekdaysDialog(callbackOk: () -> Unit) {
 		DialogUtil.create(activity, R.layout.dialog_picker_weekday, { dialog ->
-			val day = Calendar.getInstance()
+			val day = Utils.date
 			day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
 
 			val weekdays = item.weekdays.clone()
@@ -171,7 +166,7 @@ class FragmentOptions private constructor(
 	}
 
 	private fun showSelectTimeDialog(callbackOk: () -> Unit) {
-		val time = item.startDate ?: Calendar.getInstance()
+		val time = item.startDate ?: Utils.date
 		val hour = time.get(Calendar.HOUR_OF_DAY)
 		val minute = time.get(Calendar.MINUTE)
 
@@ -232,7 +227,7 @@ class FragmentOptions private constructor(
 			}
 
 			dialog.find<View>(R.id.buttonOk).setOnClickListener {
-				val date = Calendar.getInstance()
+				val date = Utils.date
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 					date.set(Calendar.HOUR_OF_DAY, picker.hour)
 					date.set(Calendar.MINUTE, picker.minute)
@@ -252,7 +247,7 @@ class FragmentOptions private constructor(
 		DialogUtil.create(activity, R.layout.dialog_picker_date, { dialog ->
 			val picker = dialog.find<DatePicker>(R.id.datePicker)
 
-			val date = (item.startDate ?: Calendar.getInstance()).clone() as Calendar
+			val date = (item.startDate ?: Utils.date).clone() as Calendar
 			val year = date.get(Calendar.YEAR)
 			val month = date.get(Calendar.MONTH)
 			val day = date.get(Calendar.DAY_OF_MONTH)
@@ -279,7 +274,7 @@ class FragmentOptions private constructor(
 
 			Prize.Type.values().forEach { type ->
 				buttonsType.addTab(buttonsType.newTab().apply {
-					text = Prize.Type.asText(type.id, activity)
+					text = type.asText(activity)
 				})
 			}
 
@@ -301,17 +296,6 @@ class FragmentOptions private constructor(
 			}
 
 		}, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-	}
-
-	private fun showSelectTagsDialog(callbackOk: () -> Unit) {
-		DialogUtil.create(activity, R.layout.dialog_picker_tags, { dialog ->
-
-			dialog.find<View>(R.id.buttonOk).setOnClickListener {
-				dialog.dismiss()
-				callbackOk.invoke()
-			}
-
-		}, Utils.UNDEFINED_WINDOW_SIZE, ViewGroup.LayoutParams.WRAP_CONTENT)
 	}
 
 	private fun showSelectColorDialog(callbackOk: () -> Unit) {

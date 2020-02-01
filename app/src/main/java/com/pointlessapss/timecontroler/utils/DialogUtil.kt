@@ -11,14 +11,14 @@ import org.jetbrains.anko.find
 import kotlin.math.min
 
 class DialogUtil private constructor(
-	private val activity: Context,
-	private val id: Int,
+	private val context: Context,
+	private val layoutId: Int,
 	private val windowSize: IntArray
 ) {
 
 	companion object {
-		fun create(activity: Context, id: Int, callback: (Dialog) -> Unit, vararg windowSize: Int) {
-			val dialog = DialogUtil(activity, id, windowSize)
+		fun create(context: Context, id: Int, callback: (Dialog) -> Unit, vararg windowSize: Int) {
+			val dialog = DialogUtil(context, id, windowSize)
 			dialog.makeDialog {
 				callback.invoke(it)
 			}
@@ -26,12 +26,12 @@ class DialogUtil private constructor(
 
 		fun create(
 			statefulDialog: StatefulDialog,
-			activity: Context,
+			context: Context,
 			id: Int,
 			callback: (StatefulDialog) -> Unit,
 			vararg windowSize: Int
 		) {
-			val dialog = DialogUtil(activity, id, windowSize)
+			val dialog = DialogUtil(context, id, windowSize)
 			dialog.makeDialog {
 				callback.invoke(statefulDialog.apply { this.dialog = it })
 				if (statefulDialog.showToggled) {
@@ -41,12 +41,12 @@ class DialogUtil private constructor(
 		}
 
 		fun showMessage(
-			activity: Context,
+			context: Context,
 			content: String,
 			clickable: Boolean = false,
 			callback: (() -> Unit)? = null
 		) {
-			create(activity, R.layout.dialog_message, { dialog ->
+			create(context, R.layout.dialog_message, { dialog ->
 				if (clickable) {
 					dialog.find<View>(R.id.buttonOk).apply {
 						setOnClickListener {
@@ -63,7 +63,7 @@ class DialogUtil private constructor(
 	}
 
 	fun makeDialog(callback: (Dialog) -> Unit) {
-		val dialog = Dialog(activity)
+		val dialog = Dialog(context)
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 		dialog.window?.also {
 			it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -80,7 +80,7 @@ class DialogUtil private constructor(
 			if (windowSize.size > 1 && windowSize[1] != Utils.UNDEFINED_WINDOW_SIZE) windowSize[1]
 			else min(500.dp, size.y - 150)
 		dialog.setContentView(
-			LayoutInflater.from(activity).inflate(id, null),
+			LayoutInflater.from(context).inflate(layoutId, null),
 			ViewGroup.LayoutParams(width, height)
 		)
 		callback.invoke(dialog)

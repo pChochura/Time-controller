@@ -35,7 +35,7 @@ import java.util.*
 
 class FragmentHome : FragmentBase() {
 
-	private var selectedDay = Calendar.getInstance()
+	private var selectedDay = Utils.date
 	private var events = mutableListOf<Event>()
 	private var tasksCreated = mutableListOf<Item>()
 	private var tasksDone = mutableListOf<Item>()
@@ -134,7 +134,7 @@ class FragmentHome : FragmentBase() {
 	}
 
 	private fun generateTodayTasks() {
-		val day = Calendar.getInstance()
+		val day = Utils.date
 		val currentDay = day.get(Calendar.DAY_OF_WEEK)
 		tasksToday.clear()
 		tasksToday.addAll(tasksCreated.filter { it.weekdays[currentDay - 1] }.sortedBy { it.startDate })
@@ -143,18 +143,8 @@ class FragmentHome : FragmentBase() {
 	private fun setTodayList() {
 		listTodayAdapter = ListTodayAdapter(tasksToday)
 		listTodayAdapter.setOnClickListener(object : ListTodayAdapter.ClickListener {
-			override fun clickConfigure(pos: Int) {
-				onTaskEditClick(tasksToday[pos])
-			}
-
-			override fun click(pos: Int, adder: Boolean) {
-				if (adder) {
-					onTaskAddClick()
-					return
-				}
-
-				onTaskClick(tasksToday[pos])
-			}
+			override fun clickConfigure(pos: Int) = onTaskEditClick(tasksToday[pos])
+			override fun click(pos: Int) = onTaskClick(tasksToday[pos])
 		})
 		listToday.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
 		listToday.adapter = listTodayAdapter
@@ -250,7 +240,7 @@ class FragmentHome : FragmentBase() {
 	}
 
 	private fun refreshListHistory() {
-		listHistoryAdapter.notifyDataSetChanged()
+		listHistoryAdapter.notifyDataset()
 
 		if (tasksHistory.isEmpty()) {
 			listHistory.visibility = View.GONE
@@ -294,7 +284,6 @@ class FragmentHome : FragmentBase() {
 					activity!!, rootView, item, arrayOf(
 						R.id.optionWeekdays,
 						R.id.optionPrize,
-						R.id.optionTags,
 						R.id.optionColor
 					)
 				)
@@ -334,9 +323,8 @@ class FragmentHome : FragmentBase() {
 	) {
 		val setItem = Item()
 		setItem.setParent(item, selectedDay.apply {
-			firstDayOfWeek = Calendar.MONDAY
 			if (item.startDate == null) {
-				val day = Calendar.getInstance()
+				val day = Utils.date
 				set(Calendar.HOUR_OF_DAY, day.get(Calendar.HOUR_OF_DAY))
 				set(Calendar.MINUTE, day.get(Calendar.MINUTE))
 			}

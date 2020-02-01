@@ -39,7 +39,6 @@ class FragmentAddTask(private val rootItem: Item? = null) : BottomSheetDialogFra
 	}
 
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
 		return (super.onCreateDialog(savedInstanceState) as BottomSheetDialog).apply {
 			setOnShowListener { d ->
 				val bottomSheet = (d as BottomSheetDialog).find<View>(R.id.design_bottom_sheet) as FrameLayout?

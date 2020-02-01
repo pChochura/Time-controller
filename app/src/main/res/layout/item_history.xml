@@ -1,74 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card"
+        style="@style/Card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp">
+        android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textTaskName"
-            android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/dialog_background"
-            android:backgroundTint="@color/colorTaskDefault"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:text="G2A"
-            android:textColor="@color/colorText1"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="10dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textTaskDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:text="9:00 - 17:00"
-            android:textColor="@color/colorText1"
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textTaskName" />
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/iconText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ic_rounded_rect"
+                android:backgroundTint="#4DFF3D00"
+                android:fontFamily="@font/lato"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="G"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textFootnote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:text="8:00"
-            android:textColor="@color/colorText1"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintLeft_toRightOf="@id/textTaskName"
-            app:layout_constraintRight_toLeftOf="@id/buttonRemove"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="G2A"
+                android:textColor="@color/colorText3"
+                android:textSize="20sp"
+                app:layout_constraintLeft_toRightOf="@id/iconText"
+                app:layout_constraintTop_toTopOf="@id/iconText"
+                app:layout_constraintVertical_bias="0" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/buttonRemove"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_remove"
-            android:tint="@color/colorText2"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:lineSpacingMultiplier="1.25"
+                android:text="9:00 - 17:00"
+                android:textColor="@color/colorText2"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/iconText"
+                app:layout_constraintTop_toBottomOf="@id/textTitle"
+                app:layout_constraintVertical_bias="0" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="8:00"
+                android:textColor="@color/colorText2"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/buttonRemove"
+                app:layout_constraintRight_toLeftOf="@id/buttonRemove"
+                app:layout_constraintTop_toTopOf="@id/buttonRemove" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/buttonRemove"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_remove"
+                android:tint="@color/colorText2"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

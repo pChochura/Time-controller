@@ -7,13 +7,13 @@
 
     <androidx.cardview.widget.CardView
             android:id="@+id/card"
+            style="@style/Card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:foreground="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            app:cardBackgroundColor="@color/colorPrimary"
-            style="@style/Card">
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/colorPrimary">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -23,66 +23,59 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="10dp"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="1:1">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iconImage"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginBottom="20dp"
-                        android:src="@drawable/ic_rounded_rect"
-                        android:tint="@color/colorAccent"
-                        android:alpha="0.3"/>
+                    app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/iconText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintLeft_toLeftOf="@id/iconImage"
-                        app:layout_constraintRight_toRightOf="@id/iconImage"
-                        app:layout_constraintTop_toTopOf="@id/iconImage"
-                        app:layout_constraintBottom_toBottomOf="@id/iconImage"
-                        android:maxLines="1"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/ic_rounded_rect"
+                        android:backgroundTint="#4DFF3D00"
+                        android:fontFamily="@font/lato"
                         android:gravity="center"
+                        android:maxLines="1"
+                        android:text="G"
                         android:textColor="@color/colorAccent"
-                        android:text="G2A"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/lato"/>
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/textTitle"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/textTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iconImage"
                         android:layout_marginTop="10dp"
-                        android:maxLines="1"
+                        android:fontFamily="@font/lato"
                         android:gravity="center"
+                        android:maxLines="1"
+                        android:text="G2A"
                         android:textColor="@color/colorText3"
-                        android:text="G2A, work"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/lato"/>
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iconText"
+                        app:layout_constraintVertical_chainStyle="packed" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/buttonConfigure"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:src="@drawable/ic_more"
                         android:tint="@color/colorText2"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

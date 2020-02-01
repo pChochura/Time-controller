@@ -1,8 +1,8 @@
 package com.pointlessapss.timecontroler.adapters
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
-import java.util.*
 
 class ListTodayAdapter(private val items: MutableList<Item>) :
 	BaseAdapter<ListTodayAdapter.DataObjectHolder>() {
@@ -35,14 +34,14 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 	}
 
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-		val iconImage: AppCompatImageView = itemView.findViewById(R.id.iconImage)
+		val textTitle: AppCompatTextView = itemView.findViewById(R.id.textTitle)
 		val iconText: AppCompatTextView = itemView.findViewById(R.id.iconText)
 		val buttonConfigure: AppCompatImageView = itemView.findViewById(R.id.buttonConfigure)
 		val card: CardView = itemView.findViewById(R.id.card)
 
 		init {
 			card.setOnClickListener {
-				clickListener.click(adapterPosition, adapterPosition == items.size)
+				clickListener.click(adapterPosition)
 			}
 			buttonConfigure.setOnClickListener {
 				clickListener.clickConfigure(adapterPosition)
@@ -57,29 +56,25 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 	@NonNull
 	override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): DataObjectHolder {
 		context = parent.context
-		return DataObjectHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_today, parent, false))
+		return DataObjectHolder(
+			LayoutInflater.from(parent.context).inflate(
+				R.layout.item_today,
+				parent,
+				false
+			)
+		)
 	}
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
-		if (pos < items.size) {
-			holder.card.cardElevation = 1f
-			holder.buttonConfigure.visibility = View.VISIBLE
+		holder.card.cardElevation = 1f
+		holder.buttonConfigure.visibility = View.VISIBLE
 
-			setColor(holder, items[pos].color)
-			holder.iconText.text = Utils.getInitials(items[pos].title)
-		} else {
-			holder.card.cardElevation = 0f
-			holder.buttonConfigure.visibility = View.GONE
-
-			setColor(holder, ContextCompat.getColor(context, R.color.colorTaskDefault))
-			holder.iconText.text = "+"
-		}
-
-		TextViewCompat.setAutoSizeTextTypeWithDefaults(holder.iconText, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM)
+		setColor(holder, items[pos].color)
+		holder.iconText.text = Utils.getInitials(items[pos].title)
+		holder.textTitle.text = items[pos].title
 	}
 
 	private fun setColor(@NonNull holder: DataObjectHolder, @ColorInt color: Int) {
-		holder.iconImage.setColorFilter(color)
 		holder.iconText.setTextColor(
 			if (Utils.getLuminance(color) > 0.5f) {
 				ColorUtils.blendARGB(color, Color.BLACK, 0.5f)
@@ -87,12 +82,14 @@ class ListTodayAdapter(private val items: MutableList<Item>) :
 				color
 			}
 		)
+		holder.iconText.backgroundTintList =
+			ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
 	}
 
-	override fun getItemCount() = items.size + 1
+	override fun getItemCount() = items.size
 
 	interface ClickListener {
 		fun clickConfigure(pos: Int)
-		fun click(pos: Int, adder: Boolean)
+		fun click(pos: Int)
 	}
 }

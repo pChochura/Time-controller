@@ -9,6 +9,6 @@
         android:clickable="true"
         android:focusable="true"
         android:background="?android:attr/selectableItemBackground"
-        android:textColor="@color/colorText1"
+        android:textColor="@color/colorText3"
         android:padding="10dp"
         android:text="Text"/>

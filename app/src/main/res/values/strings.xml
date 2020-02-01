@@ -56,7 +56,7 @@
     <string name="amount">Amount</string>
     <string name="period">Period</string>
     <string name="select_month">Select month</string>
-    <string name="salary">﹩%.2f</string>
+    <string name="salary">﹩%.2f %s</string>
     <string name="settlements">Settlements</string>
     <string name="this_week">This week</string>
     <string name="days">Days</string>
@@ -69,6 +69,7 @@
     <string name="add_settlement">Add settlement</string>
     <string name="total_time_spent">Total time spent</string>
     <string name="monthly">Monthly</string>
+    <string name="add_task">Add a task</string>
 
     <plurals name="day">
         <item quantity="one">Day</item>

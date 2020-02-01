@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentSnapshot
+import com.pointlessapss.timecontroler.utils.Utils
 import java.util.*
 
 @Entity(tableName = "items")
@@ -89,7 +90,7 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 					id = item["id"].toString().toInt()
 					parentId = item["parentId"].toString().toIntOrNull()
 					weekdays = (item["weekdays"] as ArrayList<*>).map { it.toString().toBoolean() }.toBooleanArray()
-					startDate = Calendar.getInstance()
+					startDate = Utils.date
 						.apply { item["startDate"]?.let { timeInMillis = it.toString().toLong() } }
 					color = item["color"].toString().toInt()
 					amount = item["amount"].toString().toFloat()
@@ -97,8 +98,8 @@ class Item(@ColumnInfo(name = "title") var title: String = "") {
 					prize = (item["prize"] as? HashMap<*, *>)?.let { Prize(Prize.Type.valueOf(it["type"].toString()), it["amount"].toString().toFloat()) }
 					tags = (item["tags"] as? ArrayList<*>)?.map { it.toString().toInt() }?.toIntArray()
 					done = item["done"].toString().toBoolean()
-					settlements = (item["settlements"] as? ArrayList<*>)?.map { time -> Calendar.getInstance().apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
-					disabledDays = (item["disabledDays"] as? ArrayList<*>)?.map { time -> Calendar.getInstance().apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
+					settlements = (item["settlements"] as? ArrayList<*>)?.map { time -> Utils.date.apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
+					disabledDays = (item["disabledDays"] as? ArrayList<*>)?.map { time -> Utils.date.apply { timeInMillis = time.toString().toLong() } }?.toMutableList()
 				}
 			}
 		}

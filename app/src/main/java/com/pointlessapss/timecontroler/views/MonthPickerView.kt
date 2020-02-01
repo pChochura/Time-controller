@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.adapters.BaseAdapter
+import com.pointlessapss.timecontroler.utils.Utils
 import org.jetbrains.anko.find
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,7 +29,7 @@ class MonthPickerView(
 	private val formatMonth = SimpleDateFormat("MMM", Locale.getDefault())
 	private val formatYear = SimpleDateFormat("yyyy", Locale.getDefault())
 
-	val selectedDate: Calendar = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
+	val selectedDate: Calendar = Utils.date.apply { set(Calendar.DAY_OF_MONTH, 1) }
 
 	private var size = 0f
 
@@ -49,7 +50,7 @@ class MonthPickerView(
 	private fun setYearsList() {
 		find<RecyclerView>(R.id.listYears).apply {
 			layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-			adapter = ListYearAdapter(Calendar.getInstance().let { date ->
+			adapter = ListYearAdapter(Utils.date.let { date ->
 				(1950..date.get(Calendar.YEAR)).map { year ->
 					formatYear.format(
 						date.apply {
@@ -62,7 +63,7 @@ class MonthPickerView(
 				}
 			}).apply {
 				clickListener = {
-					selectedDate.set(Calendar.YEAR, (1950..Calendar.getInstance().get(Calendar.YEAR)).toList()[it])
+					selectedDate.set(Calendar.YEAR, (1950..Utils.date.get(Calendar.YEAR)).toList()[it])
 					refreshTitle()
 					showMonthPicker()
 					notifyDataset()

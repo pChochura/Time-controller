@@ -1,5 +1,6 @@
 package com.pointlessapss.timecontroler.models
 
+import com.pointlessapss.timecontroler.utils.Utils
 import java.util.*
 
 class MonthGroup(item: Item) : Comparable<MonthGroup> {
@@ -8,10 +9,12 @@ class MonthGroup(item: Item) : Comparable<MonthGroup> {
 	internal val year = item.startDate!!.get(Calendar.YEAR)
 
 	val calendar: Calendar
-		get() = Calendar.getInstance().apply {
+		get() = Utils.date.apply {
 			set(Calendar.MONTH, month)
 			set(Calendar.YEAR, year)
 		}
+
+	fun getIndex() = year * 12f + month.toFloat()
 
 	override fun compareTo(other: MonthGroup) = compareValuesBy(this, other, { year }, { month })
 

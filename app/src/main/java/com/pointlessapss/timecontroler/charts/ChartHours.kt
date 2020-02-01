@@ -15,8 +15,10 @@ import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.models.MonthGroup
 import com.pointlessapss.timecontroler.utils.RoundedBarChartRenderer
+import com.pointlessapss.timecontroler.utils.Utils
 import com.pointlessapss.timecontroler.utils.ValueFormatters
 import com.pointlessapss.timecontroler.utils.dp
+import kotlinx.android.synthetic.main.chart_hours.view.*
 import org.jetbrains.anko.find
 import java.util.*
 
@@ -33,7 +35,7 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 	}
 
 	private fun initChart() {
-		rootView!!.find<BarChart>(R.id.chartHours).apply {
+		chartHours.apply {
 			legend.isEnabled = false
 			description.isEnabled = false
 			isHighlightPerDragEnabled = false
@@ -86,13 +88,13 @@ class ChartHours(context: Context, private val parent: Item?, private val tasks:
 				}
 			}.map {
 				BarEntry(
-					it.key.month + it.key.year * 12f,
+					it.key.getIndex(),
 					it.value!!
 				)
 			}
 
-		val now = Calendar.getInstance()
-		rootView!!.find<BarChart>(R.id.chartHours).apply {
+		val now = Utils.date
+		chartHours.apply {
 			this.data = BarData(BarDataSet(values, this@ChartHours.parent?.title).apply {
 				valueTypeface = ResourcesCompat.getFont(context, R.font.lato)
 				valueTextSize = 10f

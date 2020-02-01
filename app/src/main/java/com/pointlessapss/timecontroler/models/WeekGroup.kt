@@ -1,5 +1,6 @@
 package com.pointlessapss.timecontroler.models
 
+import com.pointlessapss.timecontroler.utils.Utils
 import java.util.*
 
 class WeekGroup(item: Item) : Comparable<WeekGroup> {
@@ -8,10 +9,12 @@ class WeekGroup(item: Item) : Comparable<WeekGroup> {
 	internal val year = item.startDate!!.get(Calendar.YEAR)
 
 	val calendar: Calendar
-		get() = Calendar.getInstance().apply {
+		get() = Utils.date.apply {
 			set(Calendar.WEEK_OF_YEAR, week)
 			set(Calendar.YEAR, year)
 		}
+
+	fun getIndex() = year * 52f + week.toFloat()
 
 	override fun compareTo(other: WeekGroup) = compareValuesBy(this, other, { year }, { week })
 

@@ -13,13 +13,15 @@ class Prize(var type: Type, var amount: Float) {
 		PER_MONTH(R.id.per_month), PER_DAY(R.id.per_day), PER_HOUR(R.id.per_hour),
 		PER_TASK(R.id.per_task);
 
+		fun asText(context: Context) = asText(id, context)
+
 		companion object {
 			private fun fromId(id: Int) = values().find { it.id == id } ?: PER_TASK
 
 			fun asText(id: Int, context: Context): String {
 				return context.resources.getString(
 					context.resources.getIdentifier(
-						fromId(id).toString().toLowerCase(),
+						fromId(id).toString().toLowerCase(Locale.getDefault()),
 						"string",
 						context.packageName
 					)
@@ -28,13 +30,13 @@ class Prize(var type: Type, var amount: Float) {
 		}
 	}
 
-	fun describe(context: Context) = "${Type.asText(type.id, context)}: $amount"
+	fun describe(context: Context) = "${type.asText(context)}: $amount"
 
 	companion object {
 		fun getPrizeSum(prize: Prize?, list: List<Item>?): Float? {
 			return when (prize?.type) {
 				Type.PER_MONTH -> {
-					val today = Calendar.getInstance()
+					val today = Utils.date
 					list?.filter {
 						it.startDate?.get(Calendar.YEAR) != today.get(Calendar.YEAR) ||
 								it.startDate?.get(Calendar.MONTH) != today.get(Calendar.MONTH)

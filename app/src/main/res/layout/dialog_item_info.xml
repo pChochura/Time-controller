@@ -7,41 +7,40 @@
         android:background="@drawable/dialog_background">
 
     <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Title"
             android:id="@+id/textTitle"
-            android:layout_width="0dp"
+            style="@style/Title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="Title"
+            android:textColor="@color/colorText3"
+            android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_margin="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/colorText1"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:text="Title"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/containerInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            app:layout_constraintBottom_toTopOf="@id/buttonOk"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textTitle"
-            app:layout_constraintBottom_toTopOf="@id/buttonOk">
+            app:layout_constraintTop_toBottomOf="@id/textTitle">
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="9:00 - 17:00"
-                android:textSize="35sp"
-                android:textColor="@color/colorText1"/>
+                android:textColor="@color/colorText3"
+                android:textSize="35sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -51,52 +50,51 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/buttonOk"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textTitle"
-            app:layout_constraintBottom_toTopOf="@id/buttonOk">
+            app:layout_constraintTop_toBottomOf="@id/textTitle">
 
-        <include layout="@layout/fragment_options"/>
+        <include layout="@layout/fragment_options" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonEdit"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textAppearance="@style/ButtonText"
-            app:layout_constraintRight_toLeftOf="@id/buttonOk"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:cornerRadius="5dp"
-            android:insetBottom="0dp"
-            android:insetTop="0dp"
-            android:textColor="@color/colorText1"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:layout_margin="10dp"
-            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minHeight="0dp"
+            android:padding="10dp"
             android:text="@string/edit"
-            app:rippleColor="@color/colorTaskDefault"/>
+            android:textAppearance="@style/ButtonText"
+            android:textColor="@color/colorText3"
+            android:textSize="12sp"
+            app:cornerRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/buttonOk"
+            app:rippleColor="@color/colorPrimaryDark" />
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonOk"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textAppearance="@style/ButtonText"
-            android:backgroundTint="@color/colorPrimaryDark"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:cornerRadius="5dp"
-            android:insetBottom="0dp"
-            android:insetTop="0dp"
-            android:textColor="@color/colorText3"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:layout_margin="10dp"
-            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minHeight="0dp"
+            android:padding="10dp"
             android:text="@android:string/ok"
-            app:rippleColor="@color/colorTaskDefault"/>
+            android:textAppearance="@style/ButtonText"
+            android:textColor="@color/colorText3"
+            android:textSize="12sp"
+            app:cornerRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:rippleColor="@color/colorPrimaryDark" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

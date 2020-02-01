@@ -14,17 +14,38 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import com.pointlessapss.timecontroler.utils.Utils
+import org.jetbrains.anko.findOptional
 
 class ListHistoryAdapter(
-	private val items: List<Pair<Item, Item>>,
+	private val allItems: List<Pair<Item, Item>>,
 	private val withAdder: Boolean = false
 ) : BaseAdapter<ListHistoryAdapter.DataObjectHolder>() {
 
 	lateinit var context: Context
 	lateinit var clickListener: ClickListener
 
+	lateinit var items: Map<Item, MutableList<Item>>
+
 	init {
 		setHasStableIds(true)
+		prepareItems()
+	}
+
+	private fun prepareItems() {
+		items = allItems.groupingBy { it.first }.aggregate { _, accumulator, element, first ->
+			if (first) {
+				return@aggregate mutableListOf(element.second)
+			} else {
+				return@aggregate accumulator?.apply {
+					add(element.second)
+				}!!
+			}
+		}
+	}
+
+	override fun notifyDataset() {
+		prepareItems()
+		super.notifyDataset()
 	}
 
 	override fun getItemId(position: Int): Long {
@@ -32,15 +53,16 @@ class ListHistoryAdapter(
 	}
 
 	inner class DataObjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-		val textTaskName: AppCompatTextView? = itemView.findViewById(R.id.textTaskName)
-		val textTaskDescription: AppCompatTextView? = itemView.findViewById(R.id.textTaskDescription)
-		val textFootnote: AppCompatTextView? = itemView.findViewById(R.id.textFootnote)
+		val textTitle: AppCompatTextView? = itemView.findOptional(R.id.textTitle)
+		val iconText: AppCompatTextView? = itemView.findOptional(R.id.iconText)
+		val textPeriod: AppCompatTextView? = itemView.findOptional(R.id.textPeriod)
+		val textDuration: AppCompatTextView? = itemView.findOptional(R.id.textDuration)
 
 		init {
-			itemView.findViewById<View>(R.id.card)?.setOnClickListener {
+			itemView.findOptional<View>(R.id.card)?.setOnClickListener {
 				clickListener.click(adapterPosition)
 			}
-			itemView.findViewById<View>(R.id.buttonRemove)?.setOnClickListener {
+			itemView.findOptional<View>(R.id.buttonRemove)?.setOnClickListener {
 				clickListener.clickRemove(adapterPosition)
 			}
 		}
@@ -68,27 +90,36 @@ class ListHistoryAdapter(
 
 	override fun onBindViewHolder(@NonNull holder: DataObjectHolder, pos: Int) {
 		if (getItemViewType(pos) == 1) {
-			setColor(holder, items[pos].first.color)
-			holder.textTaskName?.text = items[pos].first.title
-			holder.textTaskDescription?.text = Utils.createItemDescription(context, items[pos].second)
-			holder.textFootnote?.text = items[pos].second.getTimeAmount()
-			if (items[pos].second.amount != 0f && !items[pos].second.wholeDay) {
-				holder.textFootnote?.visibility = View.VISIBLE
+			val parent = items.keys.toList()[pos]
+			val list = items.values.toList()[pos].sortedBy { it.startDate }
+			val amount = list.sumByDouble { it.amount.toDouble() }.toFloat()
+			val description = list.map {
+				Utils.createItemDescription(context, it)
+			}.joinToString(separator = "\n") { it }
+
+			setColor(holder, parent.color)
+			holder.textTitle?.text = parent.title
+			holder.iconText?.text = Utils.getInitials(parent.title)
+			holder.textPeriod?.text = description
+			holder.textDuration?.text = list.first().getTimeAmount(amount)
+			if (amount != 0f && list.find { it.wholeDay } ?: false == false) {
+				holder.textDuration?.visibility = View.VISIBLE
 			} else {
-				holder.textFootnote?.visibility = View.GONE
+				holder.textDuration?.visibility = View.GONE
 			}
 		}
 	}
 
 	private fun setColor(@NonNull holder: DataObjectHolder, @ColorInt color: Int) {
-		holder.textTaskName?.backgroundTintList = ColorStateList.valueOf(color)
-		holder.textTaskName?.setTextColor(
+		holder.iconText?.setTextColor(
 			if (Utils.getLuminance(color) > 0.5f) {
 				ColorUtils.blendARGB(color, Color.BLACK, 0.5f)
 			} else {
-				ColorUtils.blendARGB(color, Color.WHITE, 0.5f)
+				color
 			}
 		)
+		holder.iconText?.backgroundTintList =
+			ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 50))
 	}
 
 	override fun getItemCount() = items.size + (if (withAdder) 1 else 0)

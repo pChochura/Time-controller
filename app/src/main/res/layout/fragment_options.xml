@@ -9,16 +9,16 @@
             android:id="@+id/optionWeekdays"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/optionColor"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/optionStartTime"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@id/optionStartTime"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/optionColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="196dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -26,8 +26,8 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginBottom="30dp"
                 android:padding="15dp"
-                android:tint="@color/colorAccentLight"
-                android:src="@drawable/ic_weekdays"/>
+                android:src="@drawable/ic_weekdays"
+                android:tint="@color/colorAccentLight" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -35,10 +35,10 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/weekdays"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:text="@string/weekdays"
+                android:textColor="@color/colorText2" />
 
     </FrameLayout>
 
@@ -46,16 +46,16 @@
             android:id="@+id/optionColor"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toEndOf="@id/optionWeekdays"
-            app:layout_constraintEnd_toStartOf="@id/optionPrize"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/optionDuration"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@id/optionDuration"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/optionPrize"
+            app:layout_constraintStart_toEndOf="@id/optionWeekdays"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="196dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -63,8 +63,8 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginBottom="30dp"
                 android:padding="15dp"
-                android:tint="@color/colorTaskDefault"
-                android:src="@drawable/ic_circle"/>
+                android:src="@drawable/ic_circle"
+                android:tint="@color/colorTaskDefault" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -72,10 +72,10 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/color"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:text="@string/color"
+                android:textColor="@color/colorText2" />
 
     </FrameLayout>
 
@@ -83,16 +83,16 @@
             android:id="@+id/optionPrize"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toEndOf="@id/optionColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/optionDuration"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@id/optionDuration"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/optionColor"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="196dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -100,8 +100,8 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginBottom="30dp"
                 android:padding="15dp"
-                android:tint="@color/color13"
-                android:src="@drawable/ic_prize"/>
+                android:src="@drawable/ic_prize"
+                android:tint="@color/color13" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -109,10 +109,10 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/prize"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:text="@string/prize"
+                android:textColor="@color/colorText2" />
 
     </FrameLayout>
 
@@ -120,15 +120,15 @@
             android:id="@+id/optionStartTime"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/optionDuration"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/optionDuration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="196dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -136,8 +136,8 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginBottom="30dp"
                 android:padding="15dp"
-                android:tint="@color/colorPrimary"
-                android:src="@drawable/ic_time"/>
+                android:src="@drawable/ic_time"
+                android:tint="@color/color8" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -145,10 +145,10 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/start_time"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:text="@string/start_time"
+                android:textColor="@color/colorText2" />
 
     </FrameLayout>
 
@@ -156,16 +156,16 @@
             android:id="@+id/optionDuration"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toEndOf="@id/optionStartTime"
-            app:layout_constraintEnd_toStartOf="@id/optionDate"
-            app:layout_constraintTop_toBottomOf="@id/optionColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/optionDate"
+            app:layout_constraintStart_toEndOf="@id/optionStartTime"
+            app:layout_constraintTop_toBottomOf="@id/optionColor"
+            app:layout_constraintWidth_max="196dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -173,8 +173,8 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginBottom="30dp"
                 android:padding="15dp"
-                android:tint="@color/colorPrimaryDark"
-                android:src="@drawable/ic_duration"/>
+                android:src="@drawable/ic_duration"
+                android:tint="@color/color9" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -182,10 +182,10 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/duration"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:text="@string/duration"
+                android:textColor="@color/colorText2" />
 
     </FrameLayout>
 
@@ -193,53 +193,16 @@
             android:id="@+id/optionDate"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toEndOf="@id/optionDuration"
-            app:layout_constraintEnd_toStartOf="@id/optionTags"
-            app:layout_constraintTop_toBottomOf="@id/optionColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginBottom="30dp"
-                android:padding="15dp"
-                android:tint="@color/colorAccentDark"
-                android:src="@drawable/ic_date"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/date"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
-
-    </FrameLayout>
-
-    <FrameLayout
-            android:id="@+id/optionTags"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintWidth_max="196dp"
-            app:layout_constraintStart_toEndOf="@id/optionDate"
+            android:focusable="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/optionPrize"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintDimensionRatio="1:1"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true">
+            app:layout_constraintStart_toEndOf="@id/optionDuration"
+            app:layout_constraintTop_toBottomOf="@id/optionColor"
+            app:layout_constraintWidth_max="196dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -247,8 +210,8 @@
                 android:layout_gravity="top|center_horizontal"
                 android:layout_marginBottom="30dp"
                 android:padding="15dp"
-                android:tint="@color/color7"
-                android:src="@drawable/ic_tag"/>
+                android:src="@drawable/ic_date"
+                android:tint="@color/colorAccentDark" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -256,10 +219,10 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:textColor="@color/colorText1"
-                android:text="@string/tags"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:text="@string/date"
+                android:textColor="@color/colorText2" />
 
     </FrameLayout>
 

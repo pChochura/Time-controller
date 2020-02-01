@@ -17,7 +17,7 @@ import java.util.*
 
 class DayViewContainer(view: View) : ViewContainer(view) {
 
-	private val today = Calendar.getInstance()
+	private val today = Utils.date
 
 	var onClickListener: ((CalendarDay) -> Unit)? = null
 

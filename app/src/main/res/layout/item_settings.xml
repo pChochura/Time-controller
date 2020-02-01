@@ -8,68 +8,69 @@
         android:paddingRight="10dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Title"
             android:id="@+id/textTitle"
+            style="@style/Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_margin="15dp"
             android:fontFamily="@font/josefin_sans"
-            android:textColor="@color/colorText1"/>
+            android:textColor="@color/colorText3"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textSubtitle"
             style="@style/Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/textTitle"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="15dp"
             android:layout_marginBottom="15dp"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/josefin_sans"/>
+            android:fontFamily="@font/josefin_sans"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textTitle" />
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginRight="15dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:padding="5dp"
-            android:visibility="gone"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_arrow_right"
-            android:tint="@color/colorText2"/>
+            android:tint="@color/colorText2"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
             android:id="@+id/loader"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginRight="15dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorText2"
             android:padding="5dp"
             android:visibility="gone"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/colorText2"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:background="@color/colorRim"/>
+            android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

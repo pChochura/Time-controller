@@ -39,4 +39,13 @@ object ValueFormatters {
 				return Utils.formatMonthLong.format(GregorianCalendar(year, month, 1).time)
 			}
 		}
+
+	val formatterWeek
+		get() = object : ValueFormatter() {
+			override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+				val year = floor(value / 52f).toInt()
+				val week = value.toInt() - year * 52f
+				return week.toString()
+			}
+		}
 }

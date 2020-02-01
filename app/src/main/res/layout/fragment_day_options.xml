@@ -10,7 +10,7 @@
     <androidx.appcompat.widget.AppCompatTextView
             style="@style/Title"
             android:id="@+id/textTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -23,13 +23,14 @@
             android:textSize="20sp"
             android:gravity="center"
             android:textColorHint="@color/colorText2"
-            android:textColor="@color/colorText1"
-            android:textStyle="bold"
+            android:textColor="@color/colorText3"
+            app:layout_constraintBottom_toTopOf="@id/containerOptions"
             android:text="Monday, 19.08.2019"/>
 
     <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:id="@+id/containerOptions"
             app:layout_constraintTop_toBottomOf="@id/textTitle"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
