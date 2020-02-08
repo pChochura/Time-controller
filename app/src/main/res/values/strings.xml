@@ -70,9 +70,14 @@
     <string name="total_time_spent">Total time spent</string>
     <string name="monthly">Monthly</string>
     <string name="add_task">Add a task</string>
+    <string name="current_streak">Current streak</string>
 
+    <plurals name="longest_streak">
+        <item quantity="one">Your longest streak is currently <b>%d</b> day.</item>
+        <item quantity="other">Your longest streak is currently <b>%d</b> days.</item>
+    </plurals>
     <plurals name="day">
-        <item quantity="one">Day</item>
-        <item quantity="other">Days</item>
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
     </plurals>
 </resources>

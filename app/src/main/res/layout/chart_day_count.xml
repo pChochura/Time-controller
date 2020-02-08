@@ -14,12 +14,9 @@
                 android:id="@+id/chartDayCount"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_margin="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/buttonPeriod"/>
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonPeriod"

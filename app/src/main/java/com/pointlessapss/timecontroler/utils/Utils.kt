@@ -12,6 +12,8 @@ import com.pointlessapss.timecontroler.R
 import com.pointlessapss.timecontroler.models.Item
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 import kotlin.math.round
 
 val Int.dp: Int
@@ -136,4 +138,7 @@ object Utils {
 
 	fun getInitials(text: String) =
 		text.replace(Regex("(\\b\\w)\\w* ?"), "\$1").toUpperCase(Locale.getDefault())
+
+	fun getDayDifference(date1: Calendar, date2: Calendar) =
+		abs(TimeUnit.MILLISECONDS.toDays(date1.timeInMillis - date2.timeInMillis))
 }

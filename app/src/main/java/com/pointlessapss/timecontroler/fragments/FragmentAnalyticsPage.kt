@@ -2,10 +2,7 @@ package com.pointlessapss.timecontroler.fragments
 
 import android.view.ViewGroup
 import com.pointlessapss.timecontroler.R
-import com.pointlessapss.timecontroler.charts.ChartDayCount
-import com.pointlessapss.timecontroler.charts.ChartHours
-import com.pointlessapss.timecontroler.charts.ChartSalary
-import com.pointlessapss.timecontroler.charts.ChartTimeSpent
+import com.pointlessapss.timecontroler.charts.*
 import com.pointlessapss.timecontroler.models.Item
 import org.jetbrains.anko.find
 
@@ -40,6 +37,10 @@ class FragmentAnalyticsPage(
 				layout.addView(ChartTimeSpent(requireContext(), parent, tasks))
 			}
 			layout.addView(ChartDayCount(requireContext(), parent, tasks))
+
+			if (!parent.weekdays.any { !it }) {
+				layout.addView(ChartStreak(requireContext(), parent, tasks))
+			}
 		}
 	}
 }
